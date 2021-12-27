@@ -1,6 +1,6 @@
--- DROP SCHEMA IF EXISTS ohs_shao;
--- DROP TABLE  IF EXISTS ohs_shao.student;
--- DROP TABLE  IF EXISTS ohs_shao.breaks;
+DROP SCHEMA IF EXISTS ohs_shao CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.student CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS ohs_shao;
 
@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
    time_out TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    time_in  TIMESTAMPTZ DEFAULT NOW(),
    PRIMARY KEY(break_id),
-   FOREIGN KEY(student_id) REFERENCES ohs_shao.student(student_id) ON DELETE CASACADE
+   FOREIGN KEY(student_id) REFERENCES ohs_shao.student(student_id) ON DELETE CASCADE
 );

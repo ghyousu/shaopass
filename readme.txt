@@ -32,3 +32,8 @@ php code:
    type 2:
       $conn = pg_connect(getenv("DATABASE_URL"));
 }
+
+{
+https://www.postgresql.org/docs/9.4/functions-datetime.html
+   age(timestamp, timestamp) -> return "interval"
+}
