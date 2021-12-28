@@ -20,6 +20,8 @@ function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
 function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
+function getBreakIdSessionKey( $student_id ) { return "break_id_" . $student_id; }
+
 // return a working connection, caller is responsible to close
 // connection when done
 function getDBConnection()
@@ -56,37 +58,38 @@ function fetchQueryResults($query)
    return $result;
 }
 
-function updateStudent($student_id, $break_type, $pass_type)
+function checkoutStudent($student_id, $break_type, $pass_type)
 {
-   $check_time_out_query = "SELECT * FROM " . getBreaksTableName() . " WHERE " .
-                           "student_id = '$student_id' AND " .
-                           "time_in = time_out AND " .
-                           "DATE(time_out) = CURRENT_DATE " .
-                           "ORDER BY break_id DESC LIMIT 1";
+   $insert_query = "INSERT INTO " . getBreaksTableName() . " (student_id, break_type, pass_type) " .
+      "VALUES ('$student_id', '$break_type', '$pass_type') RETURNING break_id";
 
-   $has_time_out = pg_num_rows(fetchQueryResults($check_time_out_query));
+   $result = fetchQueryResults($insert_query);
 
-   if ($has_time_out == 1)
+   if ($result == false)
    {
-      // update "time_in" column
-      printDebug("to be implemented<br/>");
+      die("Failed to write to database <br/>");
    }
    else
    {
-      $insert_query = "INSERT INTO " . getBreaksTableName() . " (student_id, break_type, pass_type) " .
-                      "VALUES ('$student_id', '$break_type', '$pass_type') RETURNING break_id";
+      $break_id = pg_fetch_row($result)[0];
+      printDebug("successfully inserted break id: $break_id <br/>");
+   }
 
-      $result = fetchQueryResults($insert_query);
+   return $break_id;
+}
 
-      if ($result == false)
-      {
-         die("Failed to write to database <br/>");
-      }
-      else
-      {
-         $break_id = pg_fetch_row($result)[0];
-         printDebug("successfully inserted break id: $break_id <br/>");
-      }
+function checkinStudent($student_id, $break_id)
+{
+   $update_query = "UPDATE " . getBreaksTableName() . " SET time_in = NOW() " .
+                   "WHERE break_id = " . $break_id;
+
+   printDebug($update_query);
+
+   $result = fetchQueryResults($update_query);
+
+   if ($result == false)
+   {
+      die("Failed to check in student with id: $student_id and break_id: $break_id<br/>");
    }
 }
 
@@ -185,7 +188,7 @@ function displayTodaysHistory($class)
    // TODO:
    //    * add in "class" variable
    //    * display student name instead of id
-   $COLUMNS = "student_id, break_type, pass_type, " .
+   $COLUMNS = "break_id, student_id, break_type, pass_type, " .
               "TO_CHAR(timezone('America/New_York', time_out), 'HH24:MI:SS'), " .
               "TO_CHAR(timezone('America/New_York', time_in),  'HH24:MI:SS')";
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " WHERE " .
@@ -205,15 +208,19 @@ function displayTodaysHistory($class)
 
    while ( $entry = pg_fetch_row($entries) )
    {
-      $id          =  $entry[0];
-      $break_type  =  $entry[1];
-      $pass_type   =  $entry[2];
-      $time_out    =  $entry[3];
-      $time_in     =  $entry[4];
+      $break_id    =  $entry[0];
+      $id          =  $entry[1]; // student_id
+      $break_type  =  $entry[2];
+      $pass_type   =  $entry[3];
+      $time_out    =  $entry[4];
+      $time_in     =  $entry[5];
 
       if ($time_out == $time_in)
       {
          $hidden_html_ids = $hidden_html_ids . "_" . $id;
+
+         $break_id_session_key = getBreakIdSessionKey($id);
+         $_SESSION[$break_id_session_key] = $break_id;
 
          $time_in = "NA";
       }

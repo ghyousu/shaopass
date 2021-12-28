@@ -44,7 +44,7 @@
             }
 
             var id_to_name_elem = document.getElementById("id_to_name_" + id);
-            var label_name_elem =  document.getElementById("label_name_" + id);
+            var label_name_elem = document.getElementById("label_name_" + id);
 
             // update the id with actual student's name
             id_to_name_elem.innerHTML = label_name_elem.innerHTML;
@@ -98,11 +98,11 @@
             var break_type_name = document.getElementById("break_type_" + student_id).innerHTML;
             var pass_type_name  = document.getElementById("pass_type_"  + student_id).innerHTML;
 
-            debugger;
-
             // check the radio buttons
             document.getElementById("break_type_" + break_type_name).checked = true;
             document.getElementById("pass_type_"  + pass_type_name ).checked = true;
+
+            document.getElementById("submit_btn").value = "Check In";
          }
          else
          {
@@ -110,86 +110,10 @@
 
             deselectAllRadioButtons("break_type");
             deselectAllRadioButtons("pass_type");
+
+            document.getElementById("submit_btn").value = "Check Out";
          }
       }
-
-/*
-   {
-      function selectAllClicked(e)
-      {
-         var checkboxes = document.getElementsByName( "check_list[]" );
-         var numElems = checkboxes.length;
-         for ( i=0; i<numElems; i++ )
-         {
-            if (checkboxes[i].value.split('.').pop() != "php")
-            {
-              checkboxes[i].checked = true;
-            }
-         }
-         e.preventDefault(); // don't actually submit
-      }
-
-      function unselectAllClicked(e)
-      {
-         var checkboxes = document.getElementsByName( "check_list[]" );
-         var numElems = checkboxes.length;
-         for ( i=0; i<numElems; i++ )
-         {
-            checkboxes[i].checked = false;
-         }
-         e.preventDefault(); // don't actually submit
-      }
-
-      function rename_selected(e)
-      {
-         var from_str = document.getElementById("from_re").value;
-         var to_str   = document.getElementById("to_re").value;
-
-         if (from_str == "")
-         {
-            alert("You need to specify the 'From' text box");
-            e.preventDefault(); // don't actually submit
-            return ;
-         }
-
-         if (to_str == "")
-         {
-            alert("You need to specify the 'To' text box");
-            e.preventDefault(); // don't actually submit
-            return ;
-         }
-
-         if (from_str == to_str)
-         {
-            alert("'From' and 'To' are the same, do nothing");
-            e.preventDefault(); // don't actually submit
-            document.getElementById("to_re").value = "CHANGE_ME";
-            return ;
-         }
-
-         // verify there's at least one file checked
-         var checkboxes = document.getElementsByName( "check_list[]" );
-         var numElems = checkboxes.length;
-         var has_file_selected = false;
-         for ( i=0; i<numElems; i++ )
-         {
-            if (checkboxes[i].checked)
-            {
-                has_file_selected = true;
-                break;
-            }
-         }
-
-         if (!has_file_selected)
-         {
-            alert("No files are selected. Select some files to be renamed");
-            e.preventDefault(); // don't actually submit
-         }
-
-         console.log("Renaming files from '" + from_str + "' to '" + to_str + "'");
-      }
-      }
-*/
 
      </script>
 
@@ -212,26 +136,33 @@
             //       ["student_id"]=> string(9) "35"
             //       ["break_type"]=> string(8) "Bathroom"
             //       ["pass_type"]=> string(1) "E"
-            //       ["submit"]=> string(6) "Submit"
+            //       ["submit"]=> string(6) "Check In"
             //    }
 
-            $student_id = $_POST['student_id'];
-            $break_type = $_POST['break_type'];
-            $pass_type  = $_POST['pass_type'];
+            $student_id  = $_POST['student_id'];
+            $break_type  = $_POST['break_type'];
+            $pass_type   = $_POST['pass_type'];
+            $is_checkout = ($_POST['submit'] == "Check Out");
 
-            updateStudent($student_id, $break_type, $pass_type);
+            $break_id_session_key = getBreakIdSessionKey($student_id);
 
-            // if (isset($_SERVER["HTTP_REFERER"]))
-            // {
-            //    header("Location: " . $_SERVER["HTTP_REFERER"]);
-            // }
+            if ($is_checkout)
+            {
+               $break_id = checkoutStudent($student_id, $break_type, $pass_type);
+
+               $_SESSION[$break_id_session_key] = $break_id;
+            }
+            else
+            {
+               checkinStudent($student_id, $_SESSION[$break_id_session_key]);
+            }
          }
      ?>
   </head>
 
   <body onload="on_page_loaded()">
 
-     <table border=0>
+     <table border=1>
      <tr>
 
      <td>
@@ -251,7 +182,9 @@
               displayPassTypes();
            ?>
 
-           <input type="submit" name="submit" Value="Submit"/>
+           <div align="center">
+           <input id='submit_btn' type="submit" name="submit" Value="Check Out"/>
+           </div>
         </form>
      </td>
 
