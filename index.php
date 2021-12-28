@@ -16,18 +16,19 @@
 
          for (i=0; i<numElems; ++i)
          {
-            if (id_list[i] == 0)
-            {
-               continue; // skip leading 0
-            }
+            var student_id = id_list[i];
+            if (student_id == 0) { continue; }
 
-            var td_id_name = "td_label_" + id_list[i];
+            // change student-name's background color
+            var td_id_name = "td_label_" + student_id;
             var td_elem = document.getElementById(td_id_name);
             td_elem.style.backgroundColor = "orange";
          }
       }
 
-      function updateStudentNameInBreakHistory()
+      // this function is called when page loads or when a student's name is
+      // selected. It looks at what pass is taken out and disables it/them.
+      function disableTakenPassTypes()
       {
          var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
 
@@ -37,17 +38,14 @@
 
          for (i=0; i<numElems; ++i)
          {
-            id = id_list[i];
-            if (id == 0)
+            var student_id = id_list[i];
+            if (student_id == 0) { continue; }
+
+            var pass_type_name = document.getElementById("pass_type_" + student_id).innerHTML;
+            if (pass_type_name != "")
             {
-               continue; // skip leading 0
+               document.getElementById("pass_type_" + pass_type_name).disabled = true;
             }
-
-            var id_to_name_elem = document.getElementById("id_to_name_" + id);
-            var label_name_elem = document.getElementById("label_name_" + id);
-
-            // update the id with actual student's name
-            id_to_name_elem.innerHTML = label_name_elem.innerHTML;
          }
       }
 
@@ -55,7 +53,7 @@
       {
          updateStudentNameColor();
 
-         updateStudentNameInBreakHistory();
+         disableTakenPassTypes();
       }
 
       function isStudentCheckedOut( id )
@@ -87,6 +85,27 @@
          }
       }
 
+      function disableAllRadioButtons(chk_group_name)
+      {
+         const chbx = document.getElementsByName(chk_group_name);
+
+         for(let i=0; i < chbx.length; i++)
+         {
+            chbx[i].disabled = true;
+         }
+      }
+
+      function enableAllRadioButtons(chk_group_name)
+      {
+         const chbx = document.getElementsByName(chk_group_name);
+
+         for(let i=0; i < chbx.length; i++)
+         {
+            chbx[i].disabled = false;
+         }
+      }
+
+      // this is callback when a sutdent's name is selected
       function studentNameSelected(radioBtn)
       {
          var student_id = radioBtn.value;
@@ -98,9 +117,21 @@
             var break_type_name = document.getElementById("break_type_" + student_id).innerHTML;
             var pass_type_name  = document.getElementById("pass_type_"  + student_id).innerHTML;
 
-            // check the radio buttons
+            // debugger;
+
+            // check the radio buttons and disable them
             document.getElementById("break_type_" + break_type_name).checked = true;
-            document.getElementById("pass_type_"  + pass_type_name ).checked = true;
+            if (pass_type_name != "")
+            {
+               document.getElementById("pass_type_"  + pass_type_name ).checked = true;
+            }
+            else
+            {
+               deselectAllRadioButtons("pass_type");
+            }
+
+            disableAllRadioButtons("break_type");
+            disableAllRadioButtons("pass_type");
 
             document.getElementById("submit_btn").value = "Check In";
          }
@@ -108,11 +139,24 @@
          {
             console.log("student " + student_id + " is NOT checked out");
 
+            // clear selections
             deselectAllRadioButtons("break_type");
             deselectAllRadioButtons("pass_type");
 
+            // enable radio buttons but disalbe taken passes
+            enableAllRadioButtons("break_type");
+            enableAllRadioButtons("pass_type");
+            disableTakenPassTypes();
+
             document.getElementById("submit_btn").value = "Check Out";
          }
+      }
+
+      function submitClicked(event)
+      {
+         // DO WE NEED THIS?
+         // alertWithoutNotice( "You must select at least 1 item before submitting!" );
+         // e.preventDefault(); // DON'T SUBMIT with violation
       }
 
      </script>
@@ -183,7 +227,8 @@
            ?>
 
            <div align="center">
-           <input id='submit_btn' type="submit" name="submit" Value="Check Out"/>
+           <input id="submit_btn" type="submit" name="submit" value="Check Out"
+                  onclick="submitClicked(event)" style="font-size: 1.5em" />
            </div>
         </form>
      </td>
@@ -199,4 +244,7 @@
      <table>
   </body>
 
+  <?php
+     // print_r($_SESSION);
+  ?>
 </html>

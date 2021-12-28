@@ -20,7 +20,9 @@ function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
 function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
-function getBreakIdSessionKey( $student_id ) { return "break_id_" . $student_id; }
+function getNameSessionKey($student_id) { return "name_" . $student_id; }
+
+function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -109,6 +111,8 @@ function displayStudentNamesFromDB()
       $id = $student[0];
       $name = $student[1] . " " . $student[2];
 
+      $_SESSION[getNameSessionKey($id)] = $name;
+
       printDebug("id: $id, name: '$name'");
 
       if ( $loopCount == 1 )
@@ -118,7 +122,7 @@ function displayStudentNamesFromDB()
 
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
-      $html_label_id = 'label_name_' . $id;
+      $html_label_id = 'label_name_' . $id; // TODO: to be deleted (javascript replaced by SESSION variable)
 
       echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
@@ -203,6 +207,7 @@ function displayTodaysHistory($class)
    echo "<th>Pass Type</th>\n";
    echo "<th>Time Out</th>\n";
    echo "<th>Time In</th>\n";
+   echo "<th>Duration</th>\n";
 
    $hidden_html_ids = "0"; // prefix with an invalid ID
 
@@ -227,11 +232,12 @@ function displayTodaysHistory($class)
 
       echo "\t<tr>\n";
 
-      echo "\t\t<td id='id_to_name_" . $id . "'>$id</td>\n";
+      echo "\t\t<td>" . $_SESSION[getNameSessionKey($id)] . "</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
       echo "\t\t<td id='pass_type_"  . $id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
       echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
+      echo "\t\t<td id='duration_"   . $break_id . "'>PLACE HOLDER</td>\n";
 
       echo "\t</tr>\n";
    }
