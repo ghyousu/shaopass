@@ -122,11 +122,10 @@ function displayStudentNamesFromDB()
 
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
-      $html_label_id = 'label_name_' . $id; // TODO: to be deleted (javascript replaced by SESSION variable)
 
       echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
-      echo "<label id='$html_label_id' for='$html_input_id'>$name</label>\n";
+      echo "<label style='font-size: 1.5em' for='$html_input_id'>$name</label>\n";
       echo "</td>\n";
 
       if ( $loopCount++ == $NUM_COLUMNS )
@@ -155,7 +154,7 @@ function displayBreakTypes()
 
       echo "<td style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$value' />\n";
-      echo "<label for='$html_input_id'>$value</label>\n";
+      echo "<label style='font-size: 2.0em; margin-right: 30px;' for='$html_input_id'>$value</label>\n";
       echo "</td>\n";
    }
 
@@ -179,7 +178,7 @@ function displayPassTypes()
 
       echo "<td style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$value' />\n";
-      echo "<label for='$html_input_id'>$value</label>\n";
+      echo "<label style='font-size: 2.0em; margin-right: 30px;' for='$html_input_id'>$value</label>\n";
       echo "</td>\n";
    }
 
@@ -225,9 +224,6 @@ function getDurationHtmlStyleBgcolor( $duration )
 
 function displayTodaysHistory($class)
 {
-   // TODO:
-   //    * add in "class" variable
-   //    * display student name instead of id
    $COLUMNS = "break_id, student_id, break_type, pass_type, " .
               "TO_CHAR(timezone('America/New_York', time_out), 'HH12:MI:SS AM'), " .
               "TO_CHAR(timezone('America/New_York', time_in),  'HH12:MI:SS AM'), " .
