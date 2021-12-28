@@ -152,11 +152,42 @@
          }
       }
 
+      function atLeastOneRadioButtonChecked(radio_grp_name)
+      {
+         var radios = document.getElementsByName(radio_grp_name);
+
+         for (var i = 0, len = radios.length; i < len; i++) {
+            if (radios[i].checked) {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      // verify at least name and break type is selected
       function submitClicked(event)
       {
-         // DO WE NEED THIS?
-         // alertWithoutNotice( "You must select at least 1 item before submitting!" );
-         // e.preventDefault(); // DON'T SUBMIT with violation
+         if (false == atLeastOneRadioButtonChecked("student_id"))
+         {
+            alert("You need to select your name first");
+            event.preventDefault(); // DON'T SUBMIT with violation
+            return ;
+         }
+
+         if (false == atLeastOneRadioButtonChecked("break_type"))
+         {
+            alert("You must select a type");
+            event.preventDefault(); // DON'T SUBMIT with violation
+            return ;
+         }
+
+         if (false == atLeastOneRadioButtonChecked("pass_type"))
+         {
+            alert("You must select a pass");
+            event.preventDefault(); // DON'T SUBMIT with violation
+            return ;
+         }
       }
 
      </script>
