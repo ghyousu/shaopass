@@ -1,7 +1,32 @@
 <html>
   <head>
      <title>Student Break Tracker</title>
+
+     <?php require_once("common.php"); ?>
+
      <script type="text/javascript">
+
+      function updateStudentNameColor()
+      {
+         var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
+
+         var id_list = document.getElementById(html_elem_id).value.split("_");
+
+         var numElems = id_list.length;
+
+         for (i=0; i<numElems; ++i)
+         {
+            if (id_list[i] == 0)
+            {
+               continue; // skip leading 0
+            }
+
+            var td_id_name = "td_label_" + id_list[i];
+            var td_elem = document.getElementById(td_id_name);
+            td_elem.style.backgroundColor = "orange";
+         }
+      }
+
       function selectAllClicked(e)
       {
          var checkboxes = document.getElementsByName( "check_list[]" );
@@ -83,8 +108,6 @@
 
          session_start();
 
-         require_once("common.php");
-
          if (!isset($_SESSION['LOGGED_IN']))
          {
             header("location: /login.php");
@@ -116,8 +139,9 @@
      ?>
   </head>
 
-  <body>
-     <table border=1>
+  <body onload="updateStudentNameColor()">
+
+     <table border=0>
      <tr>
 
      <td>

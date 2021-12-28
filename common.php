@@ -1,20 +1,5 @@
 <?php
 
-function getSchemaName()
-{
-   return "ohs_shao";
-}
-
-function getStudentTableName()
-{
-   return getSchemaName() . "." . "student";
-}
-
-function getBreaksTableName()
-{
-   return getSchemaName() . "." . "breaks";
-}
-
 function printDebug($str)
 {
    $debug=0;
@@ -24,6 +9,16 @@ function printDebug($str)
       echo "Debug: $str <br/>";
    }
 }
+
+function getSchemaName() { return "ohs_shao"; }
+
+function getStudentTableName() { return getSchemaName() . "." . "student"; }
+
+function getBreaksTableName() { return getSchemaName() . "." . "breaks"; }
+
+function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
+
+function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -119,9 +114,9 @@ function displayStudentNamesFromDB()
       }
 
       $html_input_prefix = "<input type='radio' name='student_id' ";
-      $html_input_id = 'student_id_' . $id;
+      $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      echo "<td style='padding-bottom: 3%'>\n";
+      echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$id' />\n";
       echo "<label for='$html_input_id'>$name</label>\n";
       echo "</td>\n";
@@ -186,8 +181,9 @@ function displayPassTypes()
 
 function displayTodaysHistory($class)
 {
-   // TODO: add in "class" variable
-   // AT TIME ZONE 'America/New_York'
+   // TODO:
+   //    * add in "class" variable
+   //    * display student name instead of id
    $COLUMNS = "student_id, break_type, pass_type, " .
               "TO_CHAR(timezone('America/New_York', time_out), 'HH24:MI:SS'), " .
               "TO_CHAR(timezone('America/New_York', time_in),  'HH24:MI:SS')";
@@ -204,6 +200,8 @@ function displayTodaysHistory($class)
    echo "<th>time_out</th>\n";
    echo "<th>time_in</th>\n";
 
+   $hidden_html_ids = "0"; // prefix with invalid ID
+
    while ( $entry = pg_fetch_row($entries) )
    {
       $id          =  $entry[0];
@@ -214,6 +212,8 @@ function displayTodaysHistory($class)
 
       if ($time_out == $time_in)
       {
+         $hidden_html_ids = $hidden_html_ids . "_" . $id;
+
          $time_in = "NA";
       }
 
@@ -228,6 +228,7 @@ function displayTodaysHistory($class)
       echo "\t</tr>\n";
    }
 
+   echo '<input type="hidden" id="' . getHiddenFieldId() . '" name="checkedout_ids" value="' . $hidden_html_ids . '">';
 
    echo "</table>\n";
 }
