@@ -187,6 +187,42 @@ function displayPassTypes()
    echo "</table>\n";
 }
 
+// duration's in HH:SS format.
+function mmssToSeconds( $duration )
+{
+   $mm_ss_array = explode(":", $duration);
+   $mm = $mm_ss_array[0];
+   $ss = $mm_ss_array[1];
+
+   return $mm * 60 + $ss;
+}
+
+
+// duration's in HH:SS format.
+//   color coding:
+//     *  0-15 mins -> no color
+//     * 15-20 mins -> yellow
+//     * longer than 20 mins -> red
+function getDurationHtmlStyleBgcolor( $duration )
+{
+   $duration_in_secs = mmssToSeconds($duration);
+
+   if ($duration_in_secs >= 20 * 60)
+   {
+      $html_style = "style='text-align: center; background-color: red'";
+   }
+   else if ($duration_in_secs >= 15 * 60)
+   {
+      $html_style = "style='text-align: center; background-color: yellow'";
+   }
+   else // under 15 minutes
+   {
+      $html_style = "style='text-align: center'";
+   }
+
+   return $html_style;
+}
+
 function displayTodaysHistory($class)
 {
    // TODO:
@@ -205,7 +241,7 @@ function displayTodaysHistory($class)
 
    echo "<th>Name</th>\n";
    echo "<th>Break Type</th>\n";
-   echo "<th>Pass Type</th>\n";
+   echo "<th>Pass</th>\n";
    echo "<th>Time Out</th>\n";
    echo "<th>Time In</th>\n";
    echo "<th>Duration</th>\n";
@@ -236,10 +272,10 @@ function displayTodaysHistory($class)
 
       echo "\t\t<td>" . $_SESSION[getNameSessionKey($id)] . "</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
-      echo "\t\t<td id='pass_type_"  . $id . "'>$pass_type</td>\n";
+      echo "\t\t<td style='text-align: center' id='pass_type_"  . $id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
       echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
-      echo "\t\t<td style='text-align: center' id='duration_"   . $break_id . "'>$duration</td>\n";
+      echo "\t\t<td " . getDurationHtmlStyleBgcolor($duration) . " id='duration_" . $break_id . "'>$duration</td>\n";
 
       echo "\t</tr>\n";
    }
