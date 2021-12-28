@@ -194,7 +194,8 @@ function displayTodaysHistory($class)
    //    * display student name instead of id
    $COLUMNS = "break_id, student_id, break_type, pass_type, " .
               "TO_CHAR(timezone('America/New_York', time_out), 'HH12:MI:SS AM'), " .
-              "TO_CHAR(timezone('America/New_York', time_in),  'HH12:MI:SS AM')";
+              "TO_CHAR(timezone('America/New_York', time_in),  'HH12:MI:SS AM'), " .
+              "TO_CHAR(age(time_in, time_out), 'MI:SS')";
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " WHERE " .
                     "DATE(time_out) = CURRENT_DATE ORDER BY time_out";
 
@@ -213,12 +214,13 @@ function displayTodaysHistory($class)
 
    while ( $entry = pg_fetch_row($entries) )
    {
-      $break_id    =  $entry[0];
-      $id          =  $entry[1]; // student_id
-      $break_type  =  $entry[2];
-      $pass_type   =  $entry[3];
-      $time_out    =  $entry[4];
-      $time_in     =  $entry[5];
+      $break_id   = $entry[0];
+      $id         = $entry[1]; // student_id
+      $break_type = $entry[2];
+      $pass_type  = $entry[3];
+      $time_out   = $entry[4];
+      $time_in    = $entry[5];
+      $duration   = $entry[6];
 
       if ($time_out == $time_in)
       {
@@ -237,7 +239,7 @@ function displayTodaysHistory($class)
       echo "\t\t<td id='pass_type_"  . $id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
       echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
-      echo "\t\t<td id='duration_"   . $break_id . "'>PLACE HOLDER</td>\n";
+      echo "\t\t<td style='text-align: center' id='duration_"   . $break_id . "'>$duration</td>\n";
 
       echo "\t</tr>\n";
    }
