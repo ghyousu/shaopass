@@ -27,6 +27,72 @@
          }
       }
 
+      function updateStudentNameInBreakHistory()
+      {
+         var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
+
+         var id_list = document.getElementById(html_elem_id).value.split("_");
+
+         var numElems = id_list.length;
+
+         for (i=0; i<numElems; ++i)
+         {
+            id = id_list[i];
+            if (id == 0)
+            {
+               continue; // skip leading 0
+            }
+
+            var id_to_name_elem = document.getElementById("id_to_name_" + id);
+            var label_name_elem =  document.getElementById("label_name_" + id);
+
+            // update the id with actual student's name
+            id_to_name_elem.innerHTML = label_name_elem.innerHTML;
+         }
+      }
+
+      function on_page_loaded()
+      {
+         updateStudentNameColor();
+
+         updateStudentNameInBreakHistory();
+      }
+
+      function isStudentCheckedOut( id )
+      {
+         var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
+
+         var id_list = document.getElementById(html_elem_id).value.split("_");
+
+         var numElems = id_list.length;
+
+         for (i=0; i<numElems; ++i)
+         {
+            if (id_list[i] == id)
+            {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      function studentNameSelected(radioBtn)
+      {
+         var student_id = radioBtn.value;
+
+         if (isStudentCheckedOut(student_id))
+         {
+            console.log("student " + student_id + " is checked out");
+         }
+         else
+         {
+            console.log("student " + student_id + " is NOT checked out");
+         }
+      }
+
+/*
+   {
       function selectAllClicked(e)
       {
          var checkboxes = document.getElementsByName( "check_list[]" );
@@ -100,6 +166,8 @@
 
          console.log("Renaming files from '" + from_str + "' to '" + to_str + "'");
       }
+      }
+*/
 
      </script>
 
@@ -139,7 +207,7 @@
      ?>
   </head>
 
-  <body onload="updateStudentNameColor()">
+  <body onload="on_page_loaded()">
 
      <table border=0>
      <tr>

@@ -115,10 +115,11 @@ function displayStudentNamesFromDB()
 
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
+      $html_label_id = 'label_name_' . $id;
 
       echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
-      echo "$html_input_prefix id='$html_input_id' value='$id' />\n";
-      echo "<label for='$html_input_id'>$name</label>\n";
+      echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
+      echo "<label id='$html_label_id' for='$html_input_id'>$name</label>\n";
       echo "</td>\n";
 
       if ( $loopCount++ == $NUM_COLUMNS )
@@ -194,13 +195,13 @@ function displayTodaysHistory($class)
 
    echo "<table border=1>\n";
 
-   echo "<th>student id</th>\n";
-   echo "<th>break_type</th>\n";
-   echo "<th>pass_type</th>\n";
-   echo "<th>time_out</th>\n";
-   echo "<th>time_in</th>\n";
+   echo "<th>Name</th>\n";
+   echo "<th>Break Type</th>\n";
+   echo "<th>Pass Type</th>\n";
+   echo "<th>Time Out</th>\n";
+   echo "<th>Time In</th>\n";
 
-   $hidden_html_ids = "0"; // prefix with invalid ID
+   $hidden_html_ids = "0"; // prefix with an invalid ID
 
    while ( $entry = pg_fetch_row($entries) )
    {
@@ -219,11 +220,11 @@ function displayTodaysHistory($class)
 
       echo "\t<tr>\n";
 
-      echo "\t\t<td>$id</td>\n";
-      echo "\t\t<td>$break_type</td>\n";
-      echo "\t\t<td>$pass_type</td>\n";
-      echo "\t\t<td>$time_out</td>\n";
-      echo "\t\t<td>$time_in</td>\n";
+      echo "\t\t<td id='id_to_name_" . $id . "'>$id</td>\n";
+      echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
+      echo "\t\t<td id='pass_type_"  . $id . "'>$pass_type</td>\n";
+      echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
+      echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
 
       echo "\t</tr>\n";
    }
