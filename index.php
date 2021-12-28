@@ -77,6 +77,16 @@
          return false;
       }
 
+      function deselectAllRadioButtons(chk_group_name)
+      {
+         const chbx = document.getElementsByName(chk_group_name);
+
+         for(let i=0; i < chbx.length; i++)
+         {
+            chbx[i].checked = false;
+         }
+      }
+
       function studentNameSelected(radioBtn)
       {
          var student_id = radioBtn.value;
@@ -84,10 +94,22 @@
          if (isStudentCheckedOut(student_id))
          {
             console.log("student " + student_id + " is checked out");
+
+            var break_type_name = document.getElementById("break_type_" + student_id).innerHTML;
+            var pass_type_name  = document.getElementById("pass_type_"  + student_id).innerHTML;
+
+            debugger;
+
+            // check the radio buttons
+            document.getElementById("break_type_" + break_type_name).checked = true;
+            document.getElementById("pass_type_"  + pass_type_name ).checked = true;
          }
          else
          {
             console.log("student " + student_id + " is NOT checked out");
+
+            deselectAllRadioButtons("break_type");
+            deselectAllRadioButtons("pass_type");
          }
       }
 
