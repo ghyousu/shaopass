@@ -193,8 +193,8 @@ function displayTodaysHistory($class)
    //    * add in "class" variable
    //    * display student name instead of id
    $COLUMNS = "break_id, student_id, break_type, pass_type, " .
-              "TO_CHAR(timezone('America/New_York', time_out), 'HH24:MI:SS'), " .
-              "TO_CHAR(timezone('America/New_York', time_in),  'HH24:MI:SS')";
+              "TO_CHAR(timezone('America/New_York', time_out), 'HH12:MI:SS AM'), " .
+              "TO_CHAR(timezone('America/New_York', time_in),  'HH12:MI:SS AM')";
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " WHERE " .
                     "DATE(time_out) = CURRENT_DATE ORDER BY time_out";
 
