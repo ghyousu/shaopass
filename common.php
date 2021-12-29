@@ -12,6 +12,8 @@ function printDebug($str)
 
 function getSchemaName() { return "ohs_shao"; }
 
+function getUsersTableName() { return getSchemaName() . "." . "users"; }
+
 function getStudentTableName() { return getSchemaName() . "." . "student"; }
 
 function getBreaksTableName() { return getSchemaName() . "." . "breaks"; }
@@ -81,6 +83,26 @@ function fetchQueryResults($query)
 
    pg_close($conn);
    return $result;
+}
+
+function getUserRoleFromDB($username, $pw)
+{
+   $query = "SELECT role from " . getUsersTableName() .
+            " WHERE user_name = '$username' AND pw = '" . sha1($pw) . "'";
+
+   printDebug("query: '$query'");
+
+   $result = fetchQueryResults($query);
+
+   if ($result == false)
+   {
+      die("Failed to get login info from database <br/>");
+   }
+   else
+   {
+      $role = pg_fetch_row($result)[0];
+      return $role;
+   }
 }
 
 function checkoutStudent($student_id, $break_type, $pass_type)

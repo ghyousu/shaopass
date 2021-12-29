@@ -4,10 +4,14 @@
 <head>
   <title>Login</title>
    <?php
+      require_once("common.php");
+
       function login($username, $pw)
       {
-         if ( $username == 'bk' && $pw == 'qwertasdfg63859' )
+         $user_role = getUserRoleFromDB($username, $pw);
+         if ( $user_role != "" )
          {
+            $_SESSION['role'] = $user_role;
             return true;
          }
          else

@@ -5,7 +5,6 @@
      <?php require_once("common.php"); ?>
 
      <script type="text/javascript">
-
       function updateStudentNameColor()
       {
          var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
