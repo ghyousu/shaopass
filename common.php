@@ -28,8 +28,31 @@ function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 // connection when done
 function getDBConnection()
 {
-   // $conn = pg_connect(getenv("DATABASE_URL"));
-   $conn = pg_connect("postgres://offebckiwtuszs:10a387b0a19ce9fccc2b232127a8a2eb039d60d96243c6031d3f38c43d8a79fe@ec2-3-218-158-102.compute-1.amazonaws.com:5432/devqb8osdvb4qn");
+   $db_url = getenv("DATABASE_URL");
+
+   printDebug("db_url from env: '$db_url'");
+
+   if ($db_url == "")
+   {
+      $local_file = "heroku_database_url.txt";
+
+      printDebug("local file: $local_file");
+
+      if (is_readable($local_file))
+      {
+         $myfile = fopen($local_file, "r") or die("Unable to open file '$local_file'!");
+         $db_url = fread($myfile, filesize($local_file)-1); // account for EOL
+
+         printDebug("file size: " . filesize($local_file));
+         printDebug("db_url from $local_file: '$db_url'");
+
+         fclose($myfile);
+      }
+   }
+
+   if ($db_url == "") { die("Unable to get database URL!"); }
+
+   $conn = pg_connect($db_url);
 
    if ($conn)
    {
