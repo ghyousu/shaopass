@@ -22,8 +22,6 @@ function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
 function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
-function getNameSessionKey($student_id) { return "name_" . $student_id; }
-
 function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
 // return a working connection, caller is responsible to close
@@ -142,8 +140,6 @@ function displayStudentNamesFromDB($class)
       $id = $student[0];
       $name = $student[1] . "<br/>" . $student[2];
 
-      $_SESSION[getNameSessionKey($id)] = $name;
-
       printDebug("id: $id, name: '$name'");
 
       if ( $loopCount == 1 )
@@ -260,7 +256,7 @@ function displayTodaysHistory($class)
 {
    $tz = 'America/New_York';
 
-   $COLUMNS = "b.break_id, b.student_id, b.break_type, b.pass_type, " .
+   $COLUMNS = "b.break_id, s.fname, s.lname, b.break_type, b.pass_type, " .
               "TO_CHAR(timezone('$tz', b.time_out), 'HH12:MI:SS AM'), " .
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
               "TO_CHAR(age(b.time_in, b.time_out), 'MI:SS')";
@@ -286,12 +282,13 @@ function displayTodaysHistory($class)
    while ( $entry = pg_fetch_row($entries) )
    {
       $break_id   = $entry[0];
-      $id         = $entry[1]; // student_id
-      $break_type = $entry[2];
-      $pass_type  = $entry[3];
-      $time_out   = $entry[4];
-      $time_in    = $entry[5];
-      $duration   = $entry[6];
+      $fname      = $entry[1];
+      $lname      = $entry[2];
+      $break_type = $entry[3];
+      $pass_type  = $entry[4];
+      $time_out   = $entry[5];
+      $time_in    = $entry[6];
+      $duration   = $entry[7];
 
       if ($time_out == $time_in)
       {
@@ -305,7 +302,7 @@ function displayTodaysHistory($class)
 
       echo "\t<tr>\n";
 
-      echo "\t\t<td>" . $_SESSION[getNameSessionKey($id)] . "</td>\n";
+      echo "\t\t<td>$fname $lname</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
       echo "\t\t<td style='text-align: center' id='pass_type_"  . $id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
