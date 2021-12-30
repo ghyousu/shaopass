@@ -174,7 +174,7 @@ function displayStudentNamesFromDB($class)
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
+      echo "<td id='td_label_" . $id . "' style='padding-bottom: 30px; padding-right: 30px;'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
       echo "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
       echo "</td>\n";
