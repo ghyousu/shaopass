@@ -160,7 +160,7 @@ function displayStudentNamesFromDB($class)
    while ( $student = pg_fetch_row($students) )
    {
       $id = $student[0];
-      $name = "<br/>" . $student[1] . "<br/>" . $student[2];
+      $name = $student[1] . "<br/>" . $student[2];
 
       $_SESSION[getNameSessionKey($id)] = $name;
 
@@ -176,7 +176,7 @@ function displayStudentNamesFromDB($class)
 
       echo "<td id='td_label_" . $id . "' style='padding-bottom: 3%'>\n";
       echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
-      echo "<label style='font-size: 1.5em' for='$html_input_id'>$name</label>\n";
+      echo "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
       echo "</td>\n";
 
       if ( $loopCount++ == $NUM_COLUMNS )
