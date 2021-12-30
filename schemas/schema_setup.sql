@@ -1,4 +1,3 @@
-DROP TABLE  IF EXISTS ohs_shao.users CASCADE;
 DROP TYPE   IF EXISTS youUserRole CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.classes CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
@@ -6,6 +5,7 @@ DROP TYPE   IF EXISTS youBreakType CASCADE;
 DROP TYPE   IF EXISTS youPassType CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.student CASCADE;
 DROP TYPE   IF EXISTS youClassName CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.users CASCADE;
 DROP SCHEMA IF EXISTS ohs_shao CASCADE;
 
 CREATE TYPE youUserRole  AS ENUM ('teacher', 'student');
@@ -19,15 +19,8 @@ CREATE TABLE IF NOT EXISTS ohs_shao.users(
    user_name VARCHAR(100) NOT NULL,
    pw VARCHAR(255) NOT NULL,
    role youUserRole NOT NULL,
+   auth_class youClassName NOT NULL,
    PRIMARY KEY(user_name)
-);
-
-CREATE TABLE IF NOT EXISTS ohs_shao.classes (
-   class_id youClassName NOT NULL,
-   dow INT NOT NULL,
-   time_start TIMESTAMPTZ NOT NULL,
-   time_stop  TIMESTAMPTZ NOT NULL,
-   PRIMARY KEY (class_id, dow)
 );
 
 CREATE TABLE IF NOT EXISTS ohs_shao.student (
