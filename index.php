@@ -85,6 +85,7 @@
             var pass_type_name = document.getElementById("pass_type_" + student_id).innerHTML;
             if (pass_type_name != "")
             {
+               document.getElementById("pass_type_label_" + pass_type_name).style.color = "lightgray";
                document.getElementById("pass_type_" + pass_type_name).disabled = true;
             }
          }
