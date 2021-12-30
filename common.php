@@ -277,12 +277,15 @@ function getDurationHtmlStyleBgcolor( $duration )
 
 function displayTodaysHistory($class)
 {
-   $COLUMNS = "break_id, student_id, break_type, pass_type, " .
-              "TO_CHAR(timezone('America/New_York', time_out), 'HH12:MI:SS AM'), " .
-              "TO_CHAR(timezone('America/New_York', time_in),  'HH12:MI:SS AM'), " .
-              "TO_CHAR(age(time_in, time_out), 'MI:SS')";
-   $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " WHERE " .
-                    "DATE(time_out) = CURRENT_DATE ORDER BY time_out";
+   $COLUMNS = "b.break_id, b.student_id, b.break_type, b.pass_type, " .
+              "TO_CHAR(timezone('America/New_York', b.time_out), 'HH12:MI:SS AM'), " .
+              "TO_CHAR(timezone('America/New_York', b.time_in),  'HH12:MI:SS AM'), " .
+              "TO_CHAR(age(b.time_in, b.time_out), 'MI:SS')";
+
+   $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
+                    getStudentTableName() . " s WHERE " .
+                    " b.student_id = s.student_id AND s.class = '" . $_SESSION['class_id'] . "' " .
+                    "AND DATE(b.time_out) = CURRENT_DATE ORDER BY b.time_out";
 
    $entries = fetchQueryResults($HISTORY_QUERY);
 
