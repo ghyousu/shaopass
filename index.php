@@ -243,7 +243,7 @@
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
            <?php
               echo '<h2 style="margin-block-end: -0.5em">Select your name:</h2><br/>';
-              displayStudentNamesFromDB();
+              displayStudentNamesFromDB('901');
            ?>
 
            <?php

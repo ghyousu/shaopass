@@ -140,13 +140,13 @@ function checkinStudent($student_id, $break_id)
    }
 }
 
-function displayStudentNamesFromDB()
+function displayStudentNamesFromDB($class)
 {
-   $NUM_COLUMNS = 5;
+   $NUM_COLUMNS = 8;
 
-   // $students = pg_query_params($conn, 'SELECT * FROM ohs_shao.student WHERE class = $1', '901');
-   // failing: $students = pg_query($conn, 'SELECT * FROM ohs_shao.student WHERE class = "901"');
-   $students = fetchQueryResults('SELECT student_id, fname, lname FROM ohs_shao.student');
+   $query = "SELECT student_id, fname, lname FROM ohs_shao.student WHERE class = '$class'";
+
+   $students = fetchQueryResults($query);
 
    echo "<table class='studentNamesTable'>\n";
 
@@ -154,7 +154,7 @@ function displayStudentNamesFromDB()
    while ( $student = pg_fetch_row($students) )
    {
       $id = $student[0];
-      $name = $student[1] . " " . $student[2];
+      $name = "<br/>" . $student[1] . "<br/>" . $student[2];
 
       $_SESSION[getNameSessionKey($id)] = $name;
 
