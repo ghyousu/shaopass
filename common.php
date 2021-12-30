@@ -32,26 +32,6 @@ function getDBConnection()
 {
    $db_url = getenv("DATABASE_URL");
 
-   printDebug("db_url from env: '$db_url'");
-
-   if ($db_url == "")
-   {
-      $local_file = "heroku_database_url.txt";
-
-      printDebug("local file: $local_file");
-
-      if (is_readable($local_file))
-      {
-         $myfile = fopen($local_file, "r") or die("Unable to open file '$local_file'!");
-         $db_url = fread($myfile, filesize($local_file)-1); // account for EOL
-
-         printDebug("file size: " . filesize($local_file));
-         printDebug("db_url from $local_file: '$db_url'");
-
-         fclose($myfile);
-      }
-   }
-
    if ($db_url == "") { die("Unable to get database URL!"); }
 
    $conn = pg_connect($db_url);
