@@ -70,8 +70,6 @@ function fetchQueryResults($query)
 {
    $conn = getDBConnection();
 
-   // $students = pg_query_params($conn, 'SELECT * FROM ohs_shao.student WHERE class = $1', '901');
-   // failing: $students = pg_query($conn, 'SELECT * FROM ohs_shao.student WHERE class = "901"');
    printDebug("query: '$query'<br/>");
    $result = pg_query($conn, $query);
 
@@ -87,7 +85,7 @@ function fetchQueryResults($query)
 
 function getUserRoleFromDB($username, $pw)
 {
-   $query = "SELECT role from " . getUsersTableName() .
+   $query = "SELECT role,auth_class from " . getUsersTableName() .
             " WHERE user_name = '$username' AND pw = '" . sha1($pw) . "'";
 
    printDebug("query: '$query'");
@@ -100,7 +98,15 @@ function getUserRoleFromDB($username, $pw)
    }
    else
    {
-      $role = pg_fetch_row($result)[0];
+      $row  = pg_fetch_row($result);
+      $role = $row[0];
+
+      if ($role == 'student')
+      {
+         $auth_class = $row[1];
+         $_SESSION['class_id'] = $auth_class;
+      }
+
       return $role;
    }
 }

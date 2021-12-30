@@ -213,37 +213,50 @@
             //       ["submit"]=> string(6) "Check In"
             //    }
 
-            $student_id  = $_POST['student_id'];
-            $break_type  = $_POST['break_type'];
-            $pass_type   = $_POST['pass_type'];
-            $is_checkout = ($_POST['submit'] == "Check Out");
+               $student_id  = $_POST['student_id'];
+               $break_type  = $_POST['break_type'];
+               $pass_type   = $_POST['pass_type'];
+               $is_checkout = ($_POST['submit'] == "Check Out");
 
-            $break_id_session_key = getBreakIdSessionKey($student_id);
+               $break_id_session_key = getBreakIdSessionKey($student_id);
 
-            if ($is_checkout)
-            {
-               $break_id = checkoutStudent($student_id, $break_type, $pass_type);
+               if ($is_checkout)
+               {
+                  $break_id = checkoutStudent($student_id, $break_type, $pass_type);
 
-               $_SESSION[$break_id_session_key] = $break_id;
+                  $_SESSION[$break_id_session_key] = $break_id;
+               }
+               else
+               {
+                  checkinStudent($student_id, $_SESSION[$break_id_session_key]);
+               }
             }
-            else
-            {
-               checkinStudent($student_id, $_SESSION[$break_id_session_key]);
-            }
-         }
      ?>
   </head>
 
   <body onload="on_page_loaded()">
 
-     <table border=1>
+     <table border=0>
      <tr>
+      <td>
+         <h1 style='text-align: center'>
+            <?php echo "Class " . $_SESSION['class_id']; ?>
+         </h1>
+      </td>
 
+      <td align="right">
+           <a href="/logout.php" style="font-size: 1.5em">
+              Log Out
+           </a>
+      </td>
+     </tr>
+
+     <tr>
      <td>
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
            <?php
               echo '<h2 style="margin-block-end: -0.5em">Select your name:</h2><br/>';
-              displayStudentNamesFromDB('901');
+              displayStudentNamesFromDB($_SESSION['class_id']);
            ?>
 
            <?php
@@ -266,15 +279,11 @@
      <td style="vertical-align: baseline">
         <h2>Break History: </h2>
         <?php
-           displayTodaysHistory("901");
+           displayTodaysHistory($_SESSION['class_id']);
         ?>
      </td>
 
      </tr>
      <table>
   </body>
-
-  <?php
-     // print_r($_SESSION);
-  ?>
 </html>
