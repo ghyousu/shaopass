@@ -256,7 +256,7 @@ function displayTodaysHistory($class)
 {
    $tz = 'America/New_York';
 
-   $COLUMNS = "b.break_id, s.fname, s.lname, b.break_type, b.pass_type, " .
+   $COLUMNS = "b.break_id, b.student_id, s.fname, s.lname, b.break_type, b.pass_type, " .
               "TO_CHAR(timezone('$tz', b.time_out), 'HH12:MI:SS AM'), " .
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
               "TO_CHAR(age(b.time_in, b.time_out), 'MI:SS')";
@@ -282,13 +282,14 @@ function displayTodaysHistory($class)
    while ( $entry = pg_fetch_row($entries) )
    {
       $break_id   = $entry[0];
-      $fname      = $entry[1];
-      $lname      = $entry[2];
-      $break_type = $entry[3];
-      $pass_type  = $entry[4];
-      $time_out   = $entry[5];
-      $time_in    = $entry[6];
-      $duration   = $entry[7];
+      $id         = $entry[1];
+      $fname      = $entry[2];
+      $lname      = $entry[3];
+      $break_type = $entry[4];
+      $pass_type  = $entry[5];
+      $time_out   = $entry[6];
+      $time_in    = $entry[7];
+      $duration   = $entry[8];
 
       if ($time_out == $time_in)
       {
