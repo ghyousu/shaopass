@@ -185,15 +185,16 @@ function displayStudentNamesFromDB($class)
 
 function displayBreakTypes()
 {
-   $break_types = array("Bathroom", "Nurse", "Water", "Other");
+   $query = "SELECT unnest(enum_range(NULL::youBreakType))";
+
+   $break_types = fetchQueryResults($query);
 
    echo "<table class='breakTypesTable'>\n";
    echo "<tr>\n";
 
-   foreach ($break_types as $index => $value)
+   while ( $break_type = pg_fetch_row($break_types) )
    {
-      printDebug("index = $index, value = $value");
-
+      $value = $break_type[0];
       $html_input_prefix = "<input type='radio' name='break_type' ";
       $html_input_id = 'break_type_' . $value;
 
@@ -209,15 +210,16 @@ function displayBreakTypes()
 
 function displayPassTypes()
 {
-   $pass_types = array("A", "B", "E");
+   $query = "SELECT unnest(enum_range(NULL::youPassType))";
+
+   $pass_types = fetchQueryResults($query);
 
    echo "<table class='passTypesTable'>\n";
    echo "<tr>\n";
 
-   foreach ($pass_types as $index => $value)
+   while ( $pass_type = pg_fetch_row($pass_types) )
    {
-      printDebug("index = $index, value = $value");
-
+      $value = $pass_type[0];
       $html_input_prefix = "<input type='radio' name='pass_type' ";
       $html_input_id = 'pass_type_' . $value;
 
