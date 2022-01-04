@@ -291,9 +291,11 @@ function displayTodaysHistory($class)
       $time_in    = $entry[7];
       $duration   = $entry[8];
 
+      $uniq_id = $break_id . '@' . $id;
+
       if ($time_out == $time_in)
       {
-         $hidden_html_ids = $hidden_html_ids . "_" . $id;
+         $hidden_html_ids = $hidden_html_ids . "_" . $uniq_id;
 
          $break_id_session_key = getBreakIdSessionKey($id);
          $_SESSION[$break_id_session_key] = $break_id;
@@ -305,7 +307,7 @@ function displayTodaysHistory($class)
 
       echo "\t\t<td>$fname $lname</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
-      echo "\t\t<td style='text-align: center' id='pass_type_"  . $id . "'>$pass_type</td>\n";
+      echo "\t\t<td style='text-align: center' id='pass_type_"  . $break_id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
       echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
       echo "\t\t<td " . getDurationHtmlStyleBgcolor($duration) . " id='duration_" . $break_id . "'>$duration</td>\n";

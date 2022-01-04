@@ -57,8 +57,10 @@
 
          for (i=0; i<numElems; ++i)
          {
-            var student_id = id_list[i];
-            if (student_id == 0) { continue; }
+            var merged_id = id_list[i];
+            if (merged_id == 0) { continue; }
+
+            var student_id = id_list[i].split("@")[1];
 
             // change student-name's background color
             var td_id_name = "td_label_" + student_id;
@@ -79,10 +81,13 @@
 
          for (i=0; i<numElems; ++i)
          {
-            var student_id = id_list[i];
-            if (student_id == 0) { continue; }
+            var merged_id = id_list[i];
+            if (merged_id == 0) { continue; }
 
-            var pass_type_name = document.getElementById("pass_type_" + student_id).innerHTML;
+            var break_id   = id_list[i].split("@")[0];
+            var student_id = id_list[i].split("@")[1];
+
+            var pass_type_name = document.getElementById("pass_type_" + break_id).innerHTML;
             if (pass_type_name != "")
             {
                document.getElementById("pass_type_label_" + pass_type_name).style.color = "lightgray";
