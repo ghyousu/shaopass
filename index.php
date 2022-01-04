@@ -103,7 +103,7 @@
          disableTakenPassTypes();
       }
 
-      function isStudentCheckedOut( id )
+      function getBreakId(student_id)
       {
          var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
 
@@ -113,13 +113,15 @@
 
          for (i=0; i<numElems; ++i)
          {
-            if (id_list[i] == id)
+            var stud_id = id_list[i].split("@")[1];
+            if (stud_id == student_id)
             {
-               return true;
+               var break_id = id_list[i].split("@")[0];
+               return break_id;
             }
          }
 
-         return false;
+         return 0;
       }
 
       function deselectAllRadioButtons(chk_group_name)
@@ -156,13 +158,14 @@
       function studentNameSelected(radioBtn)
       {
          var student_id = radioBtn.value;
+         var break_id   = getBreakId(student_id);
 
-         if (isStudentCheckedOut(student_id))
+         if (break_id > 0)
          {
             console.log("student " + student_id + " is checked out");
 
             var break_type_name = document.getElementById("break_type_" + student_id).innerHTML;
-            var pass_type_name  = document.getElementById("pass_type_"  + student_id).innerHTML;
+            var pass_type_name  = document.getElementById("pass_type_"  + break_id).innerHTML;
 
             // debugger;
 
