@@ -216,25 +216,41 @@ function displayPassTypes()
    echo "</table>\n";
 }
 
-// duration's in HH:SS format.
-function mmssToSeconds( $duration )
+// duration's in HH:MM:SS format.
+function hhmmssToSeconds( $durationHms )
 {
-   $mm_ss_array = explode(":", $duration);
-   $mm = $mm_ss_array[0];
-   $ss = $mm_ss_array[1];
+   $hms_array = explode(":", $durationHms);
+   $hh = $hms_array[0];
+   $mm = $hms_array[1];
+   $ss = $hms_array[2];
 
-   return $mm * 60 + $ss;
+   return $hh * 3600 + $mm * 60 + $ss;
 }
 
+// if hour is "00", only show "MM:SS"
+function getHmsForDisplay( $durationHms )
+{
+   $hms_array = explode(":", $durationHms);
+   $hh = $hms_array[0];
+   $mm = $hms_array[1];
+   $ss = $hms_array[2];
 
-// duration's in HH:SS format.
+   if ($hh == "00")
+   {
+      return $mm . ":" . $ss;
+   }
+
+   return $durationHms;
+}
+
+// duration's in HH:MM:SS format.
 //   color coding:
 //     *  0-15 mins -> no color
 //     * 15-20 mins -> yellow
 //     * longer than 20 mins -> red
-function getDurationHtmlStyleBgcolor( $duration )
+function getDurationHtmlStyleBgcolor( $durationHms )
 {
-   $duration_in_secs = mmssToSeconds($duration);
+   $duration_in_secs = hhmmssToSeconds($durationHms);
 
    if ($duration_in_secs >= 20 * 60)
    {
@@ -259,7 +275,7 @@ function displayTodaysHistory($class)
    $COLUMNS = "b.break_id, b.student_id, s.fname, s.lname, b.break_type, b.pass_type, " .
               "TO_CHAR(timezone('$tz', b.time_out), 'HH12:MI:SS AM'), " .
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
-              "TO_CHAR(age(b.time_in, b.time_out), 'MI:SS')";
+              "TO_CHAR(age(b.time_in, b.time_out), 'HH24:MI:SS')";
 
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
                     getStudentTableName() . " s WHERE " .
@@ -289,7 +305,7 @@ function displayTodaysHistory($class)
       $pass_type  = $entry[5];
       $time_out   = $entry[6];
       $time_in    = $entry[7];
-      $duration   = $entry[8];
+      $durationHms= $entry[8];
 
       $uniq_id = $break_id . '@' . $id;
 
@@ -310,7 +326,8 @@ function displayTodaysHistory($class)
       echo "\t\t<td style='text-align: center' id='pass_type_"  . $break_id . "'>$pass_type</td>\n";
       echo "\t\t<td id='time_out_"   . $id . "'>$time_out</td>\n";
       echo "\t\t<td id='time_in_"    . $id . "'>$time_in</td>\n";
-      echo "\t\t<td " . getDurationHtmlStyleBgcolor($duration) . " id='duration_" . $break_id . "'>$duration</td>\n";
+      echo "\t\t<td " . getDurationHtmlStyleBgcolor($durationHms) .
+           " id='duration_" . $break_id . "'>" . getHmsForDisplay($durationHms) . "</td>\n";
 
       echo "\t</tr>\n";
    }
