@@ -11,7 +11,7 @@ DROP SCHEMA IF EXISTS ohs_shao CASCADE;
 CREATE TYPE youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE youClassName AS ENUM ('901', '902', '903', '904');
 CREATE TYPE youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other');
-CREATE TYPE youPassType  AS ENUM ('A', 'B', 'C', 'S');
+CREATE TYPE youPassType  AS ENUM ('A', 'B', 'C', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
 
 CREATE SCHEMA IF NOT EXISTS ohs_shao;
 
