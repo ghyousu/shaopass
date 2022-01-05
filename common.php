@@ -16,6 +16,8 @@ function getUsersTableName() { return getSchemaName() . "." . "users"; }
 
 function getStudentTableName() { return getSchemaName() . "." . "student"; }
 
+function getNotesTableName() { return getSchemaName() . "." . "notes"; }
+
 function getBreaksTableName() { return getSchemaName() . "." . "breaks"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
@@ -121,6 +123,21 @@ function checkinStudent($student_id, $break_id)
    if ($result == false)
    {
       die("Failed to check in student with id: $student_id and break_id: $break_id<br/>");
+   }
+}
+
+function enterNotesToDatabase($notes)
+{
+   $insert_query = "INSERT INTO " . getNotesTableName() . " (note_body, class) " .
+      "VALUES ('" . $notes . "', '" . $_SESSION['class_id'] . "')";
+
+   $result = fetchQueryResults($insert_query);
+
+   if ($result == false)
+   {
+      echo 'You entered: <br/>';
+      echo $notes . '<br/>';
+      die("Failed to enter notes to database <br/>");
    }
 }
 
