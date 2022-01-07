@@ -249,7 +249,7 @@
 
   <body onload="on_page_loaded()">
 
-     <table border=0>
+     <table border=1>
      <tr>
       <td>
          <h1 style='text-align: center'>
@@ -265,7 +265,7 @@
      </tr>
 
      <tr>
-     <td>
+     <td rowspan="2">
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
            <?php
               echo '<h2 style="margin-block-end: -0.5em">Select your name:</h2><br/>';
@@ -297,15 +297,13 @@
      </td>
      </tr>
 
-     <!--
      <tr>
      <td style="vertical-align: baseline">
         <form action='/submit_notes.php' method='POST' enctype='multipart/form-data'>
-          <textarea id="notes_textarea" name="notes" placeholder="Enter teacher's comment here ..." style="font-size: 1.5em; width: 300px; height: 250px; resize: none"></textarea>
-          <input type='submit' name='submit_notes' value='Submit' style='font-size: 1.0em' />
+          <textarea id="notes_textarea" name="notes" placeholder="Enter teacher's comment here ..." style="font-size: 1.5em; width: 450px; height: 250px; resize: none"></textarea>
+          <input type='submit' name='submit_notes' value='Submit' style='font-size: 1.5em' />
         </form>
      </td>
-     -->
 
      </tr>
      <table>
