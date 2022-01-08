@@ -403,7 +403,7 @@ function showNotesTable()
    $notes = fetchQueryResults($query);
 
    // display "back to main link"
-   echo '<div style="padding-left: 60%;">' .
+   echo '<div style="padding-left: 60%; padding-bottom: 20px">' .
         '<a href="/index.php" style="font-size: 1.5em">' .
         'Back to main page' .
         '</a></div>';
@@ -444,13 +444,16 @@ function showNotesTable()
    }
 
    // show delete button
-   echo "<br/><br/>\n";
-   echo "\t<tr>\n" .
-        "\t\t<td column-span='2' rowspan='2'>\n" .
-        "<br/>" .
-        "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
-        "\t\t</td>\n" .
-        "\t</tr>\n";
+   if ($show_check_box)
+   {
+      echo "<br/><br/>\n";
+      echo "\t<tr>\n" .
+         "\t\t<td column-span='2' rowspan='2'>\n" .
+         "<br/>" .
+         "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
+         "\t\t</td>\n" .
+         "\t</tr>\n";
+   }
 
    echo "</table>\n";
    echo "</form>\n";
