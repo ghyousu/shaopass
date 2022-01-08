@@ -128,6 +128,26 @@ function checkinStudent($student_id, $break_id)
    }
 }
 
+function deleteBreaks($break_id_list)
+{
+   $del_query = "DELETE FROM " . getBreaksTableName() . " WHERE break_id in (";
+
+   $num_ids = count($break_id_list);
+
+   $id_list_str = "";
+   for ($i=0; $i<$num_ids; $i++)
+   {
+      $id = $break_id_list[$i];
+      $id_list_str = $id_list_str . $id . ",";
+   }
+   // remove the last character
+   $id_list_str = substr($id_list_str, 0, -1);
+
+   $del_query = $del_query . $id_list_str . ")";
+
+   fetchQueryResults($del_query);
+}
+
 function enterNotesToDatabase($notes)
 {
    $insert_query = "INSERT INTO " . getNotesTableName() . " (note_body, class) " .
@@ -319,6 +339,7 @@ function displayBreakHistory($class)
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
                     getStudentTableName() . " s WHERE " . " b.student_id = s.student_id ";
 
+   $show_check_box = false; // for student's account
    if (isset($_SESSION['class_id']))
    {
       // class filter
@@ -327,11 +348,20 @@ function displayBreakHistory($class)
       // show TODAY filter
       $HISTORY_QUERY = $HISTORY_QUERY . "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz') ORDER BY b.time_out";
    }
+   else
+   {
+      $show_check_box = true; // assume teacher's account
+   }
 
    $entries = fetchQueryResults($HISTORY_QUERY);
 
+   echo "<form action='/index.php' method='POST' enctype='multipart/form-data'>\n";
    echo "<table border=1>\n";
 
+   if ($show_check_box)
+   {
+      echo "<th></th>\n";
+   }
    echo "<th>Name</th>\n";
    echo "<th>Break Type</th>\n";
    echo "<th>Pass</th>\n";
@@ -367,6 +397,13 @@ function displayBreakHistory($class)
 
       echo "\t<tr>\n";
 
+      if ($show_check_box)
+      {
+         echo "\t\t<td align='center'>\n" .
+              "\t\t\t<input  style='width: 30px; height: 30px' type='checkbox' " .
+              "name='break_checkbox[]' value='" .  $break_id . "'>\n" .
+              "\t\t</td>\n";
+      }
       echo "\t\t<td>$fname $lname</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
       echo "\t\t<td style='text-align: center' id='pass_type_"  . $break_id . "'>$pass_type</td>\n";
@@ -378,9 +415,22 @@ function displayBreakHistory($class)
       echo "\t</tr>\n";
    }
 
+   // show delete button
+   if ($show_check_box)
+   {
+      echo "<br/><br/>\n";
+      echo "\t<tr>\n" .
+         "\t\t<td column-span='2' rowspan='2'>\n" .
+         "<br/>" .
+         "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
+         "\t\t</td>\n" .
+         "\t</tr>\n";
+   }
+
    echo '<input type="hidden" id="' . getHiddenFieldId() . '" name="checkedout_ids" value="' . $hidden_html_ids . '">';
 
    echo "</table>\n";
+   echo "</form>\n";
 } // end of displayBreakHistory
 
 function showNotesTable()

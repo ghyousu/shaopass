@@ -26,6 +26,15 @@
             //       ["submit"]=> string(6) "Check In"
             //    }
 
+            if ($_SESSION['user_role'] == 'teacher' &&
+                isset($_POST['break_checkbox']) )
+            {
+               $break_id_list = $_POST['break_checkbox'];
+               deleteBreaks($break_id_list);
+            }
+            else
+            {
+
                $student_id  = $_POST['student_id'];
                $break_type  = $_POST['break_type'];
                $pass_type   = $_POST['pass_type'];
@@ -44,6 +53,7 @@
                   checkinStudent($student_id, $_SESSION[$break_id_session_key]);
                }
             }
+         }
      ?>
 
      <script type="text/javascript">
@@ -306,6 +316,7 @@
      </td>
      </tr>
 
+<?php if ($_SESSION['user_role'] == 'student') : ?>
      <tr>
      <td style="vertical-align: baseline; padding-top: 30px">
         <form action='/notes.php' method='POST' enctype='multipart/form-data'>
@@ -317,6 +328,7 @@
           </div>
         </form>
      </td>
+<?php endif; ?>
 
      </tr>
      <table>
