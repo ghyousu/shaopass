@@ -359,7 +359,8 @@ function showNotesTable()
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
             "TO_CHAR(timezone('$tz', ts), 'HH12:MI:SS AM'), " .
-            'note_body FROM ' . getNotesTableName();
+            'note_body FROM ' . getNotesTableName() .
+            " WHERE class = '" . $_SESSION['class_id'] . "'";
 
    $notes = fetchQueryResults($query);
 
