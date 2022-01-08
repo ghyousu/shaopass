@@ -366,7 +366,12 @@ function showNotesTable()
    echo '<div align="center">';
    echo "<table border=1>\n";
 
-   echo "<th>ID_placeholder</th>\n";
+   $show_id = false;
+
+   if ($show_id)
+   {
+      echo "<th>ID_placeholder</th>\n";
+   }
    echo "<th style='width: 60px'>class</th>\n";
    echo "<th style='width: 120px'>Time</th>\n";
    echo "<th style='width: 600px'>Note</th>\n";
@@ -380,7 +385,10 @@ function showNotesTable()
 
       echo "\t<tr>\n";
 
-      echo "\t\t<td>$note_id</td>\n";
+      if ($show_id)
+      {
+         echo "\t\t<td>$note_id</td>\n";
+      }
       echo "\t\t<td style='text-align: center'>$class</td>\n";
       echo "\t\t<td style='text-align: center'>$time</td>\n";
       echo "\t\t<td>$note_body</td>\n";
