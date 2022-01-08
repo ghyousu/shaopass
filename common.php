@@ -143,6 +143,26 @@ function enterNotesToDatabase($notes)
    }
 }
 
+function deleteNotes($note_id_list)
+{
+   $del_query = "DELETE FROM " . getNotesTableName() . " WHERE note_id in (";
+
+   $num_ids = count($note_id_list);
+
+   $id_list_str = "";
+   for ($i=0; $i<$num_ids; $i++)
+   {
+      $id = $note_id_list[$i];
+      $id_list_str = $id_list_str . $id . ",";
+   }
+   // remove the last character
+   $id_list_str = substr($id_list_str, 0, -1);
+
+   $del_query = $del_query . $id_list_str . ")";
+
+   fetchQueryResults($del_query);
+}
+
 function displayStudentNamesFromDB($class)
 {
    $NUM_COLUMNS = 8;
@@ -370,27 +390,31 @@ function showNotesTable()
             "TO_CHAR(timezone('$tz', ts), 'HH12:MI:SS AM'), " .
             'note_body FROM ' . getNotesTableName();
 
+   $show_check_box = false; // for student's account
    if (isset($_SESSION['class_id']))
    {
       $query = $query . " WHERE class = '" . $_SESSION['class_id'] . "'";
+   }
+   else
+   {
+      $show_check_box = true; // assume teacher's account
    }
 
    $notes = fetchQueryResults($query);
 
    // display "back to main link"
-   echo '<div style="padding-left: 60%; padding-bottom: 20px">' .
+   echo '<div style="padding-left: 60%;">' .
         '<a href="/index.php" style="font-size: 1.5em">' .
         'Back to main page' .
         '</a></div>';
 
    echo '<div align="center">';
+   echo "<form action='/notes.php' method='POST' enctype='multipart/form-data'>\n";
    echo "<table border=1>\n";
 
-   $show_id = false;
-
-   if ($show_id)
+   if ($show_check_box)
    {
-      echo "<th>ID_placeholder</th>\n";
+      echo "<th></th>\n";
    }
    echo "<th style='width: 60px'>class</th>\n";
    echo "<th style='width: 120px'>Time</th>\n";
@@ -405,9 +429,12 @@ function showNotesTable()
 
       echo "\t<tr>\n";
 
-      if ($show_id)
+      if ($show_check_box)
       {
-         echo "\t\t<td>$note_id</td>\n";
+         echo "\t\t<td align='center'>\n" .
+              "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
+              "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
+              "\t\t</td>\n";
       }
       echo "\t\t<td style='text-align: center'>$class</td>\n";
       echo "\t\t<td style='text-align: center'>$time</td>\n";
@@ -416,7 +443,17 @@ function showNotesTable()
       echo "\t</tr>\n";
    }
 
+   // show delete button
+   echo "<br/><br/>\n";
+   echo "\t<tr>\n" .
+        "\t\t<td column-span='2' rowspan='2'>\n" .
+        "<br/>" .
+        "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
+        "\t\t</td>\n" .
+        "\t</tr>\n";
+
    echo "</table>\n";
+   echo "</form>\n";
    echo "</div>\n";
 } // end of showNotesTable
 

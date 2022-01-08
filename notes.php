@@ -19,11 +19,19 @@
       //       ["submit_notes"]=> string(6) "Submit"
       //    }
 
-      $notes = $_POST['notes'];
+      if ( isset($_POST['note_checkbox']) )
+      {
+         $note_id_list = $_POST['note_checkbox'];
+         deleteNotes($note_id_list);
+      }
+      else // assume it's note submission from the index page
+      {
+         $notes = $_POST['notes'];
 
-      enterNotesToDatabase($notes);
+         enterNotesToDatabase($notes);
 
-      header("location: /index.php");
+         header("location: /index.php");
+      }
    }
 ?>
 
