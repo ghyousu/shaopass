@@ -352,6 +352,42 @@ function displayTodaysHistory($class)
    echo '<input type="hidden" id="' . getHiddenFieldId() . '" name="checkedout_ids" value="' . $hidden_html_ids . '">';
 
    echo "</table>\n";
-}
+} // end of displayTodaysHistory
+
+function showNotesTable()
+{
+   $tz = 'America/New_York';
+   $query = 'SELECT note_id, class, ts, note_body FROM ' . getNotesTableName();
+
+   $notes = fetchQueryResults($query);
+
+   echo '<div align="center">';
+   echo "<table border=1>\n";
+
+   echo "<th>ID_placeholder</th>\n";
+   echo "<th>class</th>\n";
+   echo "<th>Time</th>\n";
+   echo "<th>Note</th>\n";
+
+   while ( $entry = pg_fetch_row($notes) )
+   {
+      $note_id   = $entry[0];
+      $class     = $entry[1];
+      $time      = $entry[2];
+      $note_body = $entry[3];
+
+      echo "\t<tr>\n";
+
+      echo "\t\t<td>$note_id</td>\n";
+      echo "\t\t<td>$class</td>\n";
+      echo "\t\t<td>$time</td>\n";
+      echo "\t\t<td>$note_body</td>\n";
+
+      echo "\t</tr>\n";
+   }
+
+   echo "</table>\n";
+   echo "</div>\n";
+} // end of showNotesTable
 
 ?>

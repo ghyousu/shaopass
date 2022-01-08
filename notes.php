@@ -1,3 +1,7 @@
+<html>
+  <head>
+     <title>Teacher's Notes</title>
+
 <?php
    require_once("common.php");
 
@@ -22,3 +26,14 @@
       header("location: /index.php");
    }
 ?>
+
+  </head>
+
+<body>
+   <?php
+      showNotesTable();
+   ?>
+</body>
+
+
+</html>
