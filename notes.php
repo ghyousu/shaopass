@@ -39,7 +39,16 @@
 
 <body>
    <?php
-      showNotesTable();
+      if ($_SESSION['user_role'] == "student")
+      {
+         echo '<h1 align="center">' .
+              'You are not allowed to view this page' .
+              '</h1>';
+      }
+      else
+      {
+            showNotesTable();
+      }
    ?>
 </body>
 
