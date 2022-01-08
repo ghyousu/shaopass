@@ -249,12 +249,18 @@
 
   <body onload="on_page_loaded()">
 
+     <div align="center">
      <table border=0>
      <tr>
       <td>
+<!-- student's page only start -->
+<?php if ($_SESSION['user_role'] == 'student') : ?>
          <h1 style='text-align: center'>
-            <?php echo "Class " . $_SESSION['class_id']; ?>
+            <?php
+                echo "Class " . $_SESSION['class_id'];
+            ?>
          </h1>
+<?php endif; ?>
       </td>
 
       <td align="right">
@@ -265,6 +271,8 @@
      </tr>
 
      <tr>
+<!-- student's page only start -->
+<?php if ($_SESSION['user_role'] == 'student') : ?>
      <td rowspan="2">
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
            <?php
@@ -288,6 +296,7 @@
            </div>
         </form>
      </td>
+<?php endif; ?>
 
      <td style="vertical-align: baseline">
         <h2>Break History: </h2>
@@ -311,5 +320,7 @@
 
      </tr>
      <table>
+     </div>
+
   </body>
 </html>

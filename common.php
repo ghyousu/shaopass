@@ -81,10 +81,12 @@ function getUserRoleFromDB($username, $pw)
       $row  = pg_fetch_row($result);
       $role = $row[0];
 
+      $_SESSION['user_role'] = $role;
+
       if ($role == 'student')
       {
          $auth_class = $row[1];
-         $_SESSION['class_id'] = $auth_class;
+         $_SESSION['class_id']  = $auth_class;
       }
 
       return $role;
@@ -294,9 +296,12 @@ function displayTodaysHistory($class)
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
               "TO_CHAR(age(b.time_in, b.time_out), 'HH24:MI:SS')";
 
+
+   //                  " b.student_id = s.student_id AND s.class = '" . $_SESSION['class_id'] . "' " .
+
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
                     getStudentTableName() . " s WHERE " .
-                    " b.student_id = s.student_id AND s.class = '" . $_SESSION['class_id'] . "' " .
+                    " b.student_id = s.student_id " .
                     "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz') ORDER BY b.time_out";
 
    $entries = fetchQueryResults($HISTORY_QUERY);
@@ -359,8 +364,12 @@ function showNotesTable()
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
             "TO_CHAR(timezone('$tz', ts), 'HH12:MI:SS AM'), " .
-            'note_body FROM ' . getNotesTableName() .
-            " WHERE class = '" . $_SESSION['class_id'] . "'";
+            'note_body FROM ' . getNotesTableName();
+
+   if (isset($_SESSION['class_id']))
+   {
+      $query = $query . " WHERE class = '" . $_SESSION['class_id'] . "'";
+   }
 
    $notes = fetchQueryResults($query);
 
