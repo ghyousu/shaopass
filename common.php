@@ -357,7 +357,9 @@ function displayTodaysHistory($class)
 function showNotesTable()
 {
    $tz = 'America/New_York';
-   $query = 'SELECT note_id, class, ts, note_body FROM ' . getNotesTableName();
+   $query = 'SELECT note_id, class, ' .
+            "TO_CHAR(timezone('$tz', ts), 'HH12:MI:SS AM'), " .
+            'note_body FROM ' . getNotesTableName();
 
    $notes = fetchQueryResults($query);
 
@@ -365,9 +367,9 @@ function showNotesTable()
    echo "<table border=1>\n";
 
    echo "<th>ID_placeholder</th>\n";
-   echo "<th>class</th>\n";
-   echo "<th>Time</th>\n";
-   echo "<th>Note</th>\n";
+   echo "<th style='width: 60px'>class</th>\n";
+   echo "<th style='width: 120px'>Time</th>\n";
+   echo "<th style='width: 600px'>Note</th>\n";
 
    while ( $entry = pg_fetch_row($notes) )
    {
@@ -379,8 +381,8 @@ function showNotesTable()
       echo "\t<tr>\n";
 
       echo "\t\t<td>$note_id</td>\n";
-      echo "\t\t<td>$class</td>\n";
-      echo "\t\t<td>$time</td>\n";
+      echo "\t\t<td style='text-align: center'>$class</td>\n";
+      echo "\t\t<td style='text-align: center'>$time</td>\n";
       echo "\t\t<td>$note_body</td>\n";
 
       echo "\t</tr>\n";
