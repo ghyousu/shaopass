@@ -301,7 +301,7 @@
      <td style="vertical-align: baseline">
         <h2>Break History: </h2>
         <?php
-           displayTodaysHistory($_SESSION['class_id']);
+           displayBreakHistory($_SESSION['class_id']);
         ?>
      </td>
      </tr>

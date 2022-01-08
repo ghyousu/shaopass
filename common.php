@@ -287,7 +287,7 @@ function getDurationHtmlStyleBgcolor( $durationHms )
    return $html_style;
 }
 
-function displayTodaysHistory($class)
+function displayBreakHistory($class)
 {
    $tz = 'America/New_York';
 
@@ -296,13 +296,17 @@ function displayTodaysHistory($class)
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
               "TO_CHAR(age(b.time_in, b.time_out), 'HH24:MI:SS')";
 
-
-   //                  " b.student_id = s.student_id AND s.class = '" . $_SESSION['class_id'] . "' " .
-
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
-                    getStudentTableName() . " s WHERE " .
-                    " b.student_id = s.student_id " .
-                    "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz') ORDER BY b.time_out";
+                    getStudentTableName() . " s WHERE " . " b.student_id = s.student_id ";
+
+   if (isset($_SESSION['class_id']))
+   {
+      // class filter
+      $HISTORY_QUERY = $HISTORY_QUERY . " AND s.class = '" . $_SESSION['class_id'] . "' ";
+
+      // show TODAY filter
+      $HISTORY_QUERY = $HISTORY_QUERY . "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz') ORDER BY b.time_out";
+   }
 
    $entries = fetchQueryResults($HISTORY_QUERY);
 
@@ -357,7 +361,7 @@ function displayTodaysHistory($class)
    echo '<input type="hidden" id="' . getHiddenFieldId() . '" name="checkedout_ids" value="' . $hidden_html_ids . '">';
 
    echo "</table>\n";
-} // end of displayTodaysHistory
+} // end of displayBreakHistory
 
 function showNotesTable()
 {
