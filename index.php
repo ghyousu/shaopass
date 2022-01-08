@@ -270,6 +270,10 @@
                 echo "Class " . $_SESSION['class_id'];
             ?>
          </h1>
+<?php else : ?>
+        <a href="/notes.php" style="font-size: 1.5em">
+           Teacher's Notes
+        </a>
 <?php endif; ?>
       </td>
 
