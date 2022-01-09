@@ -38,18 +38,15 @@
   </head>
 
 <body>
-   <?php
-      if ($_SESSION['user_role'] == "student")
-      {
-         echo '<h1 align="center">' .
-              'You are not allowed to view this page' .
-              '</h1>';
-      }
-      else
-      {
-            showNotesTable();
-      }
-   ?>
+<?php if ($_SESSION['user_role'] == "student") : ?>
+      <h1 align="center">
+          You are not allowed to view this page
+      </h1>
+<?php else : ?>
+      <?php
+         showNotesTable();
+      ?>
+<?php endif; ?>
 </body>
 
 
