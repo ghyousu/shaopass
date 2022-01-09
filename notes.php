@@ -9,9 +9,11 @@
 
    session_start();
 
-   function getStartDateFilterHtmlId() { echo 'date_range_start'; }
+   function getStartDateFilterHtmlId() { return 'date_range_start'; }
+   function getStopDateFilterHtmlId()  { return 'date_range_stop'; }
 
-   function getStopDateFilterHtmlId()  { echo 'date_range_stop'; }
+   function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
+   function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
 
    if ($_SERVER['REQUEST_METHOD'] === 'POST')
    {
@@ -33,6 +35,8 @@
          // array(3) { ["date_range_start"]=> string(10) "2021-12-09" ["date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
          printDebug("start: " . $_POST['date_range_start']);
          printDebug("stop:  " . $_POST['date_range_stop']);
+         $_SESSION[getNotesStartDateSessionKey()] = $_POST[getStartDateFilterHtmlName()];
+         $_SESSION[getNotesStopDateSessionKey()]  = $_POST[getStopDateFilterHtmlName()];
       }
       else // assume it's note submission from the index page
       {
@@ -139,10 +143,21 @@
       </table>
       </div>
       <?php
-         showNotesTable();
+         $stop_date_str  = date("Y-m-d");
+         $start_date_str = date('Y-m-d', strtotime($stop_date_str . '-30 days'));
+
+         if (isset($_SESSION[getNotesStartDateSessionKey()]) &&
+             isset($_SESSION[getNotesStopDateSessionKey()]))
+         {
+            $start_date_str = $_SESSION[getNotesStartDateSessionKey()];
+            $stop_date_str  = $_SESSION[getNotesStopDateSessionKey()];
+         }
+
+         printDebug("date range: " . $start_date_str . " to " . $stop_date_str);
+
+         showNotesTable($start_date_str, $stop_date_str);
       ?>
 <?php endif; ?>
 </body>
-
 
 </html>

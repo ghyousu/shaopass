@@ -26,6 +26,9 @@ function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
 function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
+function getNotesStartDateSessionKey() { return 'notes_date_start'; }
+function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
+
 // return a working connection, caller is responsible to close
 // connection when done
 function getDBConnection()
@@ -449,7 +452,7 @@ function displayBreakHistory($class)
    echo "</form>\n";
 } // end of displayBreakHistory
 
-function showNotesTable()
+function showNotesTable($start_date_str, $stop_date_str)
 {
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
