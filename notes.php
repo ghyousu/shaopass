@@ -43,6 +43,23 @@
           You are not allowed to view this page
       </h1>
 <?php else : ?>
+      <div align='center'>
+      <table border='0' style='width: 60%'>
+        <tr>
+        <td>
+           <a href="/index.php" style="font-size: 1.5em">
+            Back to main page
+           </a>
+        </td>
+
+        <td style='text-align: right;'>
+           <a href="/logout.php" style="font-size: 1.5em">
+            Log Out
+           </a>
+        </td>
+        </tr>
+      </table>
+      </div>
       <?php
          showNotesTable();
       ?>

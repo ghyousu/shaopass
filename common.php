@@ -468,12 +468,6 @@ function showNotesTable()
 
    $notes = fetchQueryResults($query);
 
-   // display "back to main link"
-   echo '<div style="padding-left: 60%; padding-bottom: 20px">' .
-        '<a href="/index.php" style="font-size: 1.5em">' .
-        'Back to main page' .
-        '</a></div>';
-
    echo '<div align="center">';
    echo "<form action='/notes.php' method='POST' enctype='multipart/form-data'>\n";
    echo "<table border=1>\n";
