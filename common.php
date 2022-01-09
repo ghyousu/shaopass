@@ -453,7 +453,7 @@ function showNotesTable()
 {
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
-            "TO_CHAR(timezone('$tz', ts), 'HH12:MI:SS AM'), " .
+            "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
             'note_body FROM ' . getNotesTableName();
 
    $show_check_box = false; // for student's account
@@ -483,7 +483,7 @@ function showNotesTable()
       echo "<th></th>\n";
    }
    echo "<th style='width: 60px'>class</th>\n";
-   echo "<th style='width: 120px'>Time</th>\n";
+   echo "<th style='width: 200px'>Time</th>\n";
    echo "<th style='width: 600px'>Note</th>\n";
 
    while ( $entry = pg_fetch_row($notes) )
