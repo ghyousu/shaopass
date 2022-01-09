@@ -23,10 +23,16 @@
       //       ["submit_notes"]=> string(6) "Submit"
       //    }
 
-      if ( isset($_POST['note_checkbox']) )
+      if (isset($_POST['note_checkbox']))
       {
          $note_id_list = $_POST['note_checkbox'];
          deleteNotes($note_id_list);
+      }
+      else if (isset($_POST['apply_filter']))
+      {
+         // array(3) { ["date_range_start"]=> string(10) "2021-12-09" ["date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
+         printDebug("start: " . $_POST['date_range_start']);
+         printDebug("stop:  " . $_POST['date_range_stop']);
       }
       else // assume it's note submission from the index page
       {
@@ -84,38 +90,52 @@
       <div align='center'>
       <table border='0' style='width: 60%'>
         <tr>
-        <td>
+        <td colspan='2'>
            <a href="/index.php" style="font-size: 1.5em">
             Back to main page
            </a>
         </td>
 
-        <td style='text-align: right;'>
+        <td colspan='2' style='text-align: right;'>
            <a href="/logout.php" style="font-size: 1.5em">
             Log Out
            </a>
         </td>
         </tr>
 
+        <form action='/notes.php' method='POST'>
         <tr>
            <td>
               <br/>
               <label for="start">Date start:</label>
               <input type="date" value="2022-01-30"
+                 name="<?php echo getStartDateFilterHtmlId(); ?>"
                  id="<?php echo getStartDateFilterHtmlId(); ?>"
                  min="2021-12-01"
-                 max="2050-12-31">
+                 max="2050-12-31" />
            </td>
 
            <td>
               <br/>
               <label for="stop">Date stop:</label>
               <input type="date" value="2023-01-30"
+                 name="<?php echo getStopDateFilterHtmlId(); ?>"
                  id="<?php echo getStopDateFilterHtmlId(); ?>"
                  min="2021-12-01"
-                 max="2050-12-31">
+                 max="2050-12-31" />
+           </td>
+
+           <td>
+             <br/>
+             place holder class drop down filter
+           </td>
+
+           <td>
+               <br/>
+               <input type="submit" name="apply_filter" Value="Apply Filter"/>
            </td>
         </tr>
+        </form>
       </table>
       </div>
       <?php
