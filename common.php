@@ -26,6 +26,7 @@ function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
 function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
+function getDefaultNumberDaysToDisplay() { return 30; }
 function getNotesStartDateSessionKey() { return 'notes_date_start'; }
 function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
 
@@ -457,12 +458,14 @@ function showNotesTable($start_date_str, $stop_date_str)
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
             "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
-            'note_body FROM ' . getNotesTableName();
+            'note_body FROM ' . getNotesTableName() .
+            " WHERE DATE(ts AT TIME ZONE '$tz')::date >= '$start_date_str' " .
+            " AND   DATE(ts AT TIME ZONE '$tz')::date <= '$stop_date_str'" .
 
    $show_check_box = false; // for student's account
    if (isset($_SESSION['class_id']))
    {
-      $query = $query . " WHERE class = '" . $_SESSION['class_id'] . "'";
+      $query = $query . " AND class = '" . $_SESSION['class_id'] . "'";
    }
    else
    {

@@ -15,6 +15,21 @@
    function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
 
+   // create default date strings for the session. will be over-written by filtering
+   if (!isset($_SESSION[getNotesStartDateSessionKey()]) ||
+       !isset($_SESSION[getNotesStopDateSessionKey()]))
+   {
+      $stop_date_str  = date("Y-m-d");
+      $num_days_ago_str = '-' . getDefaultNumberDaysToDisplay() . ' days';
+      $start_date_str = date('Y-m-d', strtotime($stop_date_str . $num_days_ago_str));
+
+      $_SESSION[getNotesStartDateSessionKey()] = $start_date_str;
+      $_SESSION[getNotesStopDateSessionKey()]  = $stop_date_str;
+
+      printDebug("auto-gen start date: " . $_SESSION[getNotesStartDateSessionKey()] );
+      printDebug("auto-gen stop date:  " . $_SESSION[getNotesStopDateSessionKey()] );
+   }
+
    if ($_SERVER['REQUEST_METHOD'] === 'POST')
    {
       // var_dump($_POST);
@@ -33,10 +48,11 @@
       else if (isset($_POST['apply_filter']))
       {
          // array(3) { ["date_range_start"]=> string(10) "2021-12-09" ["date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
-         printDebug("start: " . $_POST['date_range_start']);
-         printDebug("stop:  " . $_POST['date_range_stop']);
          $_SESSION[getNotesStartDateSessionKey()] = $_POST[getStartDateFilterHtmlName()];
          $_SESSION[getNotesStopDateSessionKey()]  = $_POST[getStopDateFilterHtmlName()];
+
+         printDebug("filtered start date: " . $_SESSION[getNotesStartDateSessionKey()] );
+         printDebug("filtered stop date:  " . $_SESSION[getNotesStopDateSessionKey()] );
       }
       else // assume it's note submission from the index page
       {
@@ -61,6 +77,41 @@
          return date_str;
       }
 
+      // this function returns string 'NA' if key is not found in session store
+      function getStartDateFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getNotesStartDateSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getNotesStartDateSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'NA';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function getStopDateFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getNotesStopDateSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getNotesStopDateSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'NA';";
+               }
+            ?>
+
+         return value;
+      }
+
       function updateDates()
       {
          debugger;
@@ -69,12 +120,11 @@
          var stop_date_id = "<?php echo getStopDateFilterHtmlId(); ?>"
          var stop_date_elem = document.getElementById(stop_date_id);
 
-         var today = new Date();
-         var thirty_dates_ago = new Date();
-         thirty_dates_ago.setDate(thirty_dates_ago.getDate() - 30);
+         var stored_start_date_str = getStartDateFromSession();
+         var stored_stop_date_str  = getStopDateFromSession();
 
-         start_date_elem.value = getDateString(thirty_dates_ago);
-         stop_date_elem.value  = getDateString(today);
+         start_date_elem.value = stored_start_date_str;
+         stop_date_elem.value  = stored_stop_date_str;
       }
 
       function on_page_loaded()
@@ -143,15 +193,8 @@
       </table>
       </div>
       <?php
-         $stop_date_str  = date("Y-m-d");
-         $start_date_str = date('Y-m-d', strtotime($stop_date_str . '-30 days'));
-
-         if (isset($_SESSION[getNotesStartDateSessionKey()]) &&
-             isset($_SESSION[getNotesStopDateSessionKey()]))
-         {
-            $start_date_str = $_SESSION[getNotesStartDateSessionKey()];
-            $stop_date_str  = $_SESSION[getNotesStopDateSessionKey()];
-         }
+         $start_date_str = $_SESSION[getNotesStartDateSessionKey()];
+         $stop_date_str  = $_SESSION[getNotesStopDateSessionKey()];
 
          printDebug("date range: " . $start_date_str . " to " . $stop_date_str);
 
