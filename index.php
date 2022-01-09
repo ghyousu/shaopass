@@ -9,9 +9,30 @@
 
          session_start();
 
+         function getBreakStartDateFilterHtmlId() { return 'break_date_range_start'; }
+         function getBreakStopDateFilterHtmlId()  { return 'break_date_range_stop'; }
+
+         function getBreakStartDateFilterHtmlName() { return getBreakStartDateFilterHtmlId(); }
+         function getBreakStopDateFilterHtmlName()  { return getBreakStopDateFilterHtmlId(); }
+
          if (!isset($_SESSION['LOGGED_IN']))
          {
             header("location: /login.php");
+         }
+
+         // create default date strings for the session. will be over-written by filtering
+         if (!isset($_SESSION[getBreakStartDateSessionKey()]) ||
+             !isset($_SESSION[getBreakStopDateSessionKey()]))
+         {
+            $stop_date_str  = date("Y-m-d");
+            $num_days_ago_str = '-' . getDefaultNumberDaysToDisplay() . ' days';
+            $start_date_str = date('Y-m-d', strtotime($stop_date_str . $num_days_ago_str));
+
+            $_SESSION[getBreakStartDateSessionKey()] = $start_date_str;
+            $_SESSION[getBreakStopDateSessionKey()]  = $stop_date_str;
+
+            printDebug("auto-gen start date: " . $_SESSION[getBreakStartDateSessionKey()] );
+            printDebug("auto-gen stop date:  " . $_SESSION[getBreakStopDateSessionKey()] );
          }
 
          if ($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -26,11 +47,22 @@
             //       ["submit"]=> string(6) "Check In"
             //    }
 
-            if ($_SESSION['user_role'] == 'teacher' &&
-                isset($_POST['break_checkbox']) )
+            if ($_SESSION['user_role'] == 'teacher')
             {
-               $break_id_list = $_POST['break_checkbox'];
-               deleteBreaks($break_id_list);
+               if (isset($_POST['break_checkbox']) )
+               {
+                  $break_id_list = $_POST['break_checkbox'];
+                  deleteBreaks($break_id_list);
+               }
+               else if (isset($_POST['apply_filter']))
+               {
+                  // array(3) { ["break_date_range_start"]=> string(10) "2021-12-09" ["break_date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
+                  $_SESSION[getBreakStartDateSessionKey()] = $_POST[getBreakStartDateFilterHtmlName()];
+                  $_SESSION[getBreakStopDateSessionKey()]  = $_POST[getBreakStopDateFilterHtmlName()];
+
+                  printDebug("filtered start date: " . $_SESSION[getBreakStartDateSessionKey()] );
+                  printDebug("filtered stop date:  " . $_SESSION[getBreakStopDateSessionKey()] );
+               }
             }
             else
             {
@@ -57,6 +89,56 @@
      ?>
 
      <script type="text/javascript">
+      // this function returns string 'NA' if key is not found in session store
+      function getStartDateFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getBreakStartDateSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getBreakStartDateSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'NA';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function getStopDateFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getBreakStopDateSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getBreakStopDateSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'NA';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function updateDates()
+      {
+         debugger;
+         var start_date_id = "<?php echo getBreakStartDateFilterHtmlId(); ?>"
+         var start_date_elem = document.getElementById(start_date_id);
+         var stop_date_id = "<?php echo getBreakStopDateFilterHtmlId(); ?>"
+         var stop_date_elem = document.getElementById(stop_date_id);
+
+         var stored_start_date_str = getStartDateFromSession();
+         var stored_stop_date_str  = getStopDateFromSession();
+
+         start_date_elem.value = stored_start_date_str;
+         stop_date_elem.value  = stored_stop_date_str;
+      }
+
       function updateStudentNameColor()
       {
          var html_elem_id = "<?php echo getHiddenFieldId(); ?>"
@@ -108,6 +190,13 @@
 
       function on_page_loaded()
       {
+         var user_role = <?php echo "'" . $_SESSION['user_role'] . "'";?>;
+
+         if (user_role == 'teacher')
+         {
+            updateDates();
+         }
+
          updateStudentNameColor();
 
          disableTakenPassTypes();
@@ -262,30 +351,68 @@
      <div align="center">
      <table border=0>
      <tr>
-      <td>
-<!-- student's page only start -->
 <?php if ($_SESSION['user_role'] == 'student') : ?>
+      <td>
          <h1 style='text-align: center'>
             <?php
                 echo "Class " . $_SESSION['class_id'];
             ?>
          </h1>
-<?php else : ?>
-        <a href="/notes.php" style="font-size: 1.5em">
-           Teacher's Notes
-        </a>
-<?php endif; ?>
       </td>
 
       <td align="right">
+<?php else : ?>
+      <td colspan='2'>
+        <a href="/notes.php" style="font-size: 1.5em">
+           Teacher's Notes
+        </a>
+      </td>
+
+      <td colspan='2' align="right">
+<?php endif; ?>
            <a href="/logout.php" style="font-size: 1.5em">
               Log Out
            </a>
       </td>
      </tr>
 
+<?php if ($_SESSION['user_role'] == 'teacher') : ?>
      <tr>
-<!-- student's page only start -->
+        <form action='/index.php' method='POST'>
+           <td>
+              <br/>
+              <label for="start">Date start:</label>
+              <input type="date" value="2022-01-30"
+                 name="<?php echo getBreakStartDateFilterHtmlId(); ?>"
+                 id="<?php echo getBreakStartDateFilterHtmlId(); ?>"
+                 min="2021-12-01"
+                 max="2050-12-31" />
+           </td>
+
+           <td>
+              <br/>
+              <label for="stop">Date stop:</label>
+              <input type="date" value="2023-01-30"
+                 name="<?php echo getBreakStopDateFilterHtmlId(); ?>"
+                 id="<?php echo getBreakStopDateFilterHtmlId(); ?>"
+                 min="2021-12-01"
+                 max="2050-12-31" />
+           </td>
+
+           <td>
+             <br/>
+             place holder class drop down filter
+           </td>
+
+           <td>
+               <br/>
+               <input type="submit" name="apply_filter" Value="Apply Filter"/>
+           </td>
+        </form>
+     </tr>
+<?php endif; ?>
+
+     <tr>
 <?php if ($_SESSION['user_role'] == 'student') : ?>
      <td rowspan="2">
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
@@ -312,7 +439,12 @@
      </td>
 <?php endif; ?>
 
+<?php if ($_SESSION['user_role'] == 'student') : ?>
      <td style="vertical-align: baseline">
+<?php else : ?>
+     <td colspan='4' style="vertical-align: baseline">
+     <br/>
+<?php endif; ?>
         <h2>Break History: </h2>
         <?php
            displayBreakHistory($_SESSION['class_id']);
@@ -335,7 +467,7 @@
 <?php endif; ?>
 
      </tr>
-     <table>
+     </table>
      </div>
 
   </body>

@@ -30,6 +30,9 @@ function getDefaultNumberDaysToDisplay() { return 30; }
 function getNotesStartDateSessionKey() { return 'notes_date_start'; }
 function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
 
+function getBreakStartDateSessionKey() { return 'break_date_start'; }
+function getBreakStopDateSessionKey() { return 'break_date_stop'; }
+
 // return a working connection, caller is responsible to close
 // connection when done
 function getDBConnection()
@@ -352,7 +355,16 @@ function displayBreakHistory($class)
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
                     getStudentTableName() . " s WHERE " . " b.student_id = s.student_id ";
 
-   if (false == $is_teacher_account)
+   if ($is_teacher_account)
+   {
+      $start_date_str = $_SESSION[getBreakStartDateSessionKey()];
+      $stop_date_str  = $_SESSION[getBreakStopDateSessionKey()];
+
+      $HISTORY_QUERY = $HISTORY_QUERY .
+         " AND DATE(b.time_out AT TIME ZONE '$tz')::date >= '$start_date_str' " .
+         " AND DATE(b.time_out AT TIME ZONE '$tz')::date <= '$stop_date_str' ";
+   }
+   else
    {
       // class filter
       $HISTORY_QUERY = $HISTORY_QUERY . " AND s.class = '" . $_SESSION['class_id'] . "' ";

@@ -9,11 +9,16 @@
 
    session_start();
 
-   function getStartDateFilterHtmlId() { return 'date_range_start'; }
-   function getStopDateFilterHtmlId()  { return 'date_range_stop'; }
+   function getStartDateFilterHtmlId() { return 'notes_date_range_start'; }
+   function getStopDateFilterHtmlId()  { return 'notes_date_range_stop'; }
 
    function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
+
+   if (!isset($_SESSION['LOGGED_IN']))
+   {
+      header("location: /login.php");
+   }
 
    // create default date strings for the session. will be over-written by filtering
    if (!isset($_SESSION[getNotesStartDateSessionKey()]) ||

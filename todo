@@ -1,0 +1,9 @@
+* notes page:
+   -> add class filtering
+
+* teacher's break history page:
+   -> add class filter
+   -> change sorting to account for exact date and time's order, instead of weak ordering by HH:MM only
+   -> add filter for duration
+
+* add 'you901' ... 'you904' accounts
