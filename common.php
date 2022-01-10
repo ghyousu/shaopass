@@ -349,7 +349,8 @@ function displayBreakHistory($class)
    {
       $COLUMNS = $COLUMNS .
                  ", TO_CHAR(timezone('$tz', b.time_in),  'mm/DD/YYYY')" .
-                 ", TO_CHAR(timezone('$tz', b.time_in),  'Dy')";
+                 ", TO_CHAR(timezone('$tz', b.time_in),  'Dy')" .
+                 ", s.class";
    }
 
    $HISTORY_QUERY = "SELECT $COLUMNS FROM " . getBreaksTableName() . " b, " .
@@ -382,7 +383,8 @@ function displayBreakHistory($class)
 
    if ($is_teacher_account)
    {
-      echo "<th></th>\n";
+      echo "<th></th>\n"; // for checkbox
+      echo "<th>Class</th>\n";
    }
    echo "<th>Name</th>\n";
    echo "<th>Break Type</th>\n";
@@ -411,6 +413,7 @@ function displayBreakHistory($class)
       $durationHms= $entry[8];
       $date       = $entry[9];
       $day        = $entry[10];
+      $class_id   = $entry[11];
 
       $uniq_id = $break_id . '@' . $id;
 
@@ -432,6 +435,8 @@ function displayBreakHistory($class)
               "\t\t\t<input  style='width: 30px; height: 30px' type='checkbox' " .
               "name='break_checkbox[]' value='" .  $break_id . "'>\n" .
               "\t\t</td>\n";
+
+         echo "\t\t<td>$class_id</td>\n";
       }
       echo "\t\t<td>$fname $lname</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
