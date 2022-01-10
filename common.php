@@ -370,8 +370,10 @@ function displayBreakHistory($class)
       $HISTORY_QUERY = $HISTORY_QUERY . " AND s.class = '" . $_SESSION['class_id'] . "' ";
 
       // show TODAY filter
-      $HISTORY_QUERY = $HISTORY_QUERY . "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz') ORDER BY b.time_out";
+      $HISTORY_QUERY = $HISTORY_QUERY . "AND DATE(b.time_out AT TIME ZONE '$tz') = DATE(now() AT TIME ZONE '$tz')";
    }
+
+   $HISTORY_QUERY = $HISTORY_QUERY . ' ORDER BY b.time_out';
 
    $entries = fetchQueryResults($HISTORY_QUERY);
 
