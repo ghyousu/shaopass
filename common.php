@@ -34,6 +34,7 @@ function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
 
 function getBreakStartDateSessionKey() { return 'break_date_start'; }
 function getBreakStopDateSessionKey() { return 'break_date_stop'; }
+function getClassFilterSessionKey() { return 'filter_class_id'; }
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -383,6 +384,13 @@ function displayBreakHistory($class)
       $HISTORY_QUERY = $HISTORY_QUERY .
          " AND DATE(b.time_out AT TIME ZONE '$tz')::date >= '$start_date_str' " .
          " AND DATE(b.time_out AT TIME ZONE '$tz')::date <= '$stop_date_str' ";
+
+      if (isset($_SESSION[getClassFilterSessionKey()]) &&
+            $_SESSION[getClassFilterSessionKey()] != "All")
+      {
+         $HISTORY_QUERY = $HISTORY_QUERY .
+            " AND class = '" . $_SESSION[getClassFilterSessionKey()] . "'";
+      }
    }
    else
    {
@@ -564,10 +572,10 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "</div>\n";
 } // end of showNotesTable
 
-function showClassNameDropDown()
+function showClassNameDropDown($html_name, $html_id)
 {
    echo "<label for='class_drop_down'>Select A class: </label>\n";
-   echo "<select name='class_drop_down' id='class_drop_down'>\n";
+   echo "<select name='" . $html_name . "' id='" . $html_id . "'>\n";
    echo "\t<option value='All'>All</option>\n";
 
    $class_names = getClassEnumArray();

@@ -11,9 +11,11 @@
 
          function getBreakStartDateFilterHtmlId() { return 'break_date_range_start'; }
          function getBreakStopDateFilterHtmlId()  { return 'break_date_range_stop'; }
+         function getClassFilterHtmlId()          { return 'class_drop_down'; }
 
          function getBreakStartDateFilterHtmlName() { return getBreakStartDateFilterHtmlId(); }
          function getBreakStopDateFilterHtmlName()  { return getBreakStopDateFilterHtmlId(); }
+         function getClassFilterHtmlName()          { return getClassFilterHtmlId(); }
 
          if (!isset($_SESSION['LOGGED_IN']))
          {
@@ -39,13 +41,6 @@
          {
             // var_dump($_POST);
             // die("<br/>temp");
-            // sample output:
-            //    array(4) {
-            //       ["student_id"]=> string(9) "35"
-            //       ["break_type"]=> string(8) "Bathroom"
-            //       ["pass_type"]=> string(1) "E"
-            //       ["submit"]=> string(6) "Check In"
-            //    }
 
             if ($_SESSION['user_role'] == 'teacher')
             {
@@ -56,17 +51,29 @@
                }
                else if (isset($_POST['apply_filter']))
                {
-                  // array(3) { ["break_date_range_start"]=> string(10) "2021-12-09" ["break_date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
+                  // _POST {
+                  //    ["break_date_range_start"]=> string(10) "2021-12-09"
+                  //    ["break_date_range_stop"]=> string(10)
+                  //    ["class_drop_down"]=> string(10) "901"
+                  //    "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
                   $_SESSION[getBreakStartDateSessionKey()] = $_POST[getBreakStartDateFilterHtmlName()];
                   $_SESSION[getBreakStopDateSessionKey()]  = $_POST[getBreakStopDateFilterHtmlName()];
+                  $_SESSION[getClassFilterSessionKey()]    = $_POST[getClassFilterHtmlName()];
 
                   printDebug("filtered start date: " . $_SESSION[getBreakStartDateSessionKey()] );
                   printDebug("filtered stop date:  " . $_SESSION[getBreakStopDateSessionKey()] );
+                  printDebug("filtered class id:   " . $_SESSION[getClassFilterSessionKey()] );
                }
             }
             else
             {
-
+               // sample _POST
+               //    array(4) {
+               //       ["student_id"]=> string(9) "35"
+               //       ["break_type"]=> string(8) "Bathroom"
+               //       ["pass_type"]=> string(1) "E"
+               //       ["submit"]=> string(6) "Check In"
+               //    }
                $student_id  = $_POST['student_id'];
                $break_type  = $_POST['break_type'];
                $pass_type   = $_POST['pass_type'];
@@ -107,6 +114,23 @@
          return value;
       }
 
+      function getFilterClassIdFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getClassFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getClassFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'All';";
+               }
+            ?>
+
+         return value;
+      }
+
       function getStopDateFromSession()
       {
          var value =
@@ -137,6 +161,17 @@
 
          start_date_elem.value = stored_start_date_str;
          stop_date_elem.value  = stored_stop_date_str;
+      }
+
+      function updateClassDropDown()
+      {
+         debugger;
+         var class_filter_dropdown_id = "<?php echo getClassFilterHtmlId(); ?>"
+         var class_filter_elem = document.getElementById(class_filter_dropdown_id);
+
+         var stored_class_id_str  = getFilterClassIdFromSession();
+
+         class_filter_elem.value = stored_class_id_str;
       }
 
       function updateStudentNameColor()
@@ -195,6 +230,8 @@
          if (user_role == 'teacher')
          {
             updateDates();
+
+            updateClassDropDown();
          }
 
          updateStudentNameColor();
@@ -402,7 +439,9 @@
            <td>
              <br/>
              <?php
-               showClassNameDropDown();
+               showClassNameDropDown(
+                     getClassFilterHtmlId(),
+                     getClassFilterHtmlName());
              ?>
            </td>
 
