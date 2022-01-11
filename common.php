@@ -14,6 +14,8 @@ function getSchemaName() { return "ohs_shao"; }
 
 function getUsersTableName() { return getSchemaName() . "." . "users"; }
 
+function getClassEnumName() { return "youClassName"; }
+
 function getStudentTableName() { return getSchemaName() . "." . "student"; }
 
 function getNotesTableName() { return getSchemaName() . "." . "notes"; }
@@ -229,6 +231,23 @@ function displayStudentNamesFromDB($class)
    }
 
    echo "</table>\n";
+}
+
+function getClassEnumArray()
+{
+   $query = 'SELECT unnest(enum_range(NULL::' . getClassEnumName() . '))';
+
+   $class_names_array = array();
+
+   $class_names = fetchQueryResults($query);
+
+   while ( $class_id = pg_fetch_row($class_names) )
+   {
+      $value = $class_id[0];
+      array_push($class_names_array, $value);
+   }
+
+   return $class_names_array;
 }
 
 function displayBreakTypes()
@@ -544,5 +563,22 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "</form>\n";
    echo "</div>\n";
 } // end of showNotesTable
+
+function showClassNameDropDown()
+{
+   echo "<label for='class_drop_down'>Select A class: </label>\n";
+   echo "<select name='class_drop_down' id='class_drop_down'>\n";
+   echo "\t<option value='All'>All</option>\n";
+
+   $class_names = getClassEnumArray();
+
+   $num_classes = count($class_names);
+   for ($i=0; $i<$num_classes; ++$i)
+   {
+      echo "\t<option value='" . $class_names[$i] . "'>" . $class_names[$i] . "</option>\n";
+   }
+
+   echo "</select>\n";
+}
 
 ?>

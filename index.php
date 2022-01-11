@@ -401,7 +401,9 @@
 
            <td>
              <br/>
-             place holder class drop down filter
+             <?php
+               showClassNameDropDown();
+             ?>
            </td>
 
            <td>
