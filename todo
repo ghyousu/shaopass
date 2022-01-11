@@ -5,4 +5,7 @@
    -> add class filter
    -> add filter for duration
    -> DONE on 2022-01-09: change sorting to account for exact date and time's order, instead of weak ordering by HH:MM only
+
+* replace hard coded enum types in common.php with function call
+* change enum types to be under the schema?
 * add 'you901' ... 'you904' accounts
