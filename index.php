@@ -7,6 +7,8 @@
 
          setlocale(LC_ALL,'C.UTF-8');
 
+         date_default_timezone_set('America/New_York');
+
          session_start();
 
          function getBreakStartDateFilterHtmlId() { return 'break_date_range_start'; }
