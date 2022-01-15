@@ -10,17 +10,25 @@ function printDebug($str)
    }
 }
 
-function getSchemaName() { return "ohs_shao"; }
+// use public schema for now, can be renamed to other names if needed
+function getCommonSchemaName() { return 'common'; }
 
-function getUsersTableName() { return getSchemaName() . "." . "users"; }
+// common schema tables
+function getUsersTableName() { return getCommonSchemaName() . ".users"; }
+function getStudentTableName() { return getCommonSchemaName() . "." . "student"; }
 
-function getClassEnumName() { return "youClassName"; }
+// enum types in common schema
+function getClassEnumName() { return getCommonSchemaName() . ".youclassname"; }
 
-function getStudentTableName() { return getSchemaName() . "." . "student"; }
+function getIndividualSchemaName() { return $_SESSION['schema_name']; }
 
-function getNotesTableName() { return getSchemaName() . "." . "notes"; }
+// enum types in individual schemas
+function getBreakTypeEnumName() { return getIndividualSchemaName() . ".youbreaktype"; }
+function getPassTypeEnumName() { return getIndividualSchemaName() . ".youpasstype"; }
 
-function getBreaksTableName() { return getSchemaName() . "." . "breaks"; }
+// table names in individual schemas
+function getNotesTableName() { return getIndividualSchemaName() . "." . "notes"; }
+function getBreaksTableName() { return getIndividualSchemaName() . "." . "breaks"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
@@ -73,9 +81,9 @@ function fetchQueryResults($query)
    return $result;
 }
 
-function getUserRoleFromDB($username, $pw)
+function authenticateUser($username, $pw)
 {
-   $query = "SELECT role,auth_class from " . getUsersTableName() .
+   $query = "SELECT role,auth_class,schema_name from " . getUsersTableName() .
             " WHERE user_name = '$username' AND pw = '" . sha1($pw) . "'";
 
    printDebug("query: '$query'");
@@ -84,22 +92,29 @@ function getUserRoleFromDB($username, $pw)
 
    if ($result == false)
    {
-      die("Failed to get login info from database <br/>");
+      die("Failed to get user info from database <br/>");
    }
    else
    {
       $row  = pg_fetch_row($result);
       $role = $row[0];
+      $auth_class = $row[1];
+      $schema_name= $row[2];
 
       $_SESSION['user_role'] = $role;
+      $_SESSION['schema_name'] = $schema_name;
 
-      if ($role == 'student')
+      if ($role == '')
       {
-         $auth_class = $row[1];
+         return false; // failed to find login into
+      }
+      else if ($role == 'student')
+      {
+         // this is only applicable to student account
          $_SESSION['class_id']  = $auth_class;
       }
 
-      return $role;
+      return true;
    }
 }
 
@@ -197,7 +212,7 @@ function displayStudentNamesFromDB($class)
 {
    $NUM_COLUMNS = 8;
 
-   $query = "SELECT student_id, fname, lname FROM ohs_shao.student WHERE class = '$class'";
+   $query = "SELECT student_id, fname, lname FROM " . getStudentTableName() . " WHERE class = '$class'";
 
    $students = fetchQueryResults($query);
 
@@ -253,7 +268,7 @@ function getClassEnumArray()
 
 function displayBreakTypes()
 {
-   $query = "SELECT unnest(enum_range(NULL::youBreakType))";
+   $query = "SELECT unnest(enum_range(NULL::" . getBreakTypeEnumName() . "))";
 
    $break_types = fetchQueryResults($query);
 
@@ -278,7 +293,7 @@ function displayBreakTypes()
 
 function displayPassTypes()
 {
-   $query = "SELECT unnest(enum_range(NULL::youPassType))";
+   $query = "SELECT unnest(enum_range(NULL::" . getPassTypeEnumName() . "))";
 
    $pass_types = fetchQueryResults($query);
 

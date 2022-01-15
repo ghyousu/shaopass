@@ -6,20 +6,6 @@
    <?php
       require_once("common.php");
 
-      function login($username, $pw)
-      {
-         $user_role = getUserRoleFromDB($username, $pw);
-         if ( $user_role != "" )
-         {
-            $_SESSION['role'] = $user_role;
-            return true;
-         }
-         else
-         {
-            return false;
-         }
-      }
-
       session_start();
 
       $thisScriptWeb = $_SERVER["SCRIPT_NAME"];
@@ -40,9 +26,9 @@
       }
       else if (isset($_POST['username']) && isset($_POST['password']))
       {
-         if (login($_POST['username'], $_POST['password']))
+         if (authenticateUser($_POST['username'], $_POST['password']))
          {
-            $_SESSION['msg'] = '';
+            // $_SESSION['msg'] = '';
             $_SESSION['LOGGED_IN'] = true;
 
             header("location: $main_page");

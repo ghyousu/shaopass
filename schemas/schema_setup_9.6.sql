@@ -42,7 +42,7 @@ CREATE TYPE ohs_shao.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other'
 CREATE TYPE ohs_shao.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
 
 CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
-   break_id    INT GENERATED ALWAYS AS IDENTITY,
+   break_id    serial,
    student_id  INT,
    break_type  ohs_shao.youBreakType,
    pass_type   ohs_shao.youPassType,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
 );
 
 CREATE TABLE IF NOT EXISTS ohs_shao.notes (
-   note_id   INT GENERATED ALWAYS AS IDENTITY,
+   note_id   serial,
    note_body TEXT NOT NULL,
    ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    class     common.youClassName,
@@ -73,7 +73,7 @@ CREATE TYPE demo.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other');
 CREATE TYPE demo.youPassType  AS ENUM ('A', 'B', 'C');
 
 CREATE TABLE IF NOT EXISTS demo.breaks (
-   break_id    INT GENERATED ALWAYS AS IDENTITY,
+   break_id    serial,
    student_id  INT,
    break_type  demo.youBreakType,
    pass_type   demo.youPassType,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS demo.breaks (
 );
 
 CREATE TABLE IF NOT EXISTS demo.notes (
-   note_id   INT GENERATED ALWAYS AS IDENTITY,
+   note_id   serial,
    note_body TEXT NOT NULL,
    ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    class     common.youClassName,
