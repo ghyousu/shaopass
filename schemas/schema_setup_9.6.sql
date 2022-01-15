@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS common.student (
 );
 
 ----------------------------------- ohs_shao schema ------------------------------
+DROP TABLE  IF EXISTS ohs_shao.seating CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.notes CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youBreakType CASCADE;
@@ -40,6 +41,14 @@ CREATE SCHEMA IF NOT EXISTS ohs_shao;
 
 CREATE TYPE ohs_shao.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other', 'L w/o P', 'L w/o C');
 CREATE TYPE ohs_shao.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
+
+CREATE TABLE IF NOT EXISTS ohs_shao.seating (
+   student_id  INT,
+   row TINYINT,
+   col TINYINT,
+   UNIQUE(row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+);
 
 CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
    break_id    serial,
@@ -61,6 +70,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.notes (
 );
 
 ----------------------------------- demo schema ------------------------------
+DROP TABLE  IF EXISTS demo.seating CASCADE;
 DROP TABLE  IF EXISTS demo.breaks CASCADE;
 DROP TABLE  IF EXISTS demo.notes CASCADE;
 DROP TYPE   IF EXISTS demo.youBreakType CASCADE;
@@ -71,6 +81,14 @@ CREATE SCHEMA IF NOT EXISTS demo;
 
 CREATE TYPE demo.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other');
 CREATE TYPE demo.youPassType  AS ENUM ('A', 'B', 'C');
+
+CREATE TABLE IF NOT EXISTS demo.seating (
+   student_id  INT,
+   row TINYINT,
+   col TINYINT,
+   UNIQUE(row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+);
 
 CREATE TABLE IF NOT EXISTS demo.breaks (
    break_id    serial,

@@ -457,7 +457,7 @@
 
      <tr>
 <?php if ($_SESSION['user_role'] == 'student') : ?>
-     <td rowspan="2">
+     <td rowspan="2" style="padding-right: 20px">
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
            <?php
               echo '<h2 style="margin-block-end: -0.5em">Select your name:</h2><br/>';

@@ -29,6 +29,7 @@ function getPassTypeEnumName() { return getIndividualSchemaName() . ".youpasstyp
 // table names in individual schemas
 function getNotesTableName() { return getIndividualSchemaName() . "." . "notes"; }
 function getBreaksTableName() { return getIndividualSchemaName() . "." . "breaks"; }
+function getSeatingTableName() { return getIndividualSchemaName() . "." . "seating"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
@@ -208,42 +209,112 @@ function deleteNotes($note_id_list)
    fetchQueryResults($del_query);
 }
 
+function getMaxColumns()
+{
+   $query = "SELECT max(col) FROM " . getSeatingTableName();
+
+   $result = fetchQueryResults($query);
+
+   while ( $res = pg_fetch_row($result) )
+   {
+      $num_cols = $res[0];
+
+      return $num_cols;
+   }
+}
+
 function displayStudentNamesFromDB($class)
 {
-   $NUM_COLUMNS = 8;
+   $NUM_COLUMNS = getMaxColumns();
+   printDebug("NUM_COLUMNS = $NUM_COLUMNS <br/>");
 
-   $query = "SELECT student_id, fname, lname FROM " . getStudentTableName() . " WHERE class = '$class'";
+   $query = "SELECT s.student_id, s.fname, s.lname, t.row, t.col FROM " .
+            getStudentTableName() . " s, " .
+            getSeatingTableName() . " t " .
+            "WHERE class = '$class' AND s.student_id = t.student_id " .
+            "ORDER BY t.row, t.col";
 
    $students = fetchQueryResults($query);
 
-   echo "<table class='studentNamesTable'>\n";
+   echo "\n<table border='1' class='studentNamesTable'>\n";
 
-   $loopCount = 1;
+   $html_string_array = array();
+
+   $tr_idx = 0;
+   $tc_idx = 1;
+   $tr_data = "";
    while ( $student = pg_fetch_row($students) )
    {
+      $row_fully_closed = false;
       $id = $student[0];
-      $name = $student[1] . "<br/>" . $student[2];
 
-      printDebug("id: $id, name: '$name'");
+      // $name = $student[1] . "<br/>" . $student[2];
+      $name = $student[1] . " " . substr($student[2], 0, 1) . ".";
+      // $name = $student[1];
 
-      if ( $loopCount == 1 )
+      $db_row = $student[3];
+      $db_col = $student[4];
+
+      printDebug("id: $id, name: '$name', row: '$db_row', col: '$db_col'");
+
+      // open a new table row
+      if ($tr_idx != $db_row)
       {
-         echo "<tr>";
+         if ($tr_data != "")
+         {
+            $tr_data = $tr_data . "</tr>\n";
+            array_push($html_string_array, $tr_data);
+         }
+
+         $tr_data = "<tr>\n"; // new table row data
+
+         $tr_idx = $db_row;
+         $tc_idx = 1;
+      }
+
+      // empty seat, fill in a blank cell
+      if ($tc_idx != $db_col)
+      {
+         $tr_data = $tr_data . "<td/>\n";
+         $tc_idx += 1;
       }
 
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      echo "<td id='td_label_" . $id . "' style='padding-bottom: 30px; padding-right: 30px;'>\n";
-      echo "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
-      echo "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
-      echo "</td>\n";
+      $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 30px; padding-right: 30px;'>\n";
+      $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
+      $tr_data = $tr_data . "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
+      $tr_data = $tr_data . "</td>\n";
 
-      if ( $loopCount++ == $NUM_COLUMNS )
+      $tc_idx += 1;
+
+      // last column of the row, close the table row
+      if ( $db_col == $NUM_COLUMNS )
       {
-         echo "</tr>\n";
-         $loopCount = 1;
+         $tr_data = $tr_data . "</tr>\n";
+
+         array_push($html_string_array, $tr_data);
+
+         $tr_data = "";
+         $tr_idx = $db_row;
+         $tc_idx = 1;
       }
+   }
+
+   // if last row doesn't have enough columns, close the tr tag
+   if ($tr_data != "")
+   {
+      $tr_data = $tr_data . "</tr>\n";
+
+      array_push($html_string_array, $tr_data);
+   }
+
+   $reversed_array = array_reverse($html_string_array);
+
+   for ($i=0; $i<count($reversed_array); ++$i)
+   {
+      echo $reversed_array[$i];
    }
 
    echo "</table>\n";
