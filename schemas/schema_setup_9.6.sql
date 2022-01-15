@@ -44,9 +44,9 @@ CREATE TYPE ohs_shao.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 
 
 CREATE TABLE IF NOT EXISTS ohs_shao.seating (
    student_id  INT,
-   row TINYINT,
-   col TINYINT,
-   UNIQUE(row, col),
+   row SMALLINT,
+   col SMALLINT,
+   UNIQUE(student_id, row, col),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id)
 );
 
@@ -84,9 +84,9 @@ CREATE TYPE demo.youPassType  AS ENUM ('A', 'B', 'C');
 
 CREATE TABLE IF NOT EXISTS demo.seating (
    student_id  INT,
-   row TINYINT,
-   col TINYINT,
-   UNIQUE(row, col),
+   row SMALLINT,
+   col SMALLINT,
+   UNIQUE(student_id, row, col),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id)
 );
 
