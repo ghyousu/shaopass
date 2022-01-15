@@ -36,7 +36,7 @@ function getHiddenFieldId() { return 'checkedout_student_ids'; }
 
 function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
-function getDefaultNumberDaysToDisplay() { return 30; }
+function getDefaultNumberDaysToDisplay() { return 0; }
 function getNotesStartDateSessionKey() { return 'notes_date_start'; }
 function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
 
