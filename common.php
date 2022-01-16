@@ -231,7 +231,7 @@ function displayStudentNamesFromDB($class)
    $query = "SELECT s.student_id, s.fname, s.lname, t.row, t.col FROM " .
             getStudentTableName() . " s, " .
             getSeatingTableName() . " t " .
-            "WHERE class = '$class' AND s.student_id = t.student_id " .
+            "WHERE s.class = '$class' AND s.student_id = t.student_id " .
             "ORDER BY t.row, t.col";
 
    $students = fetchQueryResults($query);
@@ -273,7 +273,7 @@ function displayStudentNamesFromDB($class)
       }
 
       // empty seat, fill in a blank cell
-      if ($tc_idx != $db_col)
+      while ($tc_idx != $db_col)
       {
          $tr_data = $tr_data . "<td/>\n";
          $tc_idx += 1;
