@@ -14,10 +14,16 @@
          function getBreakStartDateFilterHtmlId() { return 'break_date_range_start'; }
          function getBreakStopDateFilterHtmlId()  { return 'break_date_range_stop'; }
          function getClassFilterHtmlId()          { return 'class_drop_down'; }
+         function getFNameFilterHtmlId()          { return 'fname_filter'; }
+         function getLNameFilterHtmlId()          { return 'lname_filter'; }
+         function getDurationFilterHtmlId()       { return 'duration_filter'; }
 
          function getBreakStartDateFilterHtmlName() { return getBreakStartDateFilterHtmlId(); }
          function getBreakStopDateFilterHtmlName()  { return getBreakStopDateFilterHtmlId(); }
          function getClassFilterHtmlName()          { return getClassFilterHtmlId(); }
+         function getFNameFilterHtmlName()          { return getFNameFilterHtmlId(); }
+         function getLNameFilterHtmlName()          { return getLNameFilterHtmlId(); }
+         function getDurationFilterHtmlName()       { return getDurationFilterHtmlId(); }
 
          if (!isset($_SESSION['LOGGED_IN']))
          {
@@ -57,14 +63,23 @@
                   //    ["break_date_range_start"]=> string(10) "2021-12-09"
                   //    ["break_date_range_stop"]=> string(10)
                   //    ["class_drop_down"]=> string(10) "901"
+                  //    ["fname_filter"]=> string(10) "fname"
+                  //    ["lname_filter"]=> string(10) "lname"
+                  //    ["duration_filter"]=> string(10) "15"
                   //    "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
                   $_SESSION[getBreakStartDateSessionKey()] = $_POST[getBreakStartDateFilterHtmlName()];
                   $_SESSION[getBreakStopDateSessionKey()]  = $_POST[getBreakStopDateFilterHtmlName()];
                   $_SESSION[getClassFilterSessionKey()]    = $_POST[getClassFilterHtmlName()];
+                  $_SESSION[getFNameFilterSessionKey()]    = $_POST[getFNameFilterHtmlName()];
+                  $_SESSION[getLNameFilterSessionKey()]    = $_POST[getLNameFilterHtmlName()];
+                  $_SESSION[getDurationFilterSessionKey()] = $_POST[getDurationFilterHtmlName()];
 
                   printDebug("filtered start date: " . $_SESSION[getBreakStartDateSessionKey()] );
                   printDebug("filtered stop date:  " . $_SESSION[getBreakStopDateSessionKey()] );
                   printDebug("filtered class id:   " . $_SESSION[getClassFilterSessionKey()] );
+                  printDebug("filtered fname:      " . $_SESSION[getFNameFilterSessionKey()] );
+                  printDebug("filtered lname:      " . $_SESSION[getLNameFilterSessionKey()] );
+                  printDebug("filtered duration:   " . $_SESSION[getDurationFilterSessionKey()] );
                }
             }
             else
@@ -133,6 +148,57 @@
          return value;
       }
 
+      function getFilterFNameFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getFNameFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getFNameFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function getFilterLNameFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getLNameFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getLNameFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function getFilterDurationFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getDurationFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getDurationFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'';";
+               }
+            ?>
+
+         return value;
+      }
+
       function getStopDateFromSession()
       {
          var value =
@@ -174,6 +240,39 @@
          var stored_class_id_str  = getFilterClassIdFromSession();
 
          class_filter_elem.value = stored_class_id_str;
+      }
+
+      function updateFNameFilter()
+      {
+         debugger;
+         var fname_filter_id = "<?php echo getFNameFilterHtmlId(); ?>"
+         var filter_elem = document.getElementById(fname_filter_id);
+
+         var stored_filter_fname = getFilterFNameFromSession();
+
+         filter_elem.value = stored_filter_fname;
+      }
+
+      function updateLNameFilter()
+      {
+         debugger;
+         var lname_filter_id = "<?php echo getLNameFilterHtmlId(); ?>"
+         var filter_elem = document.getElementById(lname_filter_id);
+
+         var stored_filter_lname = getFilterLNameFromSession();
+
+         filter_elem.value = stored_filter_lname;
+      }
+
+      function updateDurationFilter()
+      {
+         debugger;
+         var duration_filter_id = "<?php echo getDurationFilterHtmlId(); ?>"
+         var filter_elem = document.getElementById(duration_filter_id);
+
+         var stored_filter_duration = getFilterDurationFromSession();
+
+         filter_elem.value = stored_filter_duration;
       }
 
       function updateStudentNameColor()
@@ -234,6 +333,12 @@
             updateDates();
 
             updateClassDropDown();
+
+            updateFNameFilter();
+
+            updateLNameFilter();
+
+            updateDurationFilter();
          }
 
          updateStudentNameColor();
@@ -446,10 +551,37 @@
                      getClassFilterHtmlName());
              ?>
            </td>
+     </tr>
+
+     <!-- filter row line two -->
+     <tr>
+           <td>
+               <br/>
+               <label for="fname_filter">First Name:</label>
+               <input style="width: 120px" type="text"
+                  id="<?php echo getFNameFilterHtmlId(); ?>"
+                  name="<?php echo getFNameFilterHtmlName(); ?>" >
+           </td>
 
            <td>
                <br/>
-               <input type="submit" name="apply_filter" Value="Apply Filter"/>
+               <label for="lname_filter">Last Name:</label>
+               <input style="width: 120px" type="text"
+                  id="<?php echo getLNameFilterHtmlId(); ?>"
+                  name="<?php echo getLNameFilterHtmlName(); ?>" >
+           </td>
+
+           <td>
+               <br/>
+               <label for="duration_filter">Duration(min):</label>
+               <input style="width: 120px" type="text"
+                  id="<?php echo getDurationFilterHtmlId(); ?>"
+                  name="<?php echo getDurationFilterHtmlName(); ?>" >
+           </td>
+
+           <td>
+               <br/>
+               <input style="font-size: 1.3em;" type="submit" name="apply_filter" Value="Apply Filter"/>
            </td>
         </form>
      </tr>

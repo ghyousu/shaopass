@@ -41,9 +41,13 @@ function getDefaultNumberDaysToDisplay() { return 0; }
 function getNotesStartDateSessionKey() { return 'notes_date_start'; }
 function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
 
+// session variable keys
 function getBreakStartDateSessionKey() { return 'break_date_start'; }
 function getBreakStopDateSessionKey() { return 'break_date_stop'; }
 function getClassFilterSessionKey() { return 'filter_class_id'; }
+function getFNameFilterSessionKey() { return 'filter_fname'; }
+function getLNameFilterSessionKey() { return 'filter_lname'; }
+function getDurationFilterSessionKey() { return 'filter_duration'; }
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -440,6 +444,42 @@ function getDurationHtmlStyleBgcolor( $durationHms )
    return $html_style;
 }
 
+// NOTE: This function assumes the student table name alias is "s"
+function getFilteringClause()
+{
+   $filter_clause = "";
+
+   if (isset($_SESSION[getClassFilterSessionKey()]) &&
+         $_SESSION[getClassFilterSessionKey()] != "All")
+   {
+      $filter_clause = $filter_clause .
+         " AND s.class = '" . $_SESSION[getClassFilterSessionKey()] . "'";
+   }
+
+   if (isset($_SESSION[getFNameFilterSessionKey()]) &&
+         $_SESSION[getFNameFilterSessionKey()] != '')
+   {
+      $filter_clause = $filter_clause .
+         " AND s.fname= '" . $_SESSION[getFNameFilterSessionKey()] . "'";
+   }
+
+   if (isset($_SESSION[getLNameFilterSessionKey()]) &&
+         $_SESSION[getLNameFilterSessionKey()] != '')
+   {
+      $filter_clause = $filter_clause .
+         " AND s.lname= '" . $_SESSION[getLNameFilterSessionKey()] . "'";
+   }
+
+//   if (isset($_SESSION[getDurationFilterSessionKey()]) &&
+//         $_SESSION[getDurationFilterSessionKey()] != '')
+//   {
+//      $filter_clause = $filter_clause .
+//         " AND duration >= '" . $_SESSION[getDurationFilterSessionKey()] . "'";
+//   }
+
+   return $filter_clause;
+}
+
 function displayBreakHistory($class)
 {
    $tz = 'America/New_York';
@@ -449,7 +489,7 @@ function displayBreakHistory($class)
    $COLUMNS = "b.break_id, b.student_id, s.fname, s.lname, b.break_type, b.pass_type, " .
               "TO_CHAR(timezone('$tz', b.time_out), 'HH12:MI:SS AM'), " .
               "TO_CHAR(timezone('$tz', b.time_in),  'HH12:MI:SS AM'), " .
-              "TO_CHAR(age(b.time_in, b.time_out), 'HH24:MI:SS')";
+              "TO_CHAR(age(b.time_in, b.time_out), 'HH24:MI:SS') AS duration";
 
    if ($is_teacher_account)
    {
@@ -469,14 +509,8 @@ function displayBreakHistory($class)
 
       $HISTORY_QUERY = $HISTORY_QUERY .
          " AND DATE(b.time_out AT TIME ZONE '$tz')::date >= '$start_date_str' " .
-         " AND DATE(b.time_out AT TIME ZONE '$tz')::date <= '$stop_date_str' ";
-
-      if (isset($_SESSION[getClassFilterSessionKey()]) &&
-            $_SESSION[getClassFilterSessionKey()] != "All")
-      {
-         $HISTORY_QUERY = $HISTORY_QUERY .
-            " AND class = '" . $_SESSION[getClassFilterSessionKey()] . "'";
-      }
+         " AND DATE(b.time_out AT TIME ZONE '$tz')::date <= '$stop_date_str' " .
+         getFilteringClause();
    }
    else
    {
