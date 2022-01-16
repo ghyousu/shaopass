@@ -470,12 +470,13 @@ function getFilteringClause()
          " AND s.lname= '" . $_SESSION[getLNameFilterSessionKey()] . "'";
    }
 
-//   if (isset($_SESSION[getDurationFilterSessionKey()]) &&
-//         $_SESSION[getDurationFilterSessionKey()] != '')
-//   {
-//      $filter_clause = $filter_clause .
-//         " AND duration >= '" . $_SESSION[getDurationFilterSessionKey()] . "'";
-//   }
+   if (isset($_SESSION[getDurationFilterSessionKey()]) &&
+         $_SESSION[getDurationFilterSessionKey()] != '')
+   {
+      $filter_clause = $filter_clause .
+         " AND age(b.time_in, b.time_out) >= '" .
+         $_SESSION[getDurationFilterSessionKey()] . "minutes'::interval";
+   }
 
    return $filter_clause;
 }
