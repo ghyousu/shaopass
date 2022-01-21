@@ -119,24 +119,23 @@
          return value;
       }
 
-      function updateDates()
+      function updateFilter(html_id, stored_value)
       {
          debugger;
-         var start_date_id = "<?php echo getStartDateFilterHtmlId(); ?>"
-         var start_date_elem = document.getElementById(start_date_id);
-         var stop_date_id = "<?php echo getStopDateFilterHtmlId(); ?>"
-         var stop_date_elem = document.getElementById(stop_date_id);
+         var html_elem = document.getElementById(html_id);
 
-         var stored_start_date_str = getStartDateFromSession();
-         var stored_stop_date_str  = getStopDateFromSession();
-
-         start_date_elem.value = stored_start_date_str;
-         stop_date_elem.value  = stored_stop_date_str;
+         html_elem.value = stored_value;
       }
 
       function on_page_loaded()
       {
-         updateDates();
+         updateFilter(
+               "<?php echo getStartDateFilterHtmlId(); ?>",
+               getStartDateFromSession());
+
+         updateFilter(
+               "<?php echo getStopDateFilterHtmlId(); ?>",
+               getStopDateFromSession());
       }
      </script>
 
