@@ -38,16 +38,17 @@ function getHiddenFieldId() { return 'checkedout_student_ids'; }
 function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 
 function getDefaultNumberDaysToDisplay() { return 0; }
-function getNotesStartDateSessionKey() { return 'notes_date_start'; }
-function getNotesStopDateSessionKey() { return 'notes_date_stop'; }
+function getNotesStartDateSessionKey()   { return 'notes_date_start'; }
+function getNotesStopDateSessionKey()    { return 'notes_date_stop'; }
 
 // session variable keys
-function getBreakStartDateSessionKey() { return 'break_date_start'; }
-function getBreakStopDateSessionKey() { return 'break_date_stop'; }
-function getClassFilterSessionKey() { return 'filter_class_id'; }
-function getFNameFilterSessionKey() { return 'filter_fname'; }
-function getLNameFilterSessionKey() { return 'filter_lname'; }
-function getDurationFilterSessionKey() { return 'filter_duration'; }
+function getStartDateSessionKey()       { return 'filter_date_start'; }
+function getStopDateSessionKey()        { return 'filter_date_stop'; }
+function getClassFilterSessionKey()     { return 'filter_class_id'; }
+function getBreakTypeFilterSessionKey() { return 'filter_break_type'; }
+function getFNameFilterSessionKey()     { return 'filter_fname'; }
+function getLNameFilterSessionKey()     { return 'filter_lname'; }
+function getDurationFilterSessionKey()  { return 'filter_duration'; }
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -324,21 +325,21 @@ function displayStudentNamesFromDB($class)
    echo "</table>\n";
 }
 
-function getClassEnumArray()
+function getEnumArray($db_enum_name)
 {
-   $query = 'SELECT unnest(enum_range(NULL::' . getClassEnumName() . '))';
+   $query = 'SELECT unnest(enum_range(NULL::' . $db_enum_name . '))';
 
-   $class_names_array = array();
+   $enum_array = array();
 
-   $class_names = fetchQueryResults($query);
+   $enum_values = fetchQueryResults($query);
 
-   while ( $class_id = pg_fetch_row($class_names) )
+   while ( $enum_val = pg_fetch_row($enum_values) )
    {
-      $value = $class_id[0];
-      array_push($class_names_array, $value);
+      $value = $enum_val[0];
+      array_push($enum_array, $value);
    }
 
-   return $class_names_array;
+   return $enum_array;
 }
 
 function displayBreakTypes()
@@ -456,6 +457,13 @@ function getFilteringClause()
          " AND s.class = '" . $_SESSION[getClassFilterSessionKey()] . "'";
    }
 
+   if (isset($_SESSION[getBreakTypeFilterSessionKey()]) &&
+         $_SESSION[getBreakTypeFilterSessionKey()] != "All")
+   {
+      $filter_clause = $filter_clause .
+         " AND b.break_type = '" . $_SESSION[getBreakTypeFilterSessionKey()] . "'";
+   }
+
    if (isset($_SESSION[getFNameFilterSessionKey()]) &&
          $_SESSION[getFNameFilterSessionKey()] != '')
    {
@@ -505,8 +513,8 @@ function displayBreakHistory($class)
 
    if ($is_teacher_account)
    {
-      $start_date_str = $_SESSION[getBreakStartDateSessionKey()];
-      $stop_date_str  = $_SESSION[getBreakStopDateSessionKey()];
+      $start_date_str = $_SESSION[getStartDateSessionKey()];
+      $stop_date_str  = $_SESSION[getStopDateSessionKey()];
 
       $HISTORY_QUERY = $HISTORY_QUERY .
          " AND DATE(b.time_out AT TIME ZONE '$tz')::date >= '$start_date_str' " .
@@ -693,18 +701,18 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "</div>\n";
 } // end of showNotesTable
 
-function showClassNameDropDown($html_name, $html_id)
+function showEnumDropDown($db_enum_name, $label, $html_name, $html_id)
 {
-   echo "<label for='class_drop_down'>Select A class: </label>\n";
+   echo "<label for='$html_id'>$label</label>\n";
    echo "<select name='" . $html_name . "' id='" . $html_id . "'>\n";
    echo "\t<option value='All'>All</option>\n";
 
-   $class_names = getClassEnumArray();
+   $enum_array = getEnumArray($db_enum_name);
 
-   $num_classes = count($class_names);
-   for ($i=0; $i<$num_classes; ++$i)
+   $num_enums = count($enum_array);
+   for ($i=0; $i<$num_enums; ++$i)
    {
-      echo "\t<option value='" . $class_names[$i] . "'>" . $class_names[$i] . "</option>\n";
+      echo "\t<option value='" . $enum_array[$i] . "'>" . $enum_array[$i] . "</option>\n";
    }
 
    echo "</select>\n";
