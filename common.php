@@ -556,6 +556,7 @@ function displayBreakHistory($class)
 
    $hidden_html_ids = "0"; // prefix with an invalid ID
 
+   $row_number = 1;
    while ( $entry = pg_fetch_row($entries) )
    {
       $break_id   = $entry[0];
@@ -588,11 +589,14 @@ function displayBreakHistory($class)
       if ($is_teacher_account)
       {
          echo "\t\t<td align='center'>\n" .
+              $row_number .
               "\t\t\t<input  style='width: 30px; height: 30px' type='checkbox' " .
               "name='break_checkbox[]' value='" .  $break_id . "'>\n" .
               "\t\t</td>\n";
 
          echo "\t\t<td>$class_id</td>\n";
+
+         $row_number = $row_number + 1;
       }
       echo "\t\t<td>$fname $lname</td>\n";
       echo "\t\t<td id='break_type_" . $id . "'>$break_type</td>\n";
@@ -661,6 +665,7 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "<th style='width: 200px'>Time</th>\n";
    echo "<th style='width: 600px'>Note</th>\n";
 
+   $row_number = 1;
    while ( $entry = pg_fetch_row($notes) )
    {
       $note_id   = $entry[0];
@@ -673,9 +678,12 @@ function showNotesTable($start_date_str, $stop_date_str)
       if ($show_check_box)
       {
          echo "\t\t<td align='center'>\n" .
+              $row_number .
               "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
               "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
               "\t\t</td>\n";
+
+         $row_number = $row_number + 1;
       }
       echo "\t\t<td style='text-align: center'>$class</td>\n";
       echo "\t\t<td style='text-align: center'>$time</td>\n";
