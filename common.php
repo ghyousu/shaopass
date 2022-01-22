@@ -40,6 +40,7 @@ function getBreakIdSessionKey($student_id) { return "break_id_" . $student_id; }
 function getDefaultNumberDaysToDisplay() { return 0; }
 function getNotesStartDateSessionKey()   { return 'notes_date_start'; }
 function getNotesStopDateSessionKey()    { return 'notes_date_stop'; }
+function getNotesClassFilterSessionKey() { return 'notes_class_id'; }
 
 // session variable keys
 function getStartDateSessionKey()       { return 'filter_date_start'; }
@@ -632,23 +633,28 @@ function displayBreakHistory($class)
    echo "</form>\n";
 } // end of displayBreakHistory
 
+// this function's only displayed for teachers
 function showNotesTable($start_date_str, $stop_date_str)
 {
+   if ($_SESSION['user_role'] == "student")
+   {
+      echo '<h1 align="center">\n';
+      echo '    You are not allowed to view this page\n';
+      echo '</h1>\n';
+      return ;
+   }
+
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
             "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
             'note_body FROM ' . getNotesTableName() .
             " WHERE DATE(ts AT TIME ZONE '$tz')::date >= '$start_date_str' " .
-            " AND   DATE(ts AT TIME ZONE '$tz')::date <= '$stop_date_str'" .
+            " AND   DATE(ts AT TIME ZONE '$tz')::date <= '$stop_date_str'";
 
-   $show_check_box = false; // for student's account
-   if (isset($_SESSION['class_id']))
+   if (isset($_SESSION[getNotesClassFilterSessionKey()]) &&
+         $_SESSION[getNotesClassFilterSessionKey()] != 'All')
    {
-      $query = $query . " AND class = '" . $_SESSION['class_id'] . "'";
-   }
-   else
-   {
-      $show_check_box = true; // assume teacher's account
+      $query = $query . " AND class = '" . $_SESSION[getNotesClassFilterSessionKey()] . "'";
    }
 
    $notes = fetchQueryResults($query);
@@ -657,10 +663,7 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "<form action='/notes.php' method='POST' enctype='multipart/form-data'>\n";
    echo "<table border=1>\n";
 
-   if ($show_check_box)
-   {
-      echo "<th></th>\n";
-   }
+   echo "<th></th>\n";
    echo "<th style='width: 60px'>class</th>\n";
    echo "<th style='width: 200px'>Time</th>\n";
    echo "<th style='width: 600px'>Note</th>\n";
@@ -675,34 +678,29 @@ function showNotesTable($start_date_str, $stop_date_str)
 
       echo "\t<tr>\n";
 
-      if ($show_check_box)
-      {
-         echo "\t\t<td align='center'>\n" .
-              $row_number .
-              "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
-              "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
-              "\t\t</td>\n";
+      echo "\t\t<td align='center'>\n" .
+           $row_number .
+           "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
+           "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
+           "\t\t</td>\n";
 
-         $row_number = $row_number + 1;
-      }
       echo "\t\t<td style='text-align: center'>$class</td>\n";
       echo "\t\t<td style='text-align: center'>$time</td>\n";
       echo "\t\t<td>$note_body</td>\n";
 
       echo "\t</tr>\n";
+
+      $row_number = $row_number + 1;
    }
 
    // show delete button
-   if ($show_check_box)
-   {
-      echo "<br/><br/>\n";
-      echo "\t<tr>\n" .
-         "\t\t<td column-span='2' rowspan='2'>\n" .
-         "<br/>" .
-         "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
-         "\t\t</td>\n" .
-         "\t</tr>\n";
-   }
+   echo "<br/><br/>\n";
+   echo "\t<tr>\n" .
+      "\t\t<td column-span='2' rowspan='2'>\n" .
+      "<br/>" .
+      "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
+      "\t\t</td>\n" .
+      "\t</tr>\n";
 
    echo "</table>\n";
    echo "</form>\n";

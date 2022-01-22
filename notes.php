@@ -13,9 +13,11 @@
 
    function getStartDateFilterHtmlId() { return 'notes_date_range_start'; }
    function getStopDateFilterHtmlId()  { return 'notes_date_range_stop'; }
+   function getClassFilterHtmlId()     { return 'class_drop_down'; }
 
    function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
+   function getClassFilterHtmlName()     { return getClassFilterHtmlId(); }
 
    if (!isset($_SESSION['LOGGED_IN']))
    {
@@ -55,11 +57,13 @@
       else if (isset($_POST['apply_filter']))
       {
          // array(3) { ["date_range_start"]=> string(10) "2021-12-09" ["date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
-         $_SESSION[getNotesStartDateSessionKey()] = $_POST[getStartDateFilterHtmlName()];
-         $_SESSION[getNotesStopDateSessionKey()]  = $_POST[getStopDateFilterHtmlName()];
+         $_SESSION[getNotesStartDateSessionKey()]   = $_POST[getStartDateFilterHtmlName()];
+         $_SESSION[getNotesStopDateSessionKey()]    = $_POST[getStopDateFilterHtmlName()];
+         $_SESSION[getNotesClassFilterSessionKey()] = $_POST[getClassFilterHtmlName()];
 
          printDebug("filtered start date: " . $_SESSION[getNotesStartDateSessionKey()] );
          printDebug("filtered stop date:  " . $_SESSION[getNotesStopDateSessionKey()] );
+         printDebug("filtered class id:   " . $_SESSION[getNotesClassFilterSessionKey()] );
       }
       else // assume it's note submission from the index page
       {
@@ -119,6 +123,23 @@
          return value;
       }
 
+      function getFilterClassIdFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getNotesClassFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getNotesClassFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'All';";
+               }
+            ?>
+
+         return value;
+      }
+
       function updateFilter(html_id, stored_value)
       {
          debugger;
@@ -136,6 +157,10 @@
          updateFilter(
                "<?php echo getStopDateFilterHtmlId(); ?>",
                getStopDateFromSession());
+
+         updateFilter(
+               "<?php echo getClassFilterHtmlId(); ?>",
+               getFilterClassIdFromSession());
       }
      </script>
 
@@ -187,7 +212,13 @@
 
            <td>
              <br/>
-             place holder class drop down filter
+             <?php
+               showEnumDropDown(
+                     getClassEnumName(),
+                     'Classes: ',
+                     getClassFilterHtmlId(),
+                     getClassFilterHtmlName());
+             ?>
            </td>
 
            <td>
