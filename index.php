@@ -286,6 +286,17 @@
             var student_id = id_list[i].split("@")[1];
 
             var pass_type_name = document.getElementById("pass_type_" + break_id).innerHTML;
+
+            // allow unlimited pass type of "Special and L"
+            if (pass_type_name == "Special")
+            {
+               continue;
+            }
+            if (pass_type_name == "L")
+            {
+               continue;
+            }
+
             if (pass_type_name != "")
             {
                document.getElementById("pass_type_label_" + pass_type_name).style.color = "lightgray";
