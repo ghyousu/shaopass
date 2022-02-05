@@ -2,7 +2,7 @@
 
 function printDebug($str)
 {
-   $debug=1;
+   $debug=0;
 
    if ($debug == 1)
    {
@@ -238,8 +238,7 @@ function displayStudentNamesFromDB($class)
             getStudentTableName() . " s, " .
             getSeatingTableName() . " t " .
             "WHERE s.class = '$class' AND s.student_id = t.student_id " .
-   "ORDER BY t.row, t.col";
-   //          "ORDER BY s.fname, s.lname";
+            "ORDER BY t.row, t.col";
 
    $students = fetchQueryResults($query);
 
