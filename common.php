@@ -2,7 +2,7 @@
 
 function printDebug($str)
 {
-   $debug=0;
+   $debug=1;
 
    if ($debug == 1)
    {
