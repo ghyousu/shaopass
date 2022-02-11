@@ -469,14 +469,14 @@ function getFilteringClause()
          $_SESSION[getFNameFilterSessionKey()] != '')
    {
       $filter_clause = $filter_clause .
-         " AND s.fname= '" . $_SESSION[getFNameFilterSessionKey()] . "'";
+         " AND s.fname ILIKE '%" . $_SESSION[getFNameFilterSessionKey()] . "%'";
    }
 
    if (isset($_SESSION[getLNameFilterSessionKey()]) &&
          $_SESSION[getLNameFilterSessionKey()] != '')
    {
       $filter_clause = $filter_clause .
-         " AND s.lname= '" . $_SESSION[getLNameFilterSessionKey()] . "'";
+         " AND s.lname ILIKE '%" . $_SESSION[getLNameFilterSessionKey()] . "%'";
    }
 
    if (isset($_SESSION[getDurationFilterSessionKey()]) &&
