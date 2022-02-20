@@ -585,7 +585,15 @@ function displayBreakHistory($class)
          $time_in = "NA";
       }
 
-      echo "\t<tr>\n";
+      // show special color for people who left without permission
+      if ($break_type == 'L w/o P')
+      {
+         echo "\t<tr style='background: lawngreen'>\n";
+      }
+      else
+      {
+         echo "\t<tr>\n";
+      }
 
       if ($is_teacher_account)
       {
