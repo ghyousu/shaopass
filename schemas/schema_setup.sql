@@ -4,6 +4,7 @@ DROP TABLE  IF EXISTS common.student CASCADE;
 DROP TYPE   IF EXISTS common.youUserRole CASCADE;
 DROP TYPE   IF EXISTS common.youClassName CASCADE;
 DROP TYPE   IF EXISTS common.youSchemaName CASCADE;
+DROP TYPE   IF EXISTS common.commentType CASCADE;
 
 DROP SCHEMA IF EXISTS common CASCADE;
 CREATE SCHEMA IF NOT EXISTS common;
@@ -11,6 +12,7 @@ CREATE SCHEMA IF NOT EXISTS common;
 CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
 CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'demo');
+CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
 
 CREATE TABLE IF NOT EXISTS common.users(
    user_name   VARCHAR(100) NOT NULL,
@@ -73,6 +75,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.notes (
 DROP TABLE  IF EXISTS demo.seating CASCADE;
 DROP TABLE  IF EXISTS demo.breaks CASCADE;
 DROP TABLE  IF EXISTS demo.notes CASCADE;
+DROP TABLE  IF EXISTS demo.teacherComment CASCADE;
 DROP TYPE   IF EXISTS demo.youBreakType CASCADE;
 DROP TYPE   IF EXISTS demo.youPassType CASCADE;
 
@@ -109,3 +112,13 @@ CREATE TABLE IF NOT EXISTS demo.notes (
    PRIMARY KEY(note_id)
 );
 
+CREATE TABLE IF NOT EXISTS demo.teacherComment (
+   comment_id serial,
+   student_id INT NOT NULL,
+   teacher_name VARCHAR(100) NOT NULL,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512),
+   time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id),
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
+);

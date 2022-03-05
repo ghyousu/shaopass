@@ -175,9 +175,15 @@
       <div align='center'>
       <table border='0' style='width: 60%'>
         <tr>
-        <td colspan='2'>
+        <td>
            <a href="/index.php" style="font-size: 1.5em">
-            Back to main page
+             Breaks History
+           </a>
+        </td>
+
+        <td>
+           <a href="/comments.php" style="font-size: 1.5em">
+             Teacher's Comments
            </a>
         </td>
 

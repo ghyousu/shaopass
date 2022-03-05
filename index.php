@@ -505,9 +505,15 @@
 
       <td align="right">
 <?php else : ?>
-      <td colspan='2'>
+      <td>
         <a href="/notes.php" style="font-size: 1.5em">
            Teacher's Notes
+        </a>
+      </td>
+
+      <td>
+        <a href="/comments.php" style="font-size: 1.5em">
+           Teacher's Comments
         </a>
       </td>
 

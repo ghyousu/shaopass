@@ -1,9 +1,7 @@
 <?php
 
-function printDebug($str)
+function printDebug($str, $debug = 0)
 {
-   $debug=0;
-
    if ($debug == 1)
    {
       echo "Debug: $str <br/>";
@@ -19,6 +17,7 @@ function getStudentTableName() { return getCommonSchemaName() . "." . "student";
 
 // enum types in common schema
 function getClassEnumName() { return getCommonSchemaName() . ".youclassname"; }
+function getCommentTypeEnumName() { return getCommonSchemaName() . ".commentType"; }
 
 function getIndividualSchemaName() { return $_SESSION['schema_name']; }
 
@@ -30,6 +29,7 @@ function getPassTypeEnumName() { return getIndividualSchemaName() . ".youpasstyp
 function getNotesTableName() { return getIndividualSchemaName() . "." . "notes"; }
 function getBreaksTableName() { return getIndividualSchemaName() . "." . "breaks"; }
 function getSeatingTableName() { return getIndividualSchemaName() . "." . "seating"; }
+function getCommentsTableName() { return getIndividualSchemaName() . "." . "teacherComment"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
@@ -41,6 +41,9 @@ function getDefaultNumberDaysToDisplay() { return 0; }
 function getNotesStartDateSessionKey()   { return 'notes_date_start'; }
 function getNotesStopDateSessionKey()    { return 'notes_date_stop'; }
 function getNotesClassFilterSessionKey() { return 'notes_class_id'; }
+function getCommentsStartDateSessionKey()   { return 'comments_date_start'; }
+function getCommentsStopDateSessionKey()    { return 'comments_date_stop'; }
+function getCommentsClassFilterSessionKey() { return 'comments_class_id'; }
 
 // session variable keys
 function getStartDateSessionKey()       { return 'filter_date_start'; }
@@ -50,6 +53,14 @@ function getBreakTypeFilterSessionKey() { return 'filter_break_type'; }
 function getFNameFilterSessionKey()     { return 'filter_fname'; }
 function getLNameFilterSessionKey()     { return 'filter_lname'; }
 function getDurationFilterSessionKey()  { return 'filter_duration'; }
+
+class tcStudent
+{
+   public $student_id = 0;
+   public $fname = "";
+   public $lname = "";
+   public $class = "";
+}
 
 // return a working connection, caller is responsible to close
 // connection when done
@@ -109,6 +120,7 @@ function authenticateUser($username, $pw)
       $schema_name= $row[2];
 
       $_SESSION['user_role'] = $role;
+      $_SESSION['user_name'] = $username;
       $_SESSION['schema_name'] = $schema_name;
 
       if ($role == '')
@@ -288,9 +300,10 @@ function displayStudentNamesFromDB($class)
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 30px; padding-right: 30px;'>\n";
+      $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 0px; padding-right: 5px;'>\n";
       $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
       $tr_data = $tr_data . "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
+      // $tr_data = $tr_data . '<br/><span style="color:red;font-size:2.0em">' . "0" . '</span>';
       $tr_data = $tr_data . "</td>\n";
 
       $tc_idx += 1;
@@ -715,11 +728,15 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "</div>\n";
 } // end of showNotesTable
 
-function showEnumDropDown($db_enum_name, $label, $html_name, $html_id)
+function showEnumDropDown($db_enum_name, $label, $html_name, $html_id, $show_all = true)
 {
    echo "<label for='$html_id'>$label</label>\n";
    echo "<select name='" . $html_name . "' id='" . $html_id . "'>\n";
-   echo "\t<option value='All'>All</option>\n";
+
+   if ($show_all)
+   {
+      echo "\t<option value='All'>All</option>\n";
+   }
 
    $enum_array = getEnumArray($db_enum_name);
 
@@ -731,5 +748,133 @@ function showEnumDropDown($db_enum_name, $label, $html_name, $html_id)
 
    echo "</select>\n";
 }
+
+// NOTE: It's OK to have empty string in the fname or lname variable
+function searchStudents($fname, $lname)
+{
+   $students = array();
+
+   $query = 'SELECT student_id, fname, lname, class FROM ' . getStudentTableName() .
+            " WHERE fname ILIKE '%" . $fname . "%' AND lname ILIKE '%" . $lname . "%'";
+
+   $result = fetchQueryResults($query);
+
+   if ($result == false)
+   {
+      die("Failed to write to database <br/>");
+   }
+   else
+   {
+      while ( $res = pg_fetch_row($result) )
+      {
+         $student = new tcStudent();
+
+         $student->student_id = $res[0];
+         $student->fname      = $res[1];
+         $student->lname      = $res[2];
+         $student->class      = $res[3];
+
+         printDebug("searchStudents: found student id: " . $student->student_id .
+                    ', (' . $student->fname . ' ' . $student->lname .
+                    ') from class ' . $student->class );
+
+         array_push($students, $student);
+      }
+   }
+
+   return $students;
+}
+
+function insertRewardWarning($comment_type, $stud_id, $comment_body)
+{
+   $username = $_SESSION['user_name'];
+
+   $insert_query = "INSERT INTO " . getCommentsTableName() .
+      " (student_id, teacher_name, cmt_type, comment) " .
+      "VALUES ('$stud_id', '$username', '$comment_type', '$comment_body')";
+
+   printDebug( $insert_query);
+
+   $result = fetchQueryResults($insert_query);
+
+   if ($result == false)
+   {
+      die("Failed to add reward/warning to database <br/>");
+   }
+}
+
+// this function's only displayed for teachers
+// function showCommentsTable($start_date_str, $stop_date_str)
+// {
+//    if ($_SESSION['user_role'] == "student")
+//    {
+//       echo '<h1 align="center">\n';
+//       echo '    You are not allowed to view this page\n';
+//       echo '</h1>\n';
+//       return ;
+//    }
+//
+//    $tz = 'America/New_York';
+//    $query = 'SELECT note_id, class, ' .
+//             "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
+//             'note_body FROM ' . getNotesTableName() .
+//             " WHERE DATE(ts AT TIME ZONE '$tz')::date >= '$start_date_str' " .
+//             " AND   DATE(ts AT TIME ZONE '$tz')::date <= '$stop_date_str'";
+//
+//    if (isset($_SESSION[getNotesClassFilterSessionKey()]) &&
+//          $_SESSION[getNotesClassFilterSessionKey()] != 'All')
+//    {
+//       $query = $query . " AND class = '" . $_SESSION[getNotesClassFilterSessionKey()] . "'";
+//    }
+//
+//    $notes = fetchQueryResults($query);
+//
+//    echo '<div align="center">';
+//    echo "<form action='/notes.php' method='POST' enctype='multipart/form-data'>\n";
+//    echo "<table border=1>\n";
+//
+//    echo "<th></th>\n";
+//    echo "<th style='width: 60px'>class</th>\n";
+//    echo "<th style='width: 200px'>Time</th>\n";
+//    echo "<th style='width: 600px'>Note</th>\n";
+//
+//    $row_number = 1;
+//    while ( $entry = pg_fetch_row($notes) )
+//    {
+//       $note_id   = $entry[0];
+//       $class     = $entry[1];
+//       $time      = $entry[2];
+//       $note_body = $entry[3];
+//
+//       echo "\t<tr>\n";
+//
+//       echo "\t\t<td align='center'>\n" .
+//            $row_number .
+//            "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
+//            "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
+//            "\t\t</td>\n";
+//
+//       echo "\t\t<td style='text-align: center'>$class</td>\n";
+//       echo "\t\t<td style='text-align: center'>$time</td>\n";
+//       echo "\t\t<td>$note_body</td>\n";
+//
+//       echo "\t</tr>\n";
+//
+//       $row_number = $row_number + 1;
+//    }
+//
+//    // show delete button
+//    echo "<br/><br/>\n";
+//    echo "\t<tr>\n" .
+//       "\t\t<td column-span='2' rowspan='2'>\n" .
+//       "<br/>" .
+//       "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
+//       "\t\t</td>\n" .
+//       "\t</tr>\n";
+//
+//    echo "</table>\n";
+//    echo "</form>\n";
+//    echo "</div>\n";
+// } // end of showNotesTable
 
 ?>
