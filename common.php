@@ -301,8 +301,11 @@ function displayStudentNamesFromDB($class)
    $tr_idx = 0;
    $tc_idx = 1;
    $tr_data = "";
+   $loop_counter = 1;
    while ( $student = pg_fetch_row($students) )
    {
+      ++$loop_counter;
+
       $row_fully_closed = false;
       $id = $student[0];
 
@@ -331,7 +334,7 @@ function displayStudentNamesFromDB($class)
       }
 
       // empty seat, fill in a blank cell
-      while ($tc_idx != $db_col)
+      while ($tc_idx < $db_col)
       {
          $tr_data = $tr_data . "<td/>\n";
          $tc_idx += 1;
@@ -369,6 +372,11 @@ function displayStudentNamesFromDB($class)
          $tr_data = "";
          $tr_idx = $db_row;
          $tc_idx = 1;
+      }
+
+      if ($loop_counter > 500)
+      {
+         die("exceeding maximum loop count, something must have gone wrong");
       }
    }
 
