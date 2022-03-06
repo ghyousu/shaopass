@@ -355,7 +355,7 @@ function displayStudentNamesFromDB($class)
       }
       $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 0px; padding-right: 5px;'>\n";
       $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
-      $tr_data = $tr_data . '<strong><span style="color:yellow;background-color:red;font-size:1.5em;float:right">' . $num_warn . '</strong></span>';
+      $tr_data = $tr_data . '<strong><span style="color:white;background-color:red;font-size:1.5em;float:right">' . $num_warn . '</strong></span>';
       $tr_data = $tr_data . "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
       $tr_data = $tr_data . '<br/><strong><span style="color:white;background-color:purple;font-size:1.5em;float:right">' . $num_rewards . '</span></strong>';
       $tr_data = $tr_data . "</td>\n";
