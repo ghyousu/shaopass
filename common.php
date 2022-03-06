@@ -726,6 +726,7 @@ function showNotesTable($start_date_str, $stop_date_str)
 
    $tz = 'America/New_York';
    $query = 'SELECT note_id, class, ' .
+            "TO_CHAR(timezone('$tz', ts), 'Dy'), " .
             "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
             'note_body FROM ' . getNotesTableName() .
             " WHERE DATE(ts AT TIME ZONE '$tz')::date >= '$start_date_str' " .
@@ -737,6 +738,8 @@ function showNotesTable($start_date_str, $stop_date_str)
       $query = $query . " AND class = '" . $_SESSION[getNotesClassFilterSessionKey()] . "'";
    }
 
+   printDebug($query, false);
+
    $notes = fetchQueryResults($query);
 
    echo '<div align="center">';
@@ -745,6 +748,7 @@ function showNotesTable($start_date_str, $stop_date_str)
 
    echo "<th></th>\n";
    echo "<th style='width: 60px'>class</th>\n";
+   echo "<th style='width: 60px'>Day of Week</th>\n";
    echo "<th style='width: 200px'>Time</th>\n";
    echo "<th style='width: 600px'>Note</th>\n";
 
@@ -753,8 +757,9 @@ function showNotesTable($start_date_str, $stop_date_str)
    {
       $note_id   = $entry[0];
       $class     = $entry[1];
-      $time      = $entry[2];
-      $note_body = $entry[3];
+      $dow       = $entry[2];
+      $time      = $entry[3];
+      $note_body = $entry[4];
 
       echo "\t<tr>\n";
 
@@ -765,6 +770,7 @@ function showNotesTable($start_date_str, $stop_date_str)
            "\t\t</td>\n";
 
       echo "\t\t<td style='text-align: center'>$class</td>\n";
+      echo "\t\t<td style='text-align: center'>" . $dow . "</td>\n";
       echo "\t\t<td style='text-align: center'>$time</td>\n";
       echo "\t\t<td>$note_body</td>\n";
 
