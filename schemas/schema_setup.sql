@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS common.student (
 DROP TABLE  IF EXISTS ohs_shao.seating CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.notes CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.teacherComment CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youBreakType CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youPassType CASCADE;
 
@@ -71,6 +72,17 @@ CREATE TABLE IF NOT EXISTS ohs_shao.notes (
    PRIMARY KEY(note_id)
 );
 
+CREATE TABLE IF NOT EXISTS ohs_shao.teacherComment (
+   comment_id serial,
+   student_id INT NOT NULL,
+   teacher_name VARCHAR(100) NOT NULL,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512),
+   is_active boolean NOT NULL DEFAULT TRUE,
+   time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id),
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
+);
 ----------------------------------- demo schema ------------------------------
 DROP TABLE  IF EXISTS demo.seating CASCADE;
 DROP TABLE  IF EXISTS demo.breaks CASCADE;
@@ -118,6 +130,7 @@ CREATE TABLE IF NOT EXISTS demo.teacherComment (
    teacher_name VARCHAR(100) NOT NULL,
    cmt_type common.commentType NOT NULL,
    comment VARCHAR(512),
+   is_active boolean NOT NULL DEFAULT TRUE,
    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id),
    FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
