@@ -21,6 +21,7 @@
 
    function getRedeemBtnHtmlName()  { return 'redeem_btn'; }
    function getCommentTypeHtmlName()  { return getCommentTypeHtmlId(); }
+   function getHiddenStudIdHtmlName() { return 'student_id'; }
    function getCommentTextAreaHtmlName()  { return 'comment_body'; }
 
    function getFNameFilterHtmlName()     { return getFNameFilterHtmlId(); }
@@ -113,28 +114,35 @@
 
       // new warning/reward entry row
       echo "\t<tr>\n";
-         // showEnumDropDown(
-         //       getCommentTypeEnumName(),
-         //       '', // empty label
-         //       getCommentTypeHtmlName(),
-         //       getCommentTypeHtmlId(),
-         //       false); // don't show "All" option
-         // echo "\t\t</td>\n";
+      echo "\t\t<td/><td/><td/>"; // empty cells
 
-         // echo "\t\t<td>\n";
-         // echo "\t\t\t" .
-         //    '<textarea name="' . getCommentTextAreaHtmlName() .
-         //    '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
-         //    "\n";
-         // echo "\t\t</td>\n";
-      echo "\t</tr>\n";
+      echo "\t\t<td>\n";
+      showEnumDropDown(
+             getCommentTypeEnumName(),
+             '', // empty label
+             getCommentTypeHtmlName(),
+             getCommentTypeHtmlId(),
+             false); // don't show "All" option
+      echo "\t\t</td>\n";
+
+      echo "\t\t<td>\n" .
+           "\t\t\t" .
+           '<textarea name="' . getCommentTextAreaHtmlName() .
+           '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
+           "\n" .
+           "\t\t</td>\n";
 
       // add the submit button
-      echo "<tr>\n";
-      echo "<td/><td/>\n"; // myou: not sure why colspan is not working here
+      // echo "<td/><td/>\n"; // myou: not sure why colspan is not working here
       echo "<td>\n";
-      echo '<div align="right"><input type="submit" style="font-size: 1.5em" name="add_reward_warning" value="Submit"/></div>' . "\n";
-      echo "</td></tr>\n";
+      echo '<div align="right"><input type="submit" style="font-size: 1.5em" ' .
+           'name="add_reward_warning" value="Submit"/></div>' . "\n";
+      echo "</td>\n";
+
+      echo '<td><input type="hidden" value="' . $stud->student_id . '" ' .
+           'name="' . getHiddenStudIdHtmlName() . '" /></td>';
+
+      echo "</tr>\n";
 
       echo "</form>\n";
       echo "</table>\n";
@@ -211,7 +219,7 @@
          //     ["comment_type"]=> string(7) "warning"
          //     ["comment"]=> string(7) "testing"
          //     ["add_reward_warning"]=> string(6) "Submit"
-         //     ["stud_id_for_comment"]=> string(2) "95"
+         //     ["student_id"]=> string(2) "95"
          // }
          insertRewardWarning(
                $_POST[getCommentTypeHtmlName()],
