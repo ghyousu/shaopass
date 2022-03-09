@@ -54,12 +54,25 @@ function getFNameFilterSessionKey()     { return 'filter_fname'; }
 function getLNameFilterSessionKey()     { return 'filter_lname'; }
 function getDurationFilterSessionKey()  { return 'filter_duration'; }
 
+class tcComment
+{
+   public $cmt_id = 0;
+   public $cmt_type = "";
+   public $cmt_text = "";
+   public $is_active = false;
+
+   // for convinience, do time conversion from database and store string in memory
+   public $cmt_dow = "";
+   public $full_ts = "";
+}
+
 class tcStudent
 {
    public $student_id = 0;
    public $fname = "";
    public $lname = "";
    public $class = "";
+   public $comments = array();
 }
 
 // return a working connection, caller is responsible to close
@@ -815,12 +828,21 @@ function showEnumDropDown($db_enum_name, $label, $html_name, $html_id, $show_all
 }
 
 // NOTE: It's OK to have empty string in the fname or lname variable
-function searchStudents($fname, $lname)
+function searchCommentsFromDB($fname, $lname)
 {
    $students = array();
 
-   $query = 'SELECT student_id, fname, lname, class FROM ' . getStudentTableName() .
-            " WHERE fname ILIKE '%" . $fname . "%' AND lname ILIKE '%" . $lname . "%'";
+   $tz = 'America/New_York';
+
+   $query = 'SELECT s.student_id, s.fname, s.lname, s.class, c.comment_id, c.cmt_type, c.comment, ' .
+            "c.is_active, TO_CHAR(timezone('$tz', c.time), 'Dy'), " .
+            "TO_CHAR(timezone('$tz', c.time), 'mm/DD/YYYY HH12:MI:SS AM') " .
+            'FROM ' . getStudentTableName() . ' s, ' .
+            getCommentsTableName() . ' c ' . 'WHERE s.student_id=c.student_id ' .
+            "AND s.fname ILIKE '%" . $fname . "%' AND s.lname ILIKE '%" . $lname . "%' " .
+            'ORDER BY c.is_active';
+
+   printDebug($query, 0);
 
    $result = fetchQueryResults($query);
 
@@ -832,23 +854,43 @@ function searchStudents($fname, $lname)
    {
       while ( $res = pg_fetch_row($result) )
       {
-         $student = new tcStudent();
+         $id = $res[0];
 
-         $student->student_id = $res[0];
-         $student->fname      = $res[1];
-         $student->lname      = $res[2];
-         $student->class      = $res[3];
+         if (!array_key_exists($id, $students))
+         {
+            $student = new tcStudent();
+            $student->student_id = $res[0];
+            $student->fname      = $res[1];
+            $student->lname      = $res[2];
+            $student->class      = $res[3];
 
-         printDebug("searchStudents: found student id: " . $student->student_id .
-                    ', (' . $student->fname . ' ' . $student->lname .
-                    ') from class ' . $student->class );
+            $students[$id] = $student;
 
-         array_push($students, $student);
+            printDebug("searchCommentsFromDB: found student id: " . $student->student_id .
+                  ', (' . $student->fname . ' ' . $student->lname .
+                    ') from class ' . $student->class);
+         }
+
+         $student = $students[$id];
+
+         $comment = new tcComment();
+         $comment->cmt_id    = $res[4];
+         $comment->cmt_type  = $res[5];
+         $comment->cmt_text  = $res[6];
+         $comment->is_active = ($res[7] == 't');
+         $comment->cmt_dow   = $res[8];
+         $comment->full_ts   = $res[9];
+
+         printDebug("searchCommentsFromDB: adding cmt_type " . $comment->cmt_type .
+               ", is_active = " . $comment->is_active . ", dow: " . $comment->cmt_dow .
+               ", ts: " . $comment->full_ts . ", comment: '" . $comment->cmt_type . "'");
+
+         array_push($student->comments, $comment);
       }
    }
 
    return $students;
-}
+} // end of searchCommentsFromDB
 
 function insertRewardWarning($comment_type, $stud_id, $comment_body)
 {
@@ -865,6 +907,21 @@ function insertRewardWarning($comment_type, $stud_id, $comment_body)
    if ($result == false)
    {
       die("Failed to add reward/warning to database <br/>");
+   }
+}
+
+function markCommentsInactive($cmt_id)
+{
+   $query = "UPDATE " . getCommentsTableName() .
+            " SET is_active = 'f' WHERE comment_id = $cmt_id";
+
+   printDebug( $insert_query, 1);
+
+   $result = fetchQueryResults($query);
+
+   if ($result == false)
+   {
+      die("Query '$query' failed!<br/>");
    }
 }
 

@@ -19,9 +19,9 @@
    function getStopDateFilterHtmlId()  { return 'comments_date_range_stop'; }
    function getClassFilterHtmlId()     { return 'class_drop_down'; }
 
+   function getRedeemBtnHtmlName()  { return 'redeem_btn'; }
    function getCommentTypeHtmlName()  { return getCommentTypeHtmlId(); }
    function getCommentTextAreaHtmlName()  { return 'comment_body'; }
-   function getHiddenStudIdHtmlName() { return 'stud_id_for_comment'; }
 
    function getFNameFilterHtmlName()     { return getFNameFilterHtmlId(); }
    function getLNameFilterHtmlName()     { return getLNameFilterHtmlId(); }
@@ -29,40 +29,104 @@
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
    function getClassFilterHtmlName()     { return getClassFilterHtmlId(); }
 
-   function showAddRewardWarningTable($stud)
+   function showCommentsPerStudent($stud)
    {
-      echo "<table border=1>\n";
+      echo "<table name='table_'" . $stud->student_id . "' border=1>\n";
       echo "<form action='/comments.php' method='POST'>\n";
 
       // table header
       echo "\t<tr>\n";
+      echo "\t\t<th></th>\n"; // check box if not yet redeemed
+      echo "\t\t<th>Class</th>\n";
       echo "\t\t<th>Name</th>\n";
-      echo "\t\t<th>Type</th>\n";
-      echo "\t\t<th>Comment</th>\n";
+      echo "\t\t<th style='width:60px;'>Day of Week</th>\n";
+      echo "\t\t<th>Time</th>\n";
+      echo "\t\t<th>Redeemed</th>\n";
+      echo "\t\t<th style='width: 400px;'>Comment</th>\n";
       echo "\t</tr>\n";
 
-      // student name
+      $num_comments = count($stud->comments);
+      for ($i=0; $i<$num_comments; ++$i)
+      {
+         $comment = $stud->comments[$i];
+
+         // comment type
+         if ($comment->cmt_type == 'warning')
+         {
+            echo "\t<tr style='background: yellow;'>\n";
+         }
+         else
+         {
+            echo "\t<tr style='background: cyan;'>\n";
+         }
+
+         // checkbox if not yet redeemed
+         if ($comment->is_active)
+         {
+            echo "\t\t<td>\n" .
+                 "\t\t\t<input style='width: 30px; height: 30px' type='checkbox' " .
+                 "name='cmt_checkbox[]' value='" . $comment->cmt_id . "'>\n" .
+                 "</td>\n";
+         }
+         else
+         {
+            echo "\t\t<td></td>\n";
+         }
+
+         if ($i == 0)
+         {
+            // class
+            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->class </td>\n";
+
+            // student name
+            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->fname $stud->lname </td>\n";
+         }
+
+         // day of week
+         echo "\t\t<td style='text-align:center;font-size: 1.5em;'> $comment->cmt_dow </td>\n";
+
+         // full time stamp
+         echo "\t\t<td style='font-size: 1.5em;'> $comment->full_ts </td>\n";
+
+         // full time stamp
+         if ($comment->is_active)
+         {
+            echo "\t\t<td style='text-align:center;font-size: 1.5em;'> No </td>\n";
+         }
+         else
+         {
+            echo "\t\t<td style='text-align:center;font-size: 1.5em;'> Yes </td>\n";
+         }
+
+         // comments
+         echo "\t\t<td style='font-size: 1.5em;'> $comment->cmt_text </td>\n";
+
+         echo "\t</tr>\n";
+      }
+
+      // add Redeem button on a row by itself
+      // echo "<tr>\n<td align="center">\n";
+      echo "<tr>\n<td colspan=7 >\n";
+      echo '<input type="submit" style="font-size: 1.5em" name="' .
+           getRedeemBtnHtmlName() . '" value="Redeem"/>' . "\n";
+      echo "</td>\n</tr>\n";
+
+      // new warning/reward entry row
       echo "\t<tr>\n";
-      echo "\t\t<td style='font-size: 1.5em;'> $stud->fname $stud->lname </td>\n";
+         // showEnumDropDown(
+         //       getCommentTypeEnumName(),
+         //       '', // empty label
+         //       getCommentTypeHtmlName(),
+         //       getCommentTypeHtmlId(),
+         //       false); // don't show "All" option
+         // echo "\t\t</td>\n";
 
-      // comment types (enum from database)
-      echo "\t\t<td>\n";
-      showEnumDropDown(
-            getCommentTypeEnumName(),
-            '', // empty label
-            getCommentTypeHtmlName(),
-            getCommentTypeHtmlId(),
-            false); // don't show "All" option
-      echo "\t\t</td>\n";
-
-      // comment text area
-      echo "\t\t<td>\n";
-      echo "\t\t\t" .
-           '<textarea name="' . getCommentTextAreaHtmlName() .
-           '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
-           "\n";
-      echo "\t\t</td>\n";
-
+         // echo "\t\t<td>\n";
+         // echo "\t\t\t" .
+         //    '<textarea name="' . getCommentTextAreaHtmlName() .
+         //    '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
+         //    "\n";
+         // echo "\t\t</td>\n";
       echo "\t</tr>\n";
 
       // add the submit button
@@ -72,13 +136,25 @@
       echo '<div align="right"><input type="submit" style="font-size: 1.5em" name="add_reward_warning" value="Submit"/></div>' . "\n";
       echo "</td></tr>\n";
 
-      // hidden student id that's not being displayed
-      echo '<input type="hidden" name="' . getHiddenStudIdHtmlName() . '" value="' . $stud->student_id . '">';
-
       echo "</form>\n";
       echo "</table>\n";
    }
 
+   function showCommentHistory($students)
+   {
+      echo "<table name='cmt_table_outter' border=1>\n";
+
+      foreach ($students as $id => $stud)
+      {
+         echo "<tr><td>\n";
+
+         showCommentsPerStudent($stud);
+
+         echo "</td></tr>\n";
+      }
+
+      echo "</table>\n";
+   }
 
    if (!isset($_SESSION['LOGGED_IN']))
    {
@@ -115,6 +191,18 @@
       {
          // the processing is moved down to the "body" so
          // table can be displayed properly on the page
+      }
+      else if (isset($_POST[getRedeemBtnHtmlName()]))
+      {
+         $num_cmt_ids = count($_POST['cmt_checkbox']);
+         for ($i=0; $i<$num_cmt_ids; ++$i)
+         {
+            $cmt_id = $_POST['cmt_checkbox'][$i];
+
+            printDebug('comment_id: ' . $cmt_id, 0);
+
+            markCommentsInactive($cmt_id);
+         }
       }
       else if (isset($_POST['add_reward_warning']))
       {
@@ -314,19 +402,15 @@
          $fname = $_POST['fname_filter'];
          $lname = $_POST['lname_filter'];
 
-         $students = searchStudents($fname, $lname);
+         $students = searchCommentsFromDB($fname, $lname);
 
          if (count($students) == 0)
          {
             echo '<p style="color:red">Did not find any students matching the serach critia. Try again</p>';
          }
-         else if (count($students) > 1)
-         {
-            echo '<p style="color:red">Found multiple students matching the search critia. Please narrow down your search to a single student</p>';
-         }
          else
          {
-            showAddRewardWarningTable($students[0]);
+            showCommentHistory($students);
          }
       }
    ?>
