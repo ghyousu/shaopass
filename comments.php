@@ -42,7 +42,6 @@
       echo "\t\t<th>Name</th>\n";
       echo "\t\t<th style='width:60px;'>Day of Week</th>\n";
       echo "\t\t<th>Time</th>\n";
-      echo "\t\t<th>Redeemed</th>\n";
       echo "\t\t<th style='width: 400px;'>Comment</th>\n";
       echo "\t</tr>\n";
 
@@ -89,16 +88,6 @@
          // full time stamp
          echo "\t\t<td style='font-size: 1.5em;'> $comment->full_ts </td>\n";
 
-         // full time stamp
-         if ($comment->is_active)
-         {
-            echo "\t\t<td style='text-align:center;font-size: 1.5em;'> No </td>\n";
-         }
-         else
-         {
-            echo "\t\t<td style='text-align:center;font-size: 1.5em;'> Yes </td>\n";
-         }
-
          // comments
          echo "\t\t<td style='font-size: 1.5em;'> $comment->cmt_text </td>\n";
 
@@ -114,7 +103,7 @@
 
       // new warning/reward entry row
       echo "\t<tr>\n";
-      echo "\t\t<td/><td/><td/>"; // empty cells
+      echo "\t\t<td/>";
 
       echo "\t\t<td>\n";
       showEnumDropDown(
@@ -125,7 +114,7 @@
              false); // don't show "All" option
       echo "\t\t</td>\n";
 
-      echo "\t\t<td>\n" .
+      echo "\t\t<td colspan=3>\n" .
            "\t\t\t" .
            '<textarea name="' . getCommentTextAreaHtmlName() .
            '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
@@ -134,7 +123,7 @@
 
       // add the submit button
       echo "<td>\n";
-      echo '<div align="right"><input type="submit" style="font-size: 1.5em" ' .
+      echo '<div align="left"><input type="submit" style="font-size: 1.5em" ' .
            'name="add_reward_warning" value="Submit"/></div>' . "\n";
       echo "</td>\n";
 
