@@ -52,6 +52,8 @@ function getClassFilterSessionKey()     { return 'filter_class_id'; }
 function getBreakTypeFilterSessionKey() { return 'filter_break_type'; }
 function getFNameFilterSessionKey()     { return 'filter_fname'; }
 function getLNameFilterSessionKey()     { return 'filter_lname'; }
+function getCmtFNameFilterSessionKey()  { return 'cmt_filter_fname'; }
+function getCmtLNameFilterSessionKey()  { return 'cmt_filter_lname'; }
 function getDurationFilterSessionKey()  { return 'filter_duration'; }
 
 class tcComment

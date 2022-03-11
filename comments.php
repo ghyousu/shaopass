@@ -13,8 +13,8 @@
 
    function getCommentTypeHtmlId() { return 'comment_type'; }
 
-   function getFNameFilterHtmlId()     { return 'fname_filter'; }
-   function getLNameFilterHtmlId()     { return 'lname_filter'; }
+   function getFNameFilterHtmlId()     { return 'cmt_fname_filter'; }
+   function getLNameFilterHtmlId()     { return 'cmt_lname_filter'; }
    function getStartDateFilterHtmlId() { return 'comments_date_range_start'; }
    function getStopDateFilterHtmlId()  { return 'comments_date_range_stop'; }
    function getClassFilterHtmlId()     { return 'class_drop_down'; }
@@ -133,7 +133,6 @@
            "\t\t</td>\n";
 
       // add the submit button
-      // echo "<td/><td/>\n"; // myou: not sure why colspan is not working here
       echo "<td>\n";
       echo '<div align="right"><input type="submit" style="font-size: 1.5em" ' .
            'name="add_reward_warning" value="Submit"/></div>' . "\n";
@@ -168,22 +167,7 @@
    {
       header("location: /login.php");
    }
-/*
-   // create default date strings for the session. will be over-written by filtering
-   if (!isset($_SESSION[getCommentsStartDateSessionKey()]) ||
-       !isset($_SESSION[getCommentsStopDateSessionKey()]))
-   {
-      $stop_date_str  = date("Y-m-d");
-      $num_days_ago_str = '-' . getDefaultNumberDaysToDisplay() . ' days';
-      $start_date_str = date('Y-m-d', strtotime($stop_date_str . $num_days_ago_str));
 
-      $_SESSION[getCommentsStartDateSessionKey()] = $start_date_str;
-      $_SESSION[getCommentsStopDateSessionKey()]  = $stop_date_str;
-
-      printDebug("auto-gen start date: " . $_SESSION[getCommentsStartDateSessionKey()] );
-      printDebug("auto-gen stop date:  " . $_SESSION[getCommentsStopDateSessionKey()] );
-   }
-*/
    if ($_SERVER['REQUEST_METHOD'] === 'POST')
    {
       // var_dump($_POST);
@@ -199,6 +183,11 @@
       {
          // the processing is moved down to the "body" so
          // table can be displayed properly on the page
+         $_SESSION[getCmtFNameFilterSessionKey()] = $_POST[getFNameFilterHtmlName()];
+         $_SESSION[getCmtLNameFilterSessionKey()] = $_POST[getLNameFilterHtmlName()];
+
+         printDebug("filtered fname:      " . $_SESSION[getCmtFNameFilterSessionKey()], 0);
+         printDebug("filtered lname:      " . $_SESSION[getCmtLNameFilterSessionKey()], 0);
       }
       else if (isset($_POST[getRedeemBtnHtmlName()]))
       {
@@ -226,126 +215,68 @@
                $_POST[getHiddenStudIdHtmlName()],
                $_POST[getCommentTextAreaHtmlName()]);
       }
-/*
-      else if (isset($_POST['note_checkbox']))
-      {
-         $note_id_list = $_POST['note_checkbox'];
-         deleteNotes($note_id_list);
-      }
-      else if (isset($_POST['apply_filter']))
-      {
-         // array(3) { ["date_range_start"]=> string(10) "2021-12-09" ["date_range_stop"]=> string(10) "2022-01-08" ["apply_filter"]=> string(12) "Apply Filter" }
-         $_SESSION[getCommentsStartDateSessionKey()]   = $_POST[getStartDateFilterHtmlName()];
-         $_SESSION[getCommentsStopDateSessionKey()]    = $_POST[getStopDateFilterHtmlName()];
-         $_SESSION[getCommentsClassFilterSessionKey()] = $_POST[getClassFilterHtmlName()];
-
-         printDebug("filtered start date: " . $_SESSION[getCommentsStartDateSessionKey()] );
-         printDebug("filtered stop date:  " . $_SESSION[getCommentsStopDateSessionKey()] );
-         printDebug("filtered class id:   " . $_SESSION[getCommentsClassFilterSessionKey()] );
-      }
-      else // assume it's note submission from the index page
-      {
-         $notes = $_POST['notes'];
-
-         enterNotesToDatabase($notes);
-
-         header("location: /index.php");
-      }
-*/
    }
 ?>
 
      <script type="text/javascript">
-      // function getDateString(date_obj)
-      // {
-      //    var yyyy = date_obj.getFullYear().toString();
-      //    var mm   = (date_obj.getMonth()+1).toString().padStart(2, '0');
-      //    var dd   = date_obj.getDate().toString().padStart(2, '0');
 
-      //    var date_str = yyyy + "-" + mm + "-" + dd;
+      function updateFilter(html_id, stored_value)
+      {
+         debugger;
+         var html_elem = document.getElementById(html_id);
 
-      //    return date_str;
-      // }
+         html_elem.value = stored_value;
+      }
 
-      // this function returns string 'NA' if key is not found in session store
-      // function getStartDateFromSession()
-      // {
-      //    var value =
-      //       <?php
-      //          if (isset($_SESSION[getCommentsStartDateSessionKey()]))
-      //          {
-      //             echo "'" . $_SESSION[getCommentsStartDateSessionKey()] . "';";
-      //          }
-      //          else
-      //          {
-      //             echo "'NA';";
-      //          }
-      //       ?>
+      function getFilterFNameFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getCmtFNameFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getCmtFNameFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'';";
+               }
+            ?>
 
-      //    return value;
-      // }
+         return value;
+      }
 
-      // function getStopDateFromSession()
-      // {
-      //    var value =
-      //       <?php
-      //          if (isset($_SESSION[getCommentsStopDateSessionKey()]))
-      //          {
-      //             echo "'" . $_SESSION[getCommentsStopDateSessionKey()] . "';";
-      //          }
-      //          else
-      //          {
-      //             echo "'NA';";
-      //          }
-      //       ?>
+      function getFilterLNameFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getCmtLNameFilterSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getCmtLNameFilterSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'';";
+               }
+            ?>
 
-      //    return value;
-      // }
+         return value;
+      }
 
-      // function getFilterClassIdFromSession()
-      // {
-      //    var value =
-      //       <?php
-      //          if (isset($_SESSION[getCommentsClassFilterSessionKey()]))
-      //          {
-      //             echo "'" . $_SESSION[getCommentsClassFilterSessionKey()] . "';";
-      //          }
-      //          else
-      //          {
-      //             echo "'All';";
-      //          }
-      //       ?>
+      function on_page_loaded()
+      {
+         updateFilter(
+               "<?php echo getFNameFilterHtmlId(); ?>",
+               getFilterFNameFromSession());
 
-      //    return value;
-      // }
-
-      // function updateFilter(html_id, stored_value)
-      // {
-      //    debugger;
-      //    var html_elem = document.getElementById(html_id);
-
-      //    html_elem.value = stored_value;
-      // }
-
-      // function on_page_loaded()
-      // {
-      //    updateFilter(
-      //          "<?php echo getStartDateFilterHtmlId(); ?>",
-      //          getStartDateFromSession());
-
-      //    updateFilter(
-      //          "<?php echo getStopDateFilterHtmlId(); ?>",
-      //          getStopDateFromSession());
-
-      //    updateFilter(
-      //          "<?php echo getClassFilterHtmlId(); ?>",
-      //          getFilterClassIdFromSession());
-      // }
+         updateFilter(
+               "<?php echo getLNameFilterHtmlId(); ?>",
+               getFilterLNameFromSession());
+      }
      </script>
 
   </head>
 
-<body>
+<body onload="on_page_loaded()">
 <?php if ($_SESSION['user_role'] == "student") : ?>
       <h1 align="center">
           You are not allowed to view this page
@@ -404,11 +335,14 @@
    </table>
 
    <?php
+      $filter_by_name = isset($_SESSION[getCmtFNameFilterSessionKey()]) ||
+         isset($_SESSION[getCmtLNameFilterSessionKey()]);
+
       // display the comment's action table for selected students
-      if (isset($_POST['search_name_btn']))
+      if ($filter_by_name)
       {
-         $fname = $_POST['fname_filter'];
-         $lname = $_POST['lname_filter'];
+         $fname = $_SESSION[getCmtFNameFilterSessionKey()];
+         $lname = $_SESSION[getCmtLNameFilterSessionKey()];
 
          $students = searchCommentsFromDB($fname, $lname);
 
@@ -422,60 +356,8 @@
          }
       }
    ?>
-
-<?php if (!isset($_POST['search_name_btn'])) : ?>
-<!-- date filtering -->
-        <form action='/comments.php' method='POST'>
-        <tr>
-           <td>
-              <br/>
-              <label for="start">Date start:</label>
-              <input type="date" value="2022-01-30"
-                 name="<?php echo getStartDateFilterHtmlId(); ?>"
-                 id="<?php echo getStartDateFilterHtmlId(); ?>"
-                 min="2021-12-01"
-                 max="2050-12-31" />
-           </td>
-
-           <td>
-              <br/>
-              <label for="stop">Date stop:</label>
-              <input type="date" value="2023-01-30"
-                 name="<?php echo getStopDateFilterHtmlId(); ?>"
-                 id="<?php echo getStopDateFilterHtmlId(); ?>"
-                 min="2021-12-01"
-                 max="2050-12-31" />
-           </td>
-
-           <td>
-             <br/>
-             <?php
-               showEnumDropDown(
-                     getClassEnumName(),
-                     'Classes: ',
-                     getClassFilterHtmlId(),
-                     getClassFilterHtmlName());
-             ?>
-           </td>
-
-           <td>
-               <br/>
-               <input type="submit" name="apply_filter" Value="Apply Filter"/>
-           </td>
-        </tr>
-        </form>
-      </table>
-      </div>
-      <?php
-         $start_date_str = $_SESSION[getCommentsStartDateSessionKey()];
-         $stop_date_str  = $_SESSION[getCommentsStopDateSessionKey()];
-
-         printDebug("date range: " . $start_date_str . " to " . $stop_date_str);
-
-         showCommentsTable($start_date_str, $stop_date_str);
-      ?>
-<?php endif; ?> <!-- end of if "search_name_btn" -->
 <?php endif; ?>
+
 </body>
 
 </html>
