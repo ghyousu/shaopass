@@ -102,12 +102,15 @@ function fetchQueryResults($query)
    $conn = getDBConnection();
 
    printDebug("query: '$query'<br/>");
+
    $result = pg_query($conn, $query);
 
    if ($result == false)
    {
+      die('Failed to execute query. query str: "' . $query . '". <br/>' .
+          'Error str: "' . pg_last_error($conn) . '"');
+
       pg_close($conn);
-      die('Failed to query from database');
    }
 
    pg_close($conn);
@@ -123,33 +126,26 @@ function authenticateUser($username, $pw)
 
    $result = fetchQueryResults($query);
 
-   if ($result == false)
+   $row  = pg_fetch_row($result);
+   $role = $row[0];
+   $auth_class = $row[1];
+   $schema_name= $row[2];
+
+   $_SESSION['user_role'] = $role;
+   $_SESSION['user_name'] = $username;
+   $_SESSION['schema_name'] = $schema_name;
+
+   if ($role == '')
    {
-      die("Failed to get user info from database <br/>");
+      return false; // failed to find login into
    }
-   else
+   else if ($role == 'student')
    {
-      $row  = pg_fetch_row($result);
-      $role = $row[0];
-      $auth_class = $row[1];
-      $schema_name= $row[2];
-
-      $_SESSION['user_role'] = $role;
-      $_SESSION['user_name'] = $username;
-      $_SESSION['schema_name'] = $schema_name;
-
-      if ($role == '')
-      {
-         return false; // failed to find login into
-      }
-      else if ($role == 'student')
-      {
-         // this is only applicable to student account
-         $_SESSION['class_id']  = $auth_class;
-      }
-
-      return true;
+      // this is only applicable to student account
+      $_SESSION['class_id']  = $auth_class;
    }
+
+   return true;
 }
 
 function checkoutStudent($student_id, $break_type, $pass_type)
@@ -159,15 +155,9 @@ function checkoutStudent($student_id, $break_type, $pass_type)
 
    $result = fetchQueryResults($insert_query);
 
-   if ($result == false)
-   {
-      die("Failed to write to database <br/>");
-   }
-   else
-   {
-      $break_id = pg_fetch_row($result)[0];
-      printDebug("successfully inserted break id: $break_id <br/>");
-   }
+   $break_id = pg_fetch_row($result)[0];
+
+   printDebug("successfully inserted break id: $break_id <br/>");
 
    return $break_id;
 }
@@ -179,12 +169,7 @@ function checkinStudent($student_id, $break_id)
 
    printDebug($update_query);
 
-   $result = fetchQueryResults($update_query);
-
-   if ($result == false)
-   {
-      die("Failed to check in student with id: $student_id and break_id: $break_id<br/>");
-   }
+   fetchQueryResults($update_query);
 }
 
 function deleteBreaks($break_id_list)
@@ -212,14 +197,7 @@ function enterNotesToDatabase($notes)
    $insert_query = "INSERT INTO " . getNotesTableName() . " (note_body, class) " .
       "VALUES ('" . $notes . "', '" . $_SESSION['class_id'] . "')";
 
-   $result = fetchQueryResults($insert_query);
-
-   if ($result == false)
-   {
-      echo 'You entered: <br/>';
-      echo $notes . '<br/>';
-      die("Failed to enter notes to database <br/>");
-   }
+   fetchQueryResults($insert_query);
 }
 
 function deleteNotes($note_id_list)
@@ -275,19 +253,12 @@ function getActiveWarningsRewards($class, $cmt_type)
 
    $result = fetchQueryResults($query);
 
-   if ($result == false)
+   while ( $res = pg_fetch_row($result) )
    {
-      die("Failed to get active warnings for students. <br/>");
-   }
-   else
-   {
-      while ( $res = pg_fetch_row($result) )
-      {
-         $stud_id  = $res[0];
-         $num_warn = $res[1];
+      $stud_id  = $res[0];
+      $num_warn = $res[1];
 
-         $id_warn_map[$stud_id] = $num_warn;
-      }
+      $id_warn_map[$stud_id] = $num_warn;
    }
 
    return $id_warn_map;
@@ -848,47 +819,40 @@ function searchCommentsFromDB($fname, $lname)
 
    $result = fetchQueryResults($query);
 
-   if ($result == false)
+   while ( $res = pg_fetch_row($result) )
    {
-      die("Failed to write to database <br/>");
-   }
-   else
-   {
-      while ( $res = pg_fetch_row($result) )
+      $id = $res[0];
+
+      if (!array_key_exists($id, $students))
       {
-         $id = $res[0];
+         $student = new tcStudent();
+         $student->student_id = $res[0];
+         $student->fname      = $res[1];
+         $student->lname      = $res[2];
+         $student->class      = $res[3];
 
-         if (!array_key_exists($id, $students))
-         {
-            $student = new tcStudent();
-            $student->student_id = $res[0];
-            $student->fname      = $res[1];
-            $student->lname      = $res[2];
-            $student->class      = $res[3];
+         $students[$id] = $student;
 
-            $students[$id] = $student;
-
-            printDebug("searchCommentsFromDB: found student id: " . $student->student_id .
-                  ', (' . $student->fname . ' ' . $student->lname .
-                    ') from class ' . $student->class);
-         }
-
-         $student = $students[$id];
-
-         $comment = new tcComment();
-         $comment->cmt_id    = $res[4];
-         $comment->cmt_type  = $res[5];
-         $comment->cmt_text  = $res[6];
-         $comment->is_active = ($res[7] == 't');
-         $comment->cmt_dow   = $res[8];
-         $comment->full_ts   = $res[9];
-
-         printDebug("searchCommentsFromDB: adding cmt_type " . $comment->cmt_type .
-               ", is_active = " . $comment->is_active . ", dow: " . $comment->cmt_dow .
-               ", ts: " . $comment->full_ts . ", comment: '" . $comment->cmt_type . "'");
-
-         array_push($student->comments, $comment);
+         printDebug("searchCommentsFromDB: found student id: " . $student->student_id .
+               ', (' . $student->fname . ' ' . $student->lname .
+                 ') from class ' . $student->class);
       }
+
+      $student = $students[$id];
+
+      $comment = new tcComment();
+      $comment->cmt_id    = $res[4];
+      $comment->cmt_type  = $res[5];
+      $comment->cmt_text  = $res[6];
+      $comment->is_active = ($res[7] == 't');
+      $comment->cmt_dow   = $res[8];
+      $comment->full_ts   = $res[9];
+
+      printDebug("searchCommentsFromDB: adding cmt_type " . $comment->cmt_type .
+            ", is_active = " . $comment->is_active . ", dow: " . $comment->cmt_dow .
+            ", ts: " . $comment->full_ts . ", comment: '" . $comment->cmt_type . "'");
+
+      array_push($student->comments, $comment);
    }
 
    return $students;
@@ -902,14 +866,9 @@ function insertRewardWarning($comment_type, $stud_id, $comment_body)
       " (student_id, teacher_name, cmt_type, comment) " .
       "VALUES ('$stud_id', '$username', '$comment_type', '$comment_body')";
 
-   printDebug( $insert_query);
+   printDebug( $insert_query, 0);
 
-   $result = fetchQueryResults($insert_query);
-
-   if ($result == false)
-   {
-      die("Failed to add reward/warning to database <br/>");
-   }
+   fetchQueryResults($insert_query);
 }
 
 function markCommentsInactive($cmt_id)
@@ -919,86 +878,7 @@ function markCommentsInactive($cmt_id)
 
    printDebug($query, 0);
 
-   $result = fetchQueryResults($query);
-
-   if ($result == false)
-   {
-      die("Query '$query' failed!<br/>");
-   }
+   fetchQueryResults($query);
 }
-
-// this function's only displayed for teachers
-// function showCommentsTable($start_date_str, $stop_date_str)
-// {
-//    if ($_SESSION['user_role'] == "student")
-//    {
-//       echo '<h1 align="center">\n';
-//       echo '    You are not allowed to view this page\n';
-//       echo '</h1>\n';
-//       return ;
-//    }
-//
-//    $tz = 'America/New_York';
-//    $query = 'SELECT note_id, class, ' .
-//             "TO_CHAR(timezone('$tz', ts), 'mm/DD/YYYY HH12:MI:SS AM'), " .
-//             'note_body FROM ' . getNotesTableName() .
-//             " WHERE DATE(ts AT TIME ZONE '$tz')::date >= '$start_date_str' " .
-//             " AND   DATE(ts AT TIME ZONE '$tz')::date <= '$stop_date_str'";
-//
-//    if (isset($_SESSION[getNotesClassFilterSessionKey()]) &&
-//          $_SESSION[getNotesClassFilterSessionKey()] != 'All')
-//    {
-//       $query = $query . " AND class = '" . $_SESSION[getNotesClassFilterSessionKey()] . "'";
-//    }
-//
-//    $notes = fetchQueryResults($query);
-//
-//    echo '<div align="center">';
-//    echo "<form action='/notes.php' method='POST' enctype='multipart/form-data'>\n";
-//    echo "<table border=1>\n";
-//
-//    echo "<th></th>\n";
-//    echo "<th style='width: 60px'>class</th>\n";
-//    echo "<th style='width: 200px'>Time</th>\n";
-//    echo "<th style='width: 600px'>Note</th>\n";
-//
-//    $row_number = 1;
-//    while ( $entry = pg_fetch_row($notes) )
-//    {
-//       $note_id   = $entry[0];
-//       $class     = $entry[1];
-//       $time      = $entry[2];
-//       $note_body = $entry[3];
-//
-//       echo "\t<tr>\n";
-//
-//       echo "\t\t<td align='center'>\n" .
-//            $row_number .
-//            "\t\t\t<input  style='width: 20px; height: 20px' type='checkbox' " .
-//            "name='note_checkbox[]' value='" .  $note_id . "'>\n" .
-//            "\t\t</td>\n";
-//
-//       echo "\t\t<td style='text-align: center'>$class</td>\n";
-//       echo "\t\t<td style='text-align: center'>$time</td>\n";
-//       echo "\t\t<td>$note_body</td>\n";
-//
-//       echo "\t</tr>\n";
-//
-//       $row_number = $row_number + 1;
-//    }
-//
-//    // show delete button
-//    echo "<br/><br/>\n";
-//    echo "\t<tr>\n" .
-//       "\t\t<td column-span='2' rowspan='2'>\n" .
-//       "<br/>" .
-//       "\t\t\t" . '<input type="submit" style="font-size: 1.5em" name="submit" Value="Delete Selected"/>' . "\n" .
-//       "\t\t</td>\n" .
-//       "\t</tr>\n";
-//
-//    echo "</table>\n";
-//    echo "</form>\n";
-//    echo "</div>\n";
-// } // end of showNotesTable
 
 ?>
