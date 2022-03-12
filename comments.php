@@ -243,6 +243,18 @@
          }
       }
 
+      function resetEnumDropDownFontSize()
+      {
+         // debugger;
+         var elem_name = <?php echo "'" . getCommentTypeHtmlName() . "'"; ?>;
+         var elements  = document.getElementsByName(elem_name);
+
+         for (let i=0; i<elements.length; i++)
+         {
+            elements[i].style.fontSize = '1.5em';
+         }
+      }
+
       function updateFilter(html_id, stored_value)
       {
          debugger;
@@ -287,6 +299,8 @@
 
       function on_page_loaded()
       {
+         resetEnumDropDownFontSize();
+
          updateFilter(
                "<?php echo getFNameFilterHtmlId(); ?>",
                getFilterFNameFromSession());
