@@ -2,6 +2,17 @@
   <head>
      <title>Teacher's Comments</title>
 
+     <style>
+      .cmt_td_reward {
+         background-color: cyan;
+         font-size: 1.5em;
+      }
+      .cmt_td_warn   {
+         background-color: yellow;
+         font-size: 1.5em;
+      }
+     </style>
+
 <?php
    require_once("common.php");
 
@@ -50,17 +61,15 @@
       {
          $comment = $stud->comments[$i];
 
-         // comment type
+         $td_class_name = 'cmt_td_reward';
          if ($comment->cmt_type == 'warning')
          {
-            echo "\t<tr style='background: yellow;'>\n";
-         }
-         else
-         {
-            echo "\t<tr style='background: cyan;'>\n";
+            $td_class_name = 'cmt_td_warn';
          }
 
-         // checkbox if not yet redeemed
+         echo "\t<tr>\n";
+
+         // show checkbox if not yet redeemed
          if ($comment->is_active)
          {
             echo "\t\t<td>\n" .
@@ -83,13 +92,13 @@
          }
 
          // day of week
-         echo "\t\t<td style='text-align:center;font-size: 1.5em;'> $comment->cmt_dow </td>\n";
+         echo "\t\t<td class='$td_class_name' style='text-align:center;'> $comment->cmt_dow </td>\n";
 
          // full time stamp
-         echo "\t\t<td style='font-size: 1.5em;'> $comment->full_ts </td>\n";
+         echo "\t\t<td class='$td_class_name'> $comment->full_ts </td>\n";
 
          // comments
-         echo "\t\t<td style='font-size: 1.5em;'> $comment->cmt_text </td>\n";
+         echo "\t\t<td class='$td_class_name'> $comment->cmt_text </td>\n";
 
          echo "\t</tr>\n";
       }
