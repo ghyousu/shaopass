@@ -48,12 +48,20 @@
 
       // table header
       echo "\t<tr>\n";
-      echo "\t\t<th></th>\n"; // check box if not yet redeemed
       echo "\t\t<th>Class</th>\n";
       echo "\t\t<th>Name</th>\n";
+      echo "\t\t<th></th>\n"; // check box if not yet redeemed
       echo "\t\t<th style='width:60px;'>Day of Week</th>\n";
       echo "\t\t<th>Time</th>\n";
       echo "\t\t<th style='width: 400px;'>Comment</th>\n";
+      echo "\t</tr>\n";
+
+      $num_comments = count($stud->comments);
+
+      echo "\t<tr>\n";
+      // class and student name
+      echo "\t\t<td rowspan=" . ($num_comments + 1) . " style='font-size: 1.5em;'> $stud->class </td>\n";
+      echo "\t\t<td rowspan=" . ($num_comments + 1) . " style='font-size: 1.5em;'> $stud->fname <br/> $stud->lname </td>\n";
       echo "\t</tr>\n";
 
       $num_comments = count($stud->comments);
@@ -67,7 +75,14 @@
             $td_class_name = 'cmt_td_warn';
          }
 
-         echo "\t<tr>\n";
+         if ($comment->is_active)
+         {
+            echo "\t<tr>\n";
+         }
+         else // redeemed
+         {
+            echo "\t<tr name='inactive_tr'>\n";
+         }
 
          // show checkbox if not yet redeemed
          if ($comment->is_active)
@@ -80,15 +95,6 @@
          else
          {
             echo "\t\t<td></td>\n";
-         }
-
-         if ($i == 0)
-         {
-            // class
-            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->class </td>\n";
-
-            // student name
-            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->fname <br/> $stud->lname </td>\n";
          }
 
          // day of week
@@ -218,6 +224,28 @@
 
      <script type="text/javascript">
 
+      function hide_redeemed_rows()
+      {
+         debugger;
+         var chkbox = document.getElementById('hide_redeemed_chkbox');
+
+         var is_checked = chkbox.checked;
+
+         var redeemed_rows = document.getElementsByName('inactive_tr');
+
+         for (let i=0; i<redeemed_rows.length; i++)
+         {
+            if (is_checked)
+            {
+               redeemed_rows[i].style.display = "none";
+            }
+            else
+            {
+               redeemed_rows[i].style.display = "table-row";
+            }
+         }
+      }
+
       function updateFilter(html_id, stored_value)
       {
          debugger;
@@ -326,11 +354,19 @@
         </td>
 
         <td>
+            <label for="hide_redeemed">Hide Redeemed:</label>
+            <input style="width: 120px" type="checkbox"
+               id="hide_redeemed_chkbox" onclick="hide_redeemed_rows()" />
+        </td>
+
+        <td>
             <input type="submit" name="search_name_btn" Value="Search"/>
         </td>
      </tr>
      </form>
    </table>
+
+   <hr/>
 
    <?php
       $filter_by_name = isset($_SESSION[getCmtFNameFilterSessionKey()]) ||
