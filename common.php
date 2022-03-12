@@ -874,7 +874,8 @@ function insertRewardWarning($comment_type, $stud_id, $comment_body)
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .
-            " SET is_active = 'f' WHERE comment_id = $cmt_id";
+            " SET is_active = 'f', redeem_time = 'NOW()' " .
+            "WHERE comment_id = $cmt_id";
 
    printDebug($query, 0);
 

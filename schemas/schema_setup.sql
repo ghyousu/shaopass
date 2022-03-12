@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.teacherComment (
    comment VARCHAR(512),
    is_active boolean NOT NULL DEFAULT TRUE,
    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   redeem_time TIMESTAMPTZ DEFAULT NOW(),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id),
    FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
 );
@@ -132,6 +133,7 @@ CREATE TABLE IF NOT EXISTS demo.teacherComment (
    comment VARCHAR(512),
    is_active boolean NOT NULL DEFAULT TRUE,
    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   redeem_time TIMESTAMPTZ DEFAULT NOW(),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id),
    FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
 );
