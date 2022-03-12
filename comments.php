@@ -88,7 +88,7 @@
             echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->class </td>\n";
 
             // student name
-            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->fname $stud->lname </td>\n";
+            echo "\t\t<td rowspan=" . $num_comments . " style='font-size: 1.5em;'> $stud->fname <br/> $stud->lname </td>\n";
          }
 
          // day of week
