@@ -813,7 +813,7 @@ function searchCommentsFromDB($fname, $lname)
             'FROM ' . getStudentTableName() . ' s, ' .
             getCommentsTableName() . ' c ' . 'WHERE s.student_id=c.student_id ' .
             "AND s.fname ILIKE '%" . $fname . "%' AND s.lname ILIKE '%" . $lname . "%' " .
-            'ORDER BY c.is_active';
+            'ORDER BY c.is_active, c.time';
 
    printDebug($query, 0);
 
