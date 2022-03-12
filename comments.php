@@ -60,8 +60,8 @@
 
       echo "\t<tr>\n";
       // class and student name
-      echo "\t\t<td rowspan=" . ($num_comments + 1) . " style='font-size: 1.5em;'> $stud->class </td>\n";
-      echo "\t\t<td rowspan=" . ($num_comments + 1) . " style='font-size: 1.5em;'> $stud->fname <br/> $stud->lname </td>\n";
+      echo "\t\t<td rowspan=" . ($num_comments + 3) . " style='font-size: 1.5em;'> $stud->class </td>\n";
+      echo "\t\t<td rowspan=" . ($num_comments + 3) . " style='font-size: 1.5em;'> $stud->fname <br/> $stud->lname </td>\n";
       echo "\t</tr>\n";
 
       $num_comments = count($stud->comments);
@@ -111,41 +111,38 @@
 
       // add Redeem button on a row by itself
       // echo "<tr>\n<td align="center">\n";
-      echo "<tr>\n<td colspan=7 >\n";
+      echo "<tr>\n<td colspan=4 >\n";
       echo '<input type="submit" style="font-size: 1.5em" name="' .
            getRedeemBtnHtmlName() . '" value="Redeem"/>' . "\n";
       echo "</td>\n</tr>\n";
 
-      // new warning/reward entry row
+      // ---------------------- LAST ROW new warning/reward -------------------------------
       echo "\t<tr>\n";
-      echo "\t\t<td/>";
 
-      echo "\t\t<td>\n";
+      echo "\t\t<td colspan=4>\n";
+
       showEnumDropDown(
              getCommentTypeEnumName(),
              '', // empty label
              getCommentTypeHtmlName(),
              getCommentTypeHtmlId(),
              false); // don't show "All" option
-      echo "\t\t</td>\n";
 
-      echo "\t\t<td colspan=3>\n" .
-           "\t\t\t" .
+      echo "\t\t\t" .
            '<textarea name="' . getCommentTextAreaHtmlName() .
            '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
-           "\n" .
-           "\t\t</td>\n";
+           "\n";
 
       // add the submit button
-      echo "<td>\n";
-      echo '<div align="left"><input type="submit" style="font-size: 1.5em" ' .
-           'name="add_reward_warning" value="Submit"/></div>' . "\n";
+      echo '<input type="submit" style="font-size: 1.5em" ' .
+           'name="add_reward_warning" value="Submit"/>' . "\n";
+
+      echo '<input type="hidden" value="' . $stud->student_id . '" ' .
+           'name="' . getHiddenStudIdHtmlName() . '" />';
+
       echo "</td>\n";
-
-      echo '<td><input type="hidden" value="' . $stud->student_id . '" ' .
-           'name="' . getHiddenStudIdHtmlName() . '" /></td>';
-
       echo "</tr>\n";
+      // ---------------------- END OF LAST ROW -------------------------------
 
       echo "</form>\n";
       echo "</table>\n";
