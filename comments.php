@@ -11,6 +11,11 @@
          background-color: yellow;
          font-size: 1.5em;
       }
+      li {
+         float: left;
+         padding: 10px;
+         list-style: none;
+      }
       select[name="comment_type"] {
          font-size: 1.5em;
       }
@@ -124,21 +129,29 @@
 
       echo "\t\t<td colspan=4>\n";
 
+      echo "\t<ul>\n";
+      echo "\t<li>\n";
       showEnumDropDown(
              getCommentTypeEnumName(),
              '', // empty label
              getCommentTypeHtmlName(),
              getCommentTypeHtmlId(),
              false); // don't show "All" option
+      echo "\t</li>\n";
 
+      echo "\t<li>\n";
       echo "\t\t\t" .
            '<textarea name="' . getCommentTextAreaHtmlName() .
            '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
            "\n";
+      echo "\t</li>\n";
 
       // add the submit button
+      echo "\t<li>\n";
       echo '<input type="submit" style="font-size: 1.5em" ' .
            'name="add_reward_warning" value="Submit"/>' . "\n";
+      echo "\t</li>\n";
+      echo "\t</ul>\n";
 
       echo '<input type="hidden" value="' . $stud->student_id . '" ' .
            'name="' . getHiddenStudIdHtmlName() . '" />';
