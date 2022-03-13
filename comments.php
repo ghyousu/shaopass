@@ -19,6 +19,9 @@
       select[name="comment_type"] {
          font-size: 1.5em;
       }
+      select[name="cmt_templates_sel"] {
+         font-size: 1.5em;
+      }
      </style>
 
 <?php
@@ -48,6 +51,25 @@
    function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
    function getClassFilterHtmlName()     { return getClassFilterHtmlId(); }
+
+   function showCommentTemplateDropdown($stud_id)
+   {
+      $cmt_templates = getCommentTemplates();
+
+      $html_id = 'cmt_template_' . $stud_id;
+      echo "\n\t<select name='cmt_templates_sel' id='$html_id' onchange='commentTemplateSelected(this);'>\n";
+
+      $num_temps = count($cmt_templates);
+      for ($i=0; $i<$num_temps; ++$i)
+      {
+         $val = $cmt_templates[$i];
+         echo "\t\t<option value='$val'>$val</option>\n";
+      }
+
+      echo "\t\t<option value='Other'>Other</option>\n";
+
+      echo "\n\t</select>\n";
+   }
 
    function showCommentsPerStudent($stud)
    {
@@ -140,11 +162,16 @@
       echo "\t</li>\n";
 
       echo "\t<li>\n";
-      echo "\t\t\t" .
-           '<textarea name="' . getCommentTextAreaHtmlName() .
-           '" placeholder="Enter your comment here ..." style="font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
+      echo "\n\t<span style='display:grid'>\n";
+      showCommentTemplateDropdown($stud->student_id);
+
+      $cmt_ta_id = 'cmt_ta_' . $stud->student_id;
+      echo "\t\t" .
+           '<textarea id="' . $cmt_ta_id . '" name="' . getCommentTextAreaHtmlName() .
+           '" placeholder="Enter your comment here ..." style="display:none; font-size: 1.5em; width: 500px; height: 150px; resize: none"></textarea>' .
            "\n";
-      echo "\t</li>\n";
+      echo "\n\t</span>\n";
+      echo "\n\t</li>\n";
 
       // add the submit button
       echo "\t<li>\n";
@@ -223,19 +250,49 @@
          // sample inputs:
          // array(4) {
          //     ["comment_type"]=> string(7) "warning"
-         //     ["comment"]=> string(7) "testing"
+         //     ["cmt_templates_sel"]=> string(7) "Wander Around classroom"
+         //     ["comment_body"]=> string(7) "testing"
          //     ["add_reward_warning"]=> string(6) "Submit"
          //     ["student_id"]=> string(2) "95"
          // }
+         $comment_body = $_POST['cmt_templates_sel'];
+         if ($_POST['cmt_templates_sel'] == "Other")
+         {
+            $comment_body = $_POST[getCommentTextAreaHtmlName()];
+         }
+
          insertRewardWarning(
                $_POST[getCommentTypeHtmlName()],
                $_POST[getHiddenStudIdHtmlName()],
-               $_POST[getCommentTextAreaHtmlName()]);
+               $comment_body);
       }
    }
 ?>
 
      <script type="text/javascript">
+
+      function commentTemplateSelected(sel_elem)
+      {
+         debugger;
+         var html_id = sel_elem.id;
+         var stud_id = html_id.split("_")[2];
+
+         var sel_option = sel_elem[sel_elem.selectedIndex];
+
+         var sel_text = sel_option.text;
+
+         var cmt_ta_id = 'cmt_ta_' + stud_id;
+         var cmt_text_area = document.getElementById(cmt_ta_id);
+
+         if (sel_text == "Other") // show the input text area
+         {
+            cmt_text_area.style.display = "table";
+         }
+         else
+         {
+            cmt_text_area.style.display = "none";
+         }
+      }
 
       function hide_redeemed_rows()
       {

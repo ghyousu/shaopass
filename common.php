@@ -29,6 +29,7 @@ function getPassTypeEnumName() { return getIndividualSchemaName() . ".youpasstyp
 function getNotesTableName() { return getIndividualSchemaName() . "." . "notes"; }
 function getBreaksTableName() { return getIndividualSchemaName() . "." . "breaks"; }
 function getSeatingTableName() { return getIndividualSchemaName() . "." . "seating"; }
+function getCommentTemplateTableName() { return getIndividualSchemaName() . "." . "comment_template"; }
 function getCommentsTableName() { return getIndividualSchemaName() . "." . "teacherComment"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
@@ -880,6 +881,23 @@ function markCommentsInactive($cmt_id)
    printDebug($query, 0);
 
    fetchQueryResults($query);
+}
+
+function getCommentTemplates()
+{
+   $cmt_templates = array();
+
+   $query = "SELECT comment FROM " . getCommentTemplateTableName() .
+            " WHERE cmt_type = 'warning' ORDER BY comment_id";
+
+   $result = fetchQueryResults($query);
+
+   while ( $res = pg_fetch_row($result) )
+   {
+      array_push($cmt_templates, $res[0]);
+   }
+
+   return $cmt_templates;
 }
 
 ?>
