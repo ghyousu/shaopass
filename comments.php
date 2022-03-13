@@ -19,6 +19,9 @@
       select[name="comment_type"] {
          font-size: 1.5em;
       }
+      select[name="cmt_type_sel"] {
+         font-size: 1.5em;
+      }
       select[name="cmt_templates_sel"] {
          font-size: 1.5em;
       }
@@ -51,6 +54,23 @@
    function getStartDateFilterHtmlName() { return getStartDateFilterHtmlId(); }
    function getStopDateFilterHtmlName()  { return getStopDateFilterHtmlId(); }
    function getClassFilterHtmlName()     { return getClassFilterHtmlId(); }
+
+   function showWarningRewardTypes($stud_id)
+   {
+      $enum_array = getEnumArray(getCommentTypeEnumName());
+
+      $html_id = 'cmt_type_' . $stud_id;
+      echo "\n\t<select name='cmt_type_sel' id='$html_id' onchange='commentTypeSelected(this);'>\n";
+
+      $num_types = count($enum_array);
+      for ($i=0; $i<$num_types; ++$i)
+      {
+         $val = $enum_array[$i];
+         echo "\t\t<option value='$val'>$val</option>\n";
+      }
+
+      echo "\n\t</select>\n";
+   }
 
    function showCommentTemplateDropdown($stud_id)
    {
@@ -153,12 +173,7 @@
 
       echo "\t<ul>\n";
       echo "\t<li>\n";
-      showEnumDropDown(
-             getCommentTypeEnumName(),
-             '', // empty label
-             getCommentTypeHtmlName(),
-             getCommentTypeHtmlId(),
-             false); // don't show "All" option
+      showWarningRewardTypes($stud->student_id);
       echo "\t</li>\n";
 
       echo "\t<li>\n";
@@ -249,27 +264,56 @@
       {
          // sample inputs:
          // array(4) {
-         //     ["comment_type"]=> string(7) "warning"
+         //     ["cmt_type_sel"]=> string(7) "warning"
          //     ["cmt_templates_sel"]=> string(7) "Wander Around classroom"
          //     ["comment_body"]=> string(7) "testing"
          //     ["add_reward_warning"]=> string(6) "Submit"
          //     ["student_id"]=> string(2) "95"
          // }
-         $comment_body = $_POST['cmt_templates_sel'];
-         if ($_POST['cmt_templates_sel'] == "Other")
+         $stud_id      = $_POST[getHiddenStudIdHtmlName()];
+         $comment_type = $_POST['cmt_type_sel'];
+         $comment_body = $_POST[getCommentTextAreaHtmlName()];
+
+         if ($comment_type == 'warning' && $_POST['cmt_templates_sel'] != 'Other')
          {
-            $comment_body = $_POST[getCommentTextAreaHtmlName()];
+            $comment_body = $_POST['cmt_templates_sel'];
          }
 
          insertRewardWarning(
-               $_POST[getCommentTypeHtmlName()],
-               $_POST[getHiddenStudIdHtmlName()],
-               $comment_body);
+               $comment_type, $stud_id, $comment_body);
       }
    }
 ?>
 
      <script type="text/javascript">
+
+      function commentTypeSelected(sel_elem)
+      {
+         debugger;
+         var html_id = sel_elem.id;
+         var stud_id = html_id.split("_")[2];
+
+         var sel_option = sel_elem[sel_elem.selectedIndex];
+
+         var sel_text = sel_option.text;
+
+         var cmt_ta_id = 'cmt_ta_' + stud_id;
+         var cmt_text_area = document.getElementById(cmt_ta_id);
+
+         var cmt_temp_id = 'cmt_template_' + stud_id;
+         var cmt_temp_elem = document.getElementById(cmt_temp_id);
+
+         if (sel_text == "reward") // show the input text area
+         {
+            cmt_text_area.style.display = "table";
+            cmt_temp_elem.style.display = "none";
+         }
+         else
+         {
+            cmt_text_area.style.display = "none";
+            cmt_temp_elem.style.display = "inline-block";
+         }
+      }
 
       function commentTemplateSelected(sel_elem)
       {
@@ -286,7 +330,7 @@
 
          if (sel_text == "Other") // show the input text area
          {
-            cmt_text_area.style.display = "table";
+            cmt_text_area.style.display = "inline-block";
          }
          else
          {
