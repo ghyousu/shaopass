@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS common.student (
 DROP TABLE  IF EXISTS ohs_shao.seating CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.notes CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.comment_template;
 DROP TABLE  IF EXISTS ohs_shao.teacherComment CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youBreakType CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youPassType CASCADE;
@@ -88,6 +89,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.teacherComment (
 DROP TABLE  IF EXISTS demo.seating CASCADE;
 DROP TABLE  IF EXISTS demo.breaks CASCADE;
 DROP TABLE  IF EXISTS demo.notes CASCADE;
+DROP TABLE  IF EXISTS demo.comment_template;
 DROP TABLE  IF EXISTS demo.teacherComment CASCADE;
 DROP TYPE   IF EXISTS demo.youBreakType CASCADE;
 DROP TYPE   IF EXISTS demo.youPassType CASCADE;
@@ -123,6 +125,12 @@ CREATE TABLE IF NOT EXISTS demo.notes (
    ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    class     common.youClassName,
    PRIMARY KEY(note_id)
+);
+
+CREATE TABLE IF NOT EXISTS demo.comment_template (
+   comment_id serial,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512)
 );
 
 CREATE TABLE IF NOT EXISTS demo.teacherComment (
