@@ -649,6 +649,10 @@ function displayBreakHistory($class)
       {
          echo "\t<tr style='background: lawngreen'>\n";
       }
+      else if ($break_type == 'Acer w/o P')
+      {
+         echo "\t<tr style='background: deepskyblue'>\n";
+      }
       else
       {
          echo "\t<tr>\n";
