@@ -417,9 +417,9 @@
   </head>
 
 <body onload="on_page_loaded()">
-<?php if ($_SESSION['user_role'] == "student") : ?>
+<?php if ($_SESSION['user_role'] != "teacher") : ?>
       <h1 align="center">
-          You are not allowed to view this page
+          Please log in to a teacher's account to access this page.
       </h1>
 <?php else : ?>
    <div align='center'>
