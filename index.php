@@ -507,18 +507,23 @@
 <?php else : ?>
       <td>
         <a href="/notes.php" style="font-size: 1.5em">
-           Teacher's Notes
+           Teacher's <br/> Notes
         </a>
       </td>
 
       <td>
         <a href="/comments.php" style="font-size: 1.5em">
-           Teacher's Comments
+           Teacher's <br/> Comments
         </a>
       </td>
 
-      <td colspan='2' align="right">
+      <td>
+        <a href="/admin.php" style="font-size: 1.5em">
+           Adamin <br/> Page
+        </a>
+      </td>
 <?php endif; ?>
+      <td>
            <a href="/logout.php" style="font-size: 1.5em">
               Log Out
            </a>
