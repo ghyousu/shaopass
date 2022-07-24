@@ -5,7 +5,7 @@
 <td>
    <table id='admin_left_panel_table'>
       <tr><td><h1>
-         <a title="Add new student(s)" href='/add_student.php'>Add Student(s)</a>
+         <a title="Add new student(s)" href='/admin_add_student.php'>Add Student(s)</a>
       </h1></td></tr>
 
       <tr><td><h1>
