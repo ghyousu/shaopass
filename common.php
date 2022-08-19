@@ -8,6 +8,19 @@ function printDebug($str, $debug = 0)
    }
 }
 
+function printInfo($str, $enabled = 0)
+{
+   if ($enabled == 1)
+   {
+      echo "Info: $str <br/>";
+   }
+}
+
+function printError($str)
+{
+   echo "Error: $str <br/>";
+}
+
 // use public schema for now, can be renamed to other names if needed
 function getCommonSchemaName() { return 'common'; }
 
@@ -784,10 +797,17 @@ function showNotesTable($start_date_str, $stop_date_str)
    echo "</div>\n";
 } // end of showNotesTable
 
-function showEnumDropDown($db_enum_name, $label, $html_name, $html_id, $show_all = true)
+function showEnumDropDown($db_enum_name, $label, $html_name, $html_id, $show_all = true, $on_change = "")
 {
    echo "<label for='$html_id'>$label</label>\n";
-   echo "<select name='" . $html_name . "' id='" . $html_id . "'>\n";
+   echo "<select name='" . $html_name . "' id='" . $html_id . "' ";
+
+   if ($on_change != "")
+   {
+      echo $on_change;
+   }
+
+   echo ">\n";
 
    if ($show_all)
    {
@@ -874,6 +894,17 @@ function insertRewardWarning($comment_type, $stud_id, $comment_body)
    printDebug( $insert_query, 0);
 
    fetchQueryResults($insert_query);
+}
+
+function insertNewStudent($fname, $lname, $class)
+{
+   $insert_query = "INSERT INTO " . getStudentTableName() .
+      " (fname, lname, class) " .
+      "VALUES ('$fname', '$lname', '$class')";
+
+   printDebug($insert_query, 0);
+
+   return fetchQueryResults($insert_query);
 }
 
 function markCommentsInactive($cmt_id)
