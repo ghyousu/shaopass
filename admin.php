@@ -30,7 +30,7 @@
          </h1>
    <?php else : ?>
       <div style='padding-top: 30px;padding-left: 15%'>
-      <table border=1 id='admin_main_table'>
+      <table border=0 id='admin_main_table'>
          <tr>
             <td></td>
             <td>
@@ -50,7 +50,7 @@
          </tr>
 
          <tr>
-            <td>
+            <td style='padding-right: 30px'>
                <?php
                   require_once("admin_template.php");
                ?>
@@ -58,13 +58,9 @@
 
             <td>
             <?php
-               if ($_GET['action'] == 'add')
+               if ($_GET['action'] == 'add_remove')
                {
                   require_once("admin_add_student.php");
-               }
-               else if ($_GET['action'] == 'del')
-               {
-                  require_once("admin_del_student.php");
                }
                else if ($_GET['action'] == 'mod')
                {

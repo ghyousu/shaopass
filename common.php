@@ -907,6 +907,35 @@ function insertNewStudent($fname, $lname, $class)
    return fetchQueryResults($insert_query);
 }
 
+function getStudentNamesPerClass($class)
+{
+   $query = "SELECT student_id, fname, lname FROM " .
+            getStudentTableName() . " WHERE class = '$class'";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id = $row[0];
+      $student->fname      = $row[1];
+      $student->lname      = $row[2];
+
+      array_push($stud_array, $student);
+   }
+
+   return $stud_array;
+}
+
+function deleteStudentPerId($stud_id)
+{
+   $query = "DELETE FROM " . getStudentTableName() . " WHERE student_id = '$stud_id'";
+
+   fetchQueryResults($query);
+}
+
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .
