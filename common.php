@@ -931,7 +931,7 @@ function getStudentNamesPerClass($class)
 
 function deleteStudentPerId($stud_id)
 {
-   $query = "DELETE FROM " . getStudentTableName() . " WHERE student_id = '$stud_id'";
+   $query = "DELETE FROM " . getStudentTableName() . " WHERE student_id = $stud_id";
 
    fetchQueryResults($query);
 }
