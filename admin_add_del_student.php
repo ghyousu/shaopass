@@ -56,6 +56,23 @@
 ?>
 
   <script type="text/javascript">
+   function delete_confirmation(event)
+   {
+      debugger;
+
+      var prompt_text = "Deleting student(s) also deletes all data related to the student(s).\n" +
+                        "This is a non-reversible operation.\n" +
+                        "Use 'Move' student if he/she is changing class.\n" +
+                        "Type exaxtly 'yes' to continue the deletion.";
+
+      var conf_text = prompt(prompt_text, "");
+
+      if (conf_text != 'yes')
+      {
+         event.preventDefault();
+      }
+   }
+
    function validate_input(event)
    {
       debugger;
@@ -135,7 +152,7 @@
       <!-- add the Delete button -->
       <tr>
         <td colspan="100%" style='border-bottom: 1px solid black; padding-top: 10px; padding-bottom: 10px; padding-left: 80%'>
-           <input type='submit' name='del_stud' value='Delete Selected' style='font-size: 1.5em' />
+           <input type='submit' name='del_stud' onclick="delete_confirmation(event)" value='Delete Selected' style='font-size: 1.5em' />
         </td>
       </tr>
 
