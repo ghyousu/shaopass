@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.seating (
    row SMALLINT,
    col SMALLINT,
    UNIQUE(student_id, row, col),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS ohs_shao.breaks (
    time_out    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    time_in     TIMESTAMPTZ DEFAULT NOW(),
    PRIMARY KEY(break_id),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ohs_shao.notes (
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS ohs_shao.teacherComment (
    is_active boolean NOT NULL DEFAULT TRUE,
    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    redeem_time TIMESTAMPTZ DEFAULT NOW(),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id),
-   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
 );
 ----------------------------------- demo schema ------------------------------
 DROP TABLE  IF EXISTS demo.seating CASCADE;
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS demo.seating (
    row SMALLINT,
    col SMALLINT,
    UNIQUE(student_id, row, col),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS demo.breaks (
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS demo.breaks (
    time_out    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    time_in     TIMESTAMPTZ DEFAULT NOW(),
    PRIMARY KEY(break_id),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS demo.notes (
@@ -142,6 +142,6 @@ CREATE TABLE IF NOT EXISTS demo.teacherComment (
    is_active boolean NOT NULL DEFAULT TRUE,
    time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
    redeem_time TIMESTAMPTZ DEFAULT NOW(),
-   FOREIGN KEY(student_id) REFERENCES common.student(student_id),
-   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name)
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
 );
