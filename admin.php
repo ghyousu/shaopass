@@ -60,7 +60,7 @@
             <?php
                if ($_GET['action'] == 'add_remove')
                {
-                  require_once("admin_add_student.php");
+                  require_once("admin_add_del_student.php");
                }
                else if ($_GET['action'] == 'mod')
                {
