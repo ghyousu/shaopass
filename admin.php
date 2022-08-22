@@ -38,7 +38,7 @@
    <script type="text/javascript">
       function updateFilter(html_id, stored_value)
       {
-         debugger;
+         // debugger;
          var html_elem = document.getElementById(html_id);
 
          html_elem.value = stored_value;
@@ -46,7 +46,7 @@
 
       function classDropDownSelectionChanged()
       {
-         debugger;
+         // debugger;
          var class_drop_down_sel = document.getElementById(<?php echo "'" . getClassDropDownId() . "'"; ?>);
 
          var selected_class_name = class_drop_down_sel.value;
