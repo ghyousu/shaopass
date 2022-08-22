@@ -118,7 +118,7 @@
          <tr>
             <td style='padding-right: 30px'>
                <?php
-                  require_once("admin_template.php");
+                  require_once("admin_left_panel.php");
                ?>
             </td>
 
