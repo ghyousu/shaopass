@@ -69,6 +69,7 @@ function getLNameFilterSessionKey()     { return 'filter_lname'; }
 function getCmtFNameFilterSessionKey()  { return 'cmt_filter_fname'; }
 function getCmtLNameFilterSessionKey()  { return 'cmt_filter_lname'; }
 function getDurationFilterSessionKey()  { return 'filter_duration'; }
+function getAdminPageClassSessionKey()  { return 'filter_admin_class_id'; }
 
 class tcComment
 {

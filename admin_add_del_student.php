@@ -127,7 +127,7 @@
       <!-- show existing student names with a checkbox -->
       <hr/>
       <?php
-         $students = getStudentNamesPerClass('901'); // TODO: replace with variable
+         $students = getStudentNamesPerClass($_SESSION[getAdminPageClassSessionKey()]);
          $num_students = count($students);
          $NUM_STUDENT_PER_ROW = 5;
          for ($i=0; $i<$num_students; ++$i):

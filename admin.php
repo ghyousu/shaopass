@@ -16,14 +16,81 @@
          header("location: /login.php");
       }
 
+      if (isset($_GET['class']))
+      {
+         $_SESSION[getAdminPageClassSessionKey()] = $_GET['class'];
+      }
+      else
+      {
+         if (!isset($_SESSION[getAdminPageClassSessionKey()]))
+         {
+            $class_name_array = getEnumArray(getClassEnumName());
+
+            $_SESSION[getAdminPageClassSessionKey()] =$class_name_array[0];
+         }
+      }
+
       function getClassDropDownName() { return 'class_drop_down_name'; }
       function getClassDropDownId()   { return 'class_drop_down_id'; }
 
    ?>
 
+   <script type="text/javascript">
+      function updateFilter(html_id, stored_value)
+      {
+         debugger;
+         var html_elem = document.getElementById(html_id);
+
+         html_elem.value = stored_value;
+      }
+
+      function classDropDownSelectionChanged()
+      {
+         debugger;
+         var class_drop_down_sel = document.getElementById(<?php echo "'" . getClassDropDownId() . "'"; ?>);
+
+         var selected_class_name = class_drop_down_sel.value;
+
+         var new_url = window.location.href + '&class=' + selected_class_name;
+
+         window.location.replace( new_url );
+      }
+
+      function getClassDropDownValueFromSession()
+      {
+         var value =
+            <?php
+               if (isset($_SESSION[getAdminPageClassSessionKey()]))
+               {
+                  echo "'" . $_SESSION[getAdminPageClassSessionKey()] . "';";
+               }
+               else
+               {
+                  echo "'NA';";
+               }
+            ?>
+
+         return value;
+      }
+
+      function on_page_loaded()
+      {
+         var user_role = <?php echo "'" . $_SESSION['user_role'] . "'";?>;
+         if (user_role == 'teacher')
+         {
+            var class_name = getClassDropDownValueFromSession();
+            if (class_name != 'NA')
+            {
+               updateFilter(
+                     "<?php echo getClassDropDownId(); ?>",
+                     class_name);
+            }
+         }
+      }
+   </script>
 </head>
 
-<body>
+<body onload="on_page_loaded()">
    <?php if ($_SESSION['user_role'] != "teacher") : ?>
          <h1 align="center">
              Please log in to a teacher's account to access this page.
@@ -35,16 +102,15 @@
             <td></td>
             <td>
                <?php
-                  $on_change_callback = 'onchange="self.location=self.location+' .
-                     "'?class='" . 'this.selectedIndex"';
+                  $on_change_callback = 'onchange="classDropDownSelectionChanged()"';
 
                   showEnumDropDown(
                      getClassEnumName(),
                      'Class: ',
                      getClassDropDownName(),
                      getClassDropDownId(),
-                     false,
-                     $on_change_callback); // last arg: "show_all"
+                     false, // last arg: "show_all"
+                     $on_change_callback);
                ?>
             </td>
          </tr>
