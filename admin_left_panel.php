@@ -18,6 +18,12 @@
 <table id='admin_left_panel_table'>
    <tr>
       <td><h1>
+         <a title="To Main page" href='/'>Main Page</a>
+      </h1></td>
+   </tr>
+
+   <tr>
+      <td><h1>
          <a title="Add/Remove student(s)" href='/admin.php?action=add_remove'>Add/Remove<br/>Student(s)</a>
       </h1></td>
    </tr>
