@@ -937,6 +937,15 @@ function deleteStudentPerId($stud_id)
    fetchQueryResults($query);
 }
 
+function renameStudent($stud_id, $new_fname, $new_lname)
+{
+   $query = "UPDATE " . getStudentTableName() .
+            " SET fname = '$new_fname', lname = '$new_lname'" .
+            " WHERE student_id = $stud_id";
+
+   fetchQueryResults($query);
+}
+
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .

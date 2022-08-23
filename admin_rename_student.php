@@ -8,10 +8,30 @@
    function getRadioBtnId($index)      { return 'radio_btn_id_' . $index; }
    function getRadioBtnLabelId($index) { return 'radio_btn_label_id_' . $index; }
 
-   function getFNameHtmlId($index)     { return 'fname_' . $index; }
-   function getLNameHtmlId($index)     { return 'lname_' . $index; }
-   function getFNameHtmlName($index)   { return getFNameHtmlId($index); }
-   function getLNameHtmlName($index)   { return getLNameHtmlId($index); }
+   function getNewFNameHtmlId()     { return 'new_fname'; }
+   function getNewLNameHtmlId()     { return 'new_lname'; }
+   function getNewFNameHtmlName()   { return getNewFNameHtmlId(); }
+   function getNewLNameHtmlName()   { return getNewLNameHtmlId(); }
+
+   if ($_SERVER['REQUEST_METHOD'] === 'POST')
+   {
+      // var_dump($_POST);
+      // die('test');
+      // sample $_POST
+      // array(4) {
+      //    ["stud_id_radio_group_name"]=> string(3) "181"
+      //    ["new_fname"]=> string(5) "Mason"
+      //    ["new_lname"]=> string(3) "You"
+      //    ["rename"]=> string(15) "Rename Selected"
+      // }
+      $stud_id   = $_POST[getRadioButtonGroupName()];
+      $new_fname = trim($_POST[getNewFNameHtmlName()]);
+      $new_lname = trim($_POST[getNewLNameHtmlName()]);
+
+      printDebug("Renaming student with id $stud_id to '$new_fname' '$new_lname'", 0);
+
+      renameStudent($stud_id, $new_fname, $new_lname);
+   }
 ?>
 
 <script type="text/javascript">
@@ -52,13 +72,44 @@
 
       var selected_student_name = label_elem.innerText;
 
-      // TODO: update "from" student name
+      // dispaly the "rename" from "to"
+      var orig_name_label_elem = document.getElementById('orig_name_label');
+      var new_fname_elem       = document.getElementById('new_fname_td');
+      var new_lname_elem       = document.getElementById('new_lname_td');
+      var rename_btn_elem      = document.getElementById('rename_btn_id');
+
+      orig_name_label_elem.innerHTML = "<span style='font-size: 1.5em'>Renaming<br/><B>" + selected_student_name + "</B><br/>To:</span> ";
+      new_fname_elem.style.display   = "table-cell";
+      new_lname_elem.style.display   = "table-cell";
+      rename_btn_elem.style.display  = "table-cell";
+   }
+
+   function rename_btn_clicked(event)
+   {
+      debugger;
+
+      var newFnameId = <?php echo "'" . getNewFNameHtmlId() . "'"; ?>;
+      var newLnameId = <?php echo "'" . getNewLNameHtmlId() . "'"; ?>;
+
+      var newFnameElem = document.getElementById(newFnameId);
+      var newLnameElem = document.getElementById(newLnameId);
+
+      var fname_value = newFnameElem.value.trim();
+      var lname_value = newLnameElem.value.trim();
+
+      if (fname_value == '' || lname_value == '')
+      {
+         event.preventDefault();
+         alert("You must fill in both First Name and Last Name");
+         return ;
+      }
    }
 
 </script>
 
 <table border=0>
    <form action='/admin.php?action=mod' method='POST'>
+      <p style='font-size: 1.5em'>Select a student to be renamed. </p>
 
       <!-- show existing student names as radio buttons -->
       <?php
@@ -92,22 +143,38 @@
 
       <?php endfor; ?>
 
+      <!-- add a artificial line break -->
+      <tr>
+        <td colspan="100%" style='border-bottom: 1px solid black; padding-top: 10px; padding-bottom: 10px; padding-left: 80%'>
+        </td>
+      </tr>
+
       <!-- show 'rename to' fname, lname and submit button -->
       <tr>
-         <td>
-            <br/>
-            <label style="font-size: 1.5em" for="<?php echo getFNameHtmlId($i) ?>">First Name:</label>
-            <input style="width: 120px" type="text"
-                id="<?php echo getFNameHtmlId( $i ); ?>"
-                name="<?php echo getFNameHtmlName( $i ); ?>" >
+         <td id='orig_name_label'>
+            <!-- hidden field, filled by javascript when a radio button's selected -->
          </td>
 
-         <td>
+         <td id='new_fname_td' style="display: none">
             <br/>
-            <label style="font-size: 1.5em" for="<?php echo getLNameHtmlId( $i ); ?>">Last Name:</label>
+            <label style="font-size: 1.5em" for="<?php echo getNewFNameHtmlId(); ?>">First Name:</label>
             <input style="width: 120px" type="text"
-               id="<?php echo getLNameHtmlId( $i ); ?>"
-               name="<?php echo getLNameHtmlName( $i ); ?>" >
+                id="<?php echo getNewFNameHtmlId(); ?>"
+                name="<?php echo getNewFNameHtmlName(); ?>" >
+         </td>
+
+         <td id='new_lname_td' style="display: none">
+            <br/>
+            <label style="font-size: 1.5em" for="<?php echo getNewLNameHtmlId(); ?>">Last Name:</label>
+            <input style="width: 120px" type="text"
+               id="<?php echo getNewLNameHtmlId(); ?>"
+               name="<?php echo getNewLNameHtmlName(); ?>" >
+          </td>
+
+          <td style='padding-top: 10px;padding-left:80px'>
+             <input id='rename_btn_id' name='rename' onclick="rename_btn_clicked(event)"
+                style='font-size: 1.5em; display: none'
+                type='submit' value='Rename Selected' />
           </td>
       </tr>
 
