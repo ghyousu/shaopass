@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS common.student (
    fname VARCHAR(50) NOT NULL,
    lname VARCHAR(50) NOT NULL,
    class common.youClassName NOT NULL,
+   UNIQUE(fname, lname),
    PRIMARY KEY(student_id)
 );
 
