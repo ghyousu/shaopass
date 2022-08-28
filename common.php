@@ -89,6 +89,8 @@ class tcStudent
    public $fname = "";
    public $lname = "";
    public $class = "";
+   public $seating_row = null;
+   public $seating_col = null;
    public $comments = array();
 }
 
@@ -944,6 +946,61 @@ function renameStudent($stud_id, $new_fname, $new_lname)
             " WHERE student_id = $stud_id";
 
    fetchQueryResults($query);
+}
+
+function getStudentsWithSeatAssignment($class)
+{
+   $query = "SELECT s.student_id, s.fname, s.lname, t.row, t.col FROM " .
+            getStudentTableName() . " s, " .
+            getSeatingTableName() . " t " .
+            "WHERE s.class = '$class' AND s.student_id = t.student_id " .
+            "ORDER BY t.row, t.col";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id  = $row[0];
+      $student->fname       = $row[1];
+      $student->lname       = $row[2];
+      $student->seating_row = $row[3];
+      $student->seating_col = $row[4];
+
+      $array_index = $student->seating_row * 10 + $student->seating_col;
+      $stud_array[$array_index] = $student;
+   }
+
+   // var_dump($stud_array);
+
+   return $stud_array;
+}
+
+function getStudentsWithoutSeatAssignment($class)
+{
+   $query = "SELECT s.student_id, s.fname, s.lname FROM " .
+            getStudentTableName() . " s LEFT JOIN " .
+            getSeatingTableName() . " t " .
+            "ON s.student_id = t.student_id WHERE s.class = '$class' AND " .
+            "t.row IS NULL";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id  = $row[0];
+      $student->fname       = $row[1];
+      $student->lname       = $row[2];
+
+      array_push($stud_array, $student);
+   }
+
+   return $stud_array;
 }
 
 function markCommentsInactive($cmt_id)

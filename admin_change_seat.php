@@ -35,7 +35,7 @@
 <p style='font-size: 1.5em'>Drag student names to the lower table to assign seat</p>
 <table border=1>
       <?php
-         $students = getStudentNamesPerClass($_SESSION[getAdminPageClassSessionKey()]);
+         $students = getStudentsWithoutSeatAssignment($_SESSION[getAdminPageClassSessionKey()]);
          $num_students = count($students);
          $NUM_STUDENT_PER_ROW = 5;
          for ($i=0; $i<$num_students; ++$i):
@@ -58,23 +58,49 @@
 
 <div id='seating_div'>
 
-<br/> <br/> <br/> <hr/>
+<br/> <hr/> <br/>
 
 <table border=1>
-   <form action='/admin.php?action=add_remove' method='POST'>
+   <form action='/admin.php?action=seating' method='POST'>
 
+   <tr>
+      <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> >
+         <div align='center' style='font-size: 2em'><b>Back</b></div>
+      </td>
+   </tr>
+
+   <?php $students = getStudentsWithSeatAssignment($_SESSION[getAdminPageClassSessionKey()]); ?>
    <?php for ($row=$NUM_ROWS_PER_CLASS; $row>0;--$row): ?>
       <tr>
       <?php for ($col=1; $col<=$NUM_COLUMNS_PER_ROW; ++$col): ?>
          <td width="200" height="50">
-            <div id=<?php echo "'seat_" . $row . "_" . $col . "'"; ?>
-               ondrop='drop(event)' ondragover='allowDrop(event)'>
-               <?php echo "Row " . $row . ", Col " . $col; ?>
-            </div>
+            <?php
+               $array_index = $row * 10 + $col;
+               if (isset($students[$array_index]))
+               {
+                  $stud = $students[$array_index];
+
+                  echo '<div id="seat_' . $row . '_' . $col . '"' .  " draggable='true' ondragstart='drag(event)'>\r";
+                  echo $stud->fname . " " . $stud->lname;
+                  echo "</div>\r";
+               }
+               else
+               {
+                  echo '<div id="seat_' . $row . '_' . $col . '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
+                  echo "Row " . $row . ", Col " . $col;
+                  echo "</div>\r";
+               }
+            ?>
          </td>
       <?php endfor; ?>
       </tr>
    <?php endfor; ?>
+
+   <tr>
+      <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> >
+         <div align='center' style='font-size: 2em'><b>Front</b></div>
+      </td>
+   </tr>
 
    </form>
 </table>
