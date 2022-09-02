@@ -80,13 +80,13 @@
                {
                   $stud = $students[$array_index];
 
-                  echo '<div id="seat_' . $row . '_' . $col . '"' .  " draggable='true' ondragstart='drag(event)'>\r";
+                  echo '<div style="font-size: 1.5em" id="seat_' . $row . '_' . $col . '"' .  " draggable='true' ondragstart='drag(event)'>\r";
                   echo $stud->fname . " " . $stud->lname;
                   echo "</div>\r";
                }
                else
                {
-                  echo '<div id="seat_' . $row . '_' . $col . '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
+                  echo '<div style="color= gray" id="seat_' . $row . '_' . $col . '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
                   echo "Row " . $row . ", Col " . $col;
                   echo "</div>\r";
                }
