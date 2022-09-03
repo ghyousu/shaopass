@@ -12,6 +12,8 @@
 ?>
 
 <script type="text/javascript">
+   updated_seating_map = new Map();
+
    function allowDrop(ev)
    {
       ev.preventDefault();
@@ -19,17 +21,46 @@
 
    function drag(ev)
    {
-      ev.dataTransfer.setData("text", ev.target.id);
+      // debugger;
+      ev.dataTransfer.setData("src_elem_id", ev.target.id);
+      ev.dataTransfer.setData("stud_name",   ev.target.innerText);
+      console.log("moving elem " + ev.target.id + ", student name: " + ev.target.innerText);
+   }
+
+   function printUpdatedSeatMap()
+   {
+      console.log("current updated seating map: \n");
+      updated_seating_map.forEach
+      (
+          function (value, key) {
+             console.log("\t" + key + ": " + value +"\n");
+          }
+      )
    }
 
    function drop(ev)
    {
-      debugger;
+      // debugger;
       ev.preventDefault();
-      var data = ev.dataTransfer.getData("text");
-      ev.target.innerText = "";
-      ev.target.appendChild(document.getElementById(data));
+      var src_elem_id = ev.dataTransfer.getData("src_elem_id");
+      var stud_name   = ev.dataTransfer.getData("stud_name");
+
+      if (src_elem_id == ev.target.parentNode.id)
+      {
+         console.log("same src and target elements, do nothing");
+      }
+      else
+      {
+         ev.target.innerText = ""; // clear inner text
+         ev.target.appendChild(document.getElementById(src_elem_id));
+
+         console.log("moved " + stud_name + " to " + ev.target.id);
+         updated_seating_map.set(src_elem_id, ev.target.id);
+      }
+
+      printUpdatedSeatMap();
    }
+
 </script>
 
 <p style='font-size: 1.5em'>Drag student names to the lower table to assign seat</p>
@@ -43,7 +74,7 @@
 
       <?php if ($i % $NUM_STUDENT_PER_ROW == 0) : ?> <tr> <?php endif; ?>
          <td width="150" height="31">
-            <div id=<?php echo "'" . getDraggableHtmlId($i) . "'"?>  draggable="true" ondragstart="drag(event)">
+            <div id=<?php echo "'" . getDraggableHtmlId($students[$i]->student_id) . "'"?>  draggable="true" ondragstart="drag(event)">
                <span style="font-size: 1.5em">
                   <?php
                      echo $students[$i]->fname . " " . $students[$i]->lname;
@@ -80,13 +111,15 @@
                {
                   $stud = $students[$array_index];
 
-                  echo '<div style="font-size: 1.5em" id="seat_' . $row . '_' . $col . '"' .  " draggable='true' ondragstart='drag(event)'>\r";
+                  echo '<div style="font-size: 1.5em" id="' . getDraggableHtmlId($stud->student_id) .
+                       '"' .  " draggable='true' ondragstart='drag(event)'>\r";
                   echo $stud->fname . " " . $stud->lname;
                   echo "</div>\r";
                }
                else
                {
-                  echo '<div style="color= gray" id="seat_' . $row . '_' . $col . '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
+                  echo '<div style="color= gray" id="seat_' . $row . '_' . $col .
+                       '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
                   echo "Row " . $row . ", Col " . $col;
                   echo "</div>\r";
                }
