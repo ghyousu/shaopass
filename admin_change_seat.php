@@ -195,7 +195,7 @@
 
                   echo '<div style="font-size: 1.5em" id="' . getDraggableHtmlId($stud->student_id) .
                        '"' .  " draggable='true' ondragstart='drag(event)'>\r";
-                  echo $stud->fname . " " . $stud->lname;
+                  echo "<b>" . $stud->fname . " " . $stud->lname . "</br/>";
                   echo "</div>\r";
                }
                else
