@@ -100,7 +100,7 @@
       <table border=0 id='admin_main_table'>
          <tr>
             <td></td>
-            <td>
+            <td style='font-size: 1.5em'>
                <?php
                   $on_change_callback = 'onchange="classDropDownSelectionChanged()"';
 
