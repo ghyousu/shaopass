@@ -1021,6 +1021,17 @@ function insertUpdateSeatAssignment($stud_id, $row, $col, $is_insert)
    }
 }
 
+function moveStudent($stud_id, $new_class)
+{
+   $updateQuery = "UPDATE " . getStudentTableName() .
+            " SET class = '$new_class' WHERE student_id = $stud_id";
+
+   $removeSeatingQuery = "DELETE FROM " . getSeatingTableName() .
+            " WHERE student_id = $stud_id";
+
+   fetchQueryResults($updateQuery) && fetchQueryResults($removeSeatingQuery);
+}
+
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .
