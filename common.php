@@ -1003,6 +1003,24 @@ function getStudentsWithoutSeatAssignment($class)
    return $stud_array;
 }
 
+function insertUpdateSeatAssignment($stud_id, $row, $col, $is_insert)
+{
+   $insertQuery = "INSERT INTO " . getSeatingTableName() .
+            " (student_id, row, col) VALUES ($stud_id, $row, $col)";
+
+   $updateQuery = "UPDATE " . getSeatingTableName() .
+            " SET row=$row, col=$col WHERE student_id = $stud_id";
+
+   if ($is_insert)
+   {
+      fetchQueryResults($insertQuery);
+   }
+   else
+   {
+      fetchQueryResults($updateQuery);
+   }
+}
+
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .
