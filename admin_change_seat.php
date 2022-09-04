@@ -200,7 +200,7 @@
                }
                else
                {
-                  echo '<div style="color= gray" id="seat_' . $row . '_' . $col .
+                  echo '<div style="color: gray" id="seat_' . $row . '_' . $col .
                        '"' .  " ondrop='drop(event)' ondragover='allowDrop(event)'>\r";
                   echo "Row " . $row . ", Col " . $col;
                   echo "</div>\r";
