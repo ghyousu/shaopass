@@ -136,13 +136,9 @@
                {
                   require_once("admin_mov_student.php");
                }
-               else if ($_GET['action'] == 'seating')
+               else // if ($_GET['action'] == 'seating')   --> default case
                {
                   require_once("admin_change_seat.php");
-               }
-               else
-               {
-                  echo "Unkown action: " . $_GET['action'] . "<br/>\n";
                }
             ?>
             </td>
