@@ -69,25 +69,38 @@
       )
    }
 
-   function drop(ev)
+   function restoreCellRowColText(cell_elem_id)
    {
       // debugger;
+      var cell_elem = document.getElementById(cell_elem_id);
+
+      var row_idx = cell_elem_id.split("_")[1];
+      var col_idx = cell_elem_id.split("_")[2];
+
+      var cell_text = "Row " + row_idx + ", Col " + col_idx;
+
+      cell_elem.innerText = cell_text;
+      cell_elem.style.color = 'gray';
+   }
+
+   function drop(ev)
+   {
+      debugger;
       ev.preventDefault();
       var src_elem_id = ev.dataTransfer.getData("src_elem_id");
       var stud_name   = ev.dataTransfer.getData("stud_name");
 
-      if (src_elem_id == ev.target.parentNode.id)
-      {
-         console.log("same src and target elements, do nothing");
-      }
-      else
-      {
-         ev.target.innerText = ""; // clear inner text
-         ev.target.appendChild(document.getElementById(src_elem_id));
+      var src_elem = document.getElementById(src_elem_id);
+      var src_parent_cell = src_elem.parentElement;
 
-         console.log("moved " + stud_name + " to " + ev.target.id);
-         updated_seating_map.set(src_elem_id, ev.target.id);
-      }
+      src_parent_cell.addEventListener("dragover", (event) => { allowDrop(event); });
+      restoreCellRowColText(src_parent_cell.id);
+
+      ev.target.innerText = ""; // clear inner text
+      ev.target.appendChild(src_elem);
+
+      console.log("moved " + stud_name + " to " + ev.target.id);
+      updated_seating_map.set(src_elem_id, ev.target.id);
 
       printUpdatedSeatMap();
    }
@@ -104,7 +117,6 @@
    function apply_btn_callback(event)
    {
       // debugger;
-
       var hidden_seating_elem = document.getElementById('<?php echo getUpdatedSeatingMapId(); ?>');
 
       updated_seating_map.forEach
@@ -193,9 +205,12 @@
                {
                   $stud = $students[$array_index];
 
-                  echo '<div style="font-size: 1.5em" id="' . getDraggableHtmlId($stud->student_id) .
+                  echo '<div id="seat_' . $row . '_' . $col .
+                       '"' .  " ondrop='drop(event)' ondragover='null'>\r";
+                  echo '<div style="font-size: 1.5em; font-weight: bold" id="' . getDraggableHtmlId($stud->student_id) .
                        '"' .  " draggable='true' ondragstart='drag(event)'>\r";
-                  echo "<b>" . $stud->fname . " " . $stud->lname . "</br/>";
+                  echo $stud->fname . " " . $stud->lname;
+                  echo "</div>\r";
                   echo "</div>\r";
                }
                else
