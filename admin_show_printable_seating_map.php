@@ -25,6 +25,8 @@ td {
 .cell_id {
    text-align: right;
    padding-right: 5%;
+   padding-bottom: 2%;
+   vertical-align: bottom;
    font-size: 0.5em;
    height: 10px;
    color: gray;
@@ -144,16 +146,19 @@ td {
 
    <?php endfor; ?>
 
-   <!-- show the row / col id -->
+</table>
+
+<!-- show the row / col id on the next page -->
+<table class='singlePagePrintable' border=0>
    <tr>
-      <td class="cell_id" colspan=<?php echo $NUM_NAMES_PER_ROW; ?> >
+      <td class="cell_id">
       <?php
          echo "R" . $row . "C" . $col;
       ?>
       </td>
    </tr>
-
 </table>
+
 <?php endfor; ?>
 
 </body>
