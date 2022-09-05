@@ -11,7 +11,49 @@
    function getSeatChkboxName()  { return getSeatChkboxId(); }
 ?>
 
+<style>
+
+.my_buttons_td {
+   padding-top: 30px;
+   text-align: right;
+}
+
+.my_buttons_input {
+   font-size: 1.5em;
+}
+
+</style>
+
 <script type="text/javascript">
+
+   function selectAllClicked()
+   {
+      debugger;
+
+      var btn_elem = document.getElementById('select_all_btn');
+      var btn_text = btn_elem.value;
+
+      var chk_boxes_elem = document.getElementsByName('<?php echo getSeatChkboxName(); ?>');
+
+      if (btn_text == 'Select All')
+      {
+         btn_elem.value = "De-Select All";
+
+         for (var i in chk_boxes_elem)
+         {
+            chk_boxes_elem[i].checked = true;
+         }
+      }
+      else
+      {
+         btn_elem.value = "Select All";
+
+         for (var i in chk_boxes_elem)
+         {
+            chk_boxes_elem[i].checked = false;
+         }
+      }
+   }
 
 </script>
 
@@ -35,7 +77,7 @@
       <?php for ($col=1; $col<=$NUM_COLUMNS_PER_ROW; ++$col): ?>
          <td width="200" height="50" align='center' style='padding-bottom: 20px; font-size: 1.5em'>
             <input style='width: 30px; height: 30px' type='checkbox'
-              name='<?php echo getSeatChkboxName() . "[]"; ?>'
+              name='<?php echo getSeatChkboxName(); ?>'
               value='<?php echo $row . "_" . $col; ?>'
             >
             <?php echo "Row $row, Col $col"; ?>
@@ -51,11 +93,16 @@
       </td>
    </tr>
 
-   <!-- add the Generate button -->
+   <!-- add the 'Select All' and 'Generate' button -->
    <tr>
-      <td colspan='6' style="padding-top: 30px; padding-left: 75%">
-         <input type='submit' name='gen_seating_map'
-               value='Generated Seating Map' style='font-size: 1.5em' />
+      <td class='my_buttons_td' colspan='4'>
+         <input class='my_buttons_input' id="select_all_btn" type="button"
+            value="Select All" onclick="selectAllClicked();" />
+      </td>
+
+      <td class='my_buttons_td' colspan='2'>
+         <input class='my_buttons_input' type='submit' name='gen_seating_map'
+               value='Generated Seating Map' />
       </td>
    </tr>
 
