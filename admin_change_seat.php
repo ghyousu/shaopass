@@ -98,6 +98,7 @@
 
       ev.target.innerText = ""; // clear inner text
       ev.target.appendChild(src_elem);
+      ev.target.ondragover = "null"; // disable drop zone
 
       console.log("moved " + stud_name + " to " + ev.target.id);
       updated_seating_map.set(src_elem_id, ev.target.id);
