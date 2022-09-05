@@ -93,8 +93,11 @@
       var src_elem = document.getElementById(src_elem_id);
       var src_parent_cell = src_elem.parentElement;
 
-      src_parent_cell.addEventListener("dragover", (event) => { allowDrop(event); });
-      restoreCellRowColText(src_parent_cell.id);
+      if (src_parent_cell.id.split("_")[0] == "seat")
+      {
+         src_parent_cell.addEventListener("dragover", (event) => { allowDrop(event); });
+         restoreCellRowColText(src_parent_cell.id);
+      }
 
       ev.target.innerText = ""; // clear inner text
       ev.target.appendChild(src_elem);
