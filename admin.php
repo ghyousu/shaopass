@@ -96,7 +96,7 @@
              Please log in to a teacher's account to access this page.
          </h1>
    <?php else : ?>
-      <div style='padding-top: 30px;padding-left: 15%'>
+      <div style='padding-top: 30px;padding-left: 10%'>
       <table border=0 id='admin_main_table'>
          <tr>
             <td></td>
@@ -135,6 +135,10 @@
                else if ($_GET['action'] == 'mov')
                {
                   require_once("admin_mov_student.php");
+               }
+               else if ($_GET['action'] == 'seat_map')
+               {
+                  require_once("admin_gen_seat_map.php");
                }
                else // if ($_GET['action'] == 'seating')   --> default case
                {

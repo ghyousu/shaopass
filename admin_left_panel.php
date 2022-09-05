@@ -45,6 +45,12 @@
          <a title="Change seat assignment for a given class" href='/admin.php?action=seating'>Seat Assignment</a>
       </h1></td>
    </tr>
+
+   <tr>
+      <td><h1>
+         <a title="Print seating map" href='/admin.php?action=seat_map'>Seating Map</a>
+      </h1></td>
+   </tr>
 </table>
 
 <?php printHtmlBreaks(10); ?>

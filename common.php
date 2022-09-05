@@ -1032,6 +1032,35 @@ function moveStudent($stud_id, $new_class)
    fetchQueryResults($updateQuery) && fetchQueryResults($removeSeatingQuery);
 }
 
+function getStudentsPerSeat($row, $col)
+{
+   $query = "SELECT s.fname, s.lname, s.class, t.row, t.col FROM " .
+            getStudentTableName() . " s, " .
+            getSeatingTableName() . " t " .
+            "WHERE s.student_id = t.student_id AND t.row = $row AND t.col = $col " .
+            "ORDER BY s.class";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->fname       = $row[0];
+      $student->lname       = $row[1];
+      $student->class       = $row[2];
+      $student->seating_row = $row[3];
+      $student->seating_col = $row[4];
+
+      $stud_array[$student->class] = $student;
+   }
+
+   // var_dump($stud_array);
+
+   return $stud_array;
+}
+
 function markCommentsInactive($cmt_id)
 {
    $query = "UPDATE " . getCommentsTableName() .
