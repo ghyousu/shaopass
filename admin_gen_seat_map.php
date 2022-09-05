@@ -33,7 +33,7 @@
       var btn_elem = document.getElementById('select_all_btn');
       var btn_text = btn_elem.value;
 
-      var chk_boxes_elem = document.getElementsByName('<?php echo getSeatChkboxName(); ?>');
+      var chk_boxes_elem = document.getElementsByName('<?php echo getSeatChkboxName() . "[]"; ?>');
 
       if (btn_text == 'Select All')
       {
@@ -77,7 +77,7 @@
       <?php for ($col=1; $col<=$NUM_COLUMNS_PER_ROW; ++$col): ?>
          <td width="200" height="50" align='center' style='padding-bottom: 20px; font-size: 1.5em'>
             <input style='width: 30px; height: 30px' type='checkbox'
-              name='<?php echo getSeatChkboxName(); ?>'
+              name='<?php echo getSeatChkboxName() . "[]"; ?>'
               value='<?php echo $row . "_" . $col; ?>'
             >
             <?php echo "Row $row, Col $col"; ?>
