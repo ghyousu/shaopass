@@ -90,10 +90,7 @@ td {
    else if ($unit_test == 1)
    {
       printDebug("unit testing... ", 0);
-      $students = getStudentsPerSeat(6,6);
-      array_push($selected_cells, $students);
-
-      $students = getStudentsPerSeat(1,1);
+      $students = getStudentsPerSeat(6, 5);
       array_push($selected_cells, $students);
 
       printDebug("num_students = " . count($students) . "<br/>", 0);
@@ -103,62 +100,64 @@ td {
 <body>
 
 <?php for ($i=0; $i<count($selected_cells); ++$i): ?>
-<table class='singlePagePrintable' border=1>
-   <?php
-      $NUM_NAMES_PER_ROW = 2;
-      $class_enums = getEnumArray(getClassEnumName());
-      $cell_content = $selected_cells[$i];
-      $row = 0;
-      $col = 0;
-   ?>
+   <?php if (count($selected_cells[$i]) > 0) : ?>
+      <table class='singlePagePrintable' border=1>
+         <?php
+            $NUM_NAMES_PER_ROW = 2;
+            $class_enums = getEnumArray(getClassEnumName());
+            $cell_content = $selected_cells[$i];
+            $row = 0;
+            $col = 0;
+         ?>
 
-   <?php for ($j=0; $j<count($class_enums); ++$j): ?>
+         <?php for ($j=0; $j<count($class_enums); ++$j): ?>
 
-      <?php if ($j % $NUM_NAMES_PER_ROW == 0) : ?>
-      <tr>
-      <?php endif; ?>
+            <?php if ($j % $NUM_NAMES_PER_ROW == 0) : ?>
+            <tr>
+            <?php endif; ?>
 
-      <!--  show td data -->
-      <td>
-         <?php if (isset($cell_content[$class_enums[$j]])): ?>
-            <div class='class_name'>
-               <?php echo $class_enums[$j];  ?>
-            </div>
+            <!--  show td data -->
+            <td>
+               <?php if (isset($cell_content[$class_enums[$j]])): ?>
+                  <div class='class_name'>
+                     <?php echo $class_enums[$j];  ?>
+                  </div>
 
-            <br/>
-            <br/>
-            <br/>
+                  <br/>
+                  <br/>
+                  <br/>
 
-            <div class='student_name'>
-               <?php
-                  $stud = $cell_content[$class_enums[$j]];
-                  $row = $stud->seating_row;
-                  $col = $stud->seating_col;
-                  echo $stud->fname . "<br/>" . substr($stud->lname, 0, 2) . ".";
-               ?>
-            </div>
-         <?php endif; ?>
-      </td>
+                  <div class='student_name'>
+                     <?php
+                        $stud = $cell_content[$class_enums[$j]];
+                        $row = $stud->seating_row;
+                        $col = $stud->seating_col;
+                        echo $stud->fname . "<br/>" . substr($stud->lname, 0, 2) . ".";
+                     ?>
+                  </div>
+               <?php endif; ?>
+            </td>
 
-      <?php if ($j % $NUM_NAMES_PER_ROW == 1) : ?>
-      </tr>
-      <?php endif; ?>
+            <?php if ($j % $NUM_NAMES_PER_ROW == 1) : ?>
+            </tr>
+            <?php endif; ?>
 
-   <?php endfor; ?>
+         <?php endfor; ?>
 
-</table>
+      </table>
 
-<!-- show the row / col id on the next page -->
-<table class='singlePagePrintable' border=0>
-   <tr>
-      <td class="cell_id">
-      <?php
-         echo "R" . $row . "C" . $col;
-      ?>
-      </td>
-   </tr>
-</table>
+      <!-- show the row / col id on the next page -->
+      <table class='singlePagePrintable' border=0>
+         <tr>
+            <td class="cell_id">
+            <?php
+               echo "R" . $row . "C" . $col;
+            ?>
+            </td>
+         </tr>
+      </table>
 
+   <?php endif; ?>
 <?php endfor; ?>
 
 </body>
