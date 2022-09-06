@@ -10,6 +10,9 @@ table {
 
 td {
    text-align: center;
+   overflow-wrap: break-word;
+   width: 50%;
+   height: 50%;
 }
 
 .class_name {
@@ -90,7 +93,7 @@ td {
    else if ($unit_test == 1)
    {
       printDebug("unit testing... ", 0);
-      $students = getStudentsPerSeat(6, 5);
+      $students = getStudentsPerSeat(6, 3);
       array_push($selected_cells, $students);
 
       printDebug("num_students = " . count($students) . "<br/>", 0);
