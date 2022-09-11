@@ -287,7 +287,7 @@
 
             var pass_type_name = document.getElementById("pass_type_" + break_id).innerHTML;
 
-            // allow unlimited pass type of "Special and L"
+            // allow unlimited pass type of "Special" and "L w/o"
             if (pass_type_name == "Special")
             {
                continue;
