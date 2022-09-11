@@ -292,7 +292,7 @@
             {
                continue;
             }
-            if (pass_type_name == "L")
+            if (pass_type_name == "L w/o")
             {
                continue;
             }
