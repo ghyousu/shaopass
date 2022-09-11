@@ -505,14 +505,16 @@ function getDurationHtmlStyleBgcolor( $durationHms )
 {
    $duration_in_secs = hhmmssToSeconds($durationHms);
 
-   if ($duration_in_secs >= 20 * 60)
+   if ($duration_in_secs >= 10 * 60)
    {
       $html_style = "style='text-align: center; background-color: red'";
    }
+   /*  2022-09-11; no longer applicable for 2022-2023 school year
    else if ($duration_in_secs >= 15 * 60)
    {
       $html_style = "style='text-align: center; background-color: yellow'";
    }
+   */
    else // under 15 minutes
    {
       $html_style = "style='text-align: center'";
