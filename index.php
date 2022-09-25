@@ -416,6 +416,17 @@
          }
       }
 
+      function setBackgroundColorByClassName(class_name, new_color)
+      {
+         // debugger;
+         const elements = document.getElementsByClassName(class_name);
+
+         for(let i=0; i < elements.length; i++)
+         {
+            elements[i].style.background = new_color;
+         }
+      }
+
       function enableAllRadioButtons(chk_group_name)
       {
          const chbx = document.getElementsByName(chk_group_name);
@@ -490,30 +501,36 @@
       // verify at least name and break type is selected
       function submitClicked(event)
       {
+         var alert_text_elem = document.getElementById('alert_text');
+         var show_alert = false;
+
          if (false == atLeastOneRadioButtonChecked("student_id"))
+         {
+            alert_text_elem.innerText = "You need to select your name first";
+            show_alert = true;
+         }
+         else if (false == atLeastOneRadioButtonChecked("break_type"))
+         {
+            alert_text_elem.innerText = "You must select a type";
+            show_alert = true;
+
+            setBackgroundColorByClassName('breakTypesTable', 'yellow');
+         }
+         else if (false == atLeastOneRadioButtonChecked("pass_type"))
+         {
+            alert_text_elem.innerText = "You must select a pass";
+            show_alert = true;
+
+            setBackgroundColorByClassName('passTypesTable', 'yellow');
+         }
+
+         if (show_alert)
          {
             // debugger;
             var alertDivElem = document.getElementById('my_custom_alert_id');
             alertDivElem.style.display = "block";
 
-            var alert_text_elem = document.getElementById('alert_text');
-            alert_text_elem.innerText = "You need to select your name first";
-
-            event.preventDefault(); // DON'T SUBMIT with violation
-            return ;
-         }
-
-         if (false == atLeastOneRadioButtonChecked("break_type"))
-         {
-            alert("You must select a type");
-            event.preventDefault(); // DON'T SUBMIT with violation
-            return ;
-         }
-
-         if (false == atLeastOneRadioButtonChecked("pass_type"))
-         {
-            alert("You must select a pass");
-            event.preventDefault(); // DON'T SUBMIT with violation
+            event.preventDefault();
             return ;
          }
       }
@@ -521,6 +538,9 @@
       function closeBtnClicked()
       {
          document.getElementById('my_custom_alert_id').style.display = "none";
+
+         setBackgroundColorByClassName('breakTypesTable', 'none');
+         setBackgroundColorByClassName('passTypesTable', 'none');
 
          event.preventDefault();
          return ;
