@@ -5,8 +5,7 @@
      <style>
       .my_custom_alert {
          padding: 20px;
-         background-color: red;
-         color: white;
+         background-color: fuchsia;
          position: fixed;
          width: 50%;
          top: 30%;
@@ -511,14 +510,14 @@
          }
          else if (false == atLeastOneRadioButtonChecked("break_type"))
          {
-            alert_text_elem.innerText = "You must select a type";
+            alert_text_elem.innerText = "You need to select a type";
             show_alert = true;
 
             setBackgroundColorByClassName('breakTypesTable', 'yellow');
          }
          else if (false == atLeastOneRadioButtonChecked("pass_type"))
          {
-            alert_text_elem.innerText = "You must select a pass";
+            alert_text_elem.innerText = "You need to select a pass";
             show_alert = true;
 
             setBackgroundColorByClassName('passTypesTable', 'yellow');
