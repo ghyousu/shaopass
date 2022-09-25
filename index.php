@@ -2,6 +2,36 @@
   <head>
      <title>Student Break Tracker</title>
 
+     <style>
+      .my_custom_alert {
+         padding: 20px;
+         background-color: red;
+         color: white;
+         position: fixed;
+         width: 50%;
+         top: 30%;
+         left: 20%;
+         display: none;
+      }
+
+      #alert_text {
+         font-size: 2em;
+         font-weight: bold;
+      }
+
+      .closebtn {
+         margin-left: 40%;
+         font-weight: bold;
+         font-size: 2em;
+         transition: 0.3s;
+         border: 5px solid cyan;
+      }
+
+      .closebtn:hover {
+         color: black;
+      }
+     </style>
+
      <?php
          require_once("common.php");
 
@@ -396,7 +426,7 @@
          }
       }
 
-      // this is callback when a sutdent's name is selected
+      // this is callback when a sutdents name is selected
       function studentNameSelected(radioBtn)
       {
          var student_id = radioBtn.value;
@@ -462,7 +492,13 @@
       {
          if (false == atLeastOneRadioButtonChecked("student_id"))
          {
-            alert("You need to select your name first");
+            // debugger;
+            var alertDivElem = document.getElementById('my_custom_alert_id');
+            alertDivElem.style.display = "block";
+
+            var alert_text_elem = document.getElementById('alert_text');
+            alert_text_elem.innerText = "You need to select your name first";
+
             event.preventDefault(); // DON'T SUBMIT with violation
             return ;
          }
@@ -482,10 +518,15 @@
          }
       }
 
+      function closeBtnClicked()
+      {
+         document.getElementById('my_custom_alert_id').style.display = "none";
+
+         event.preventDefault();
+         return ;
+      }
+
      </script>
-
-
-
 
   </head>
 
@@ -670,5 +711,10 @@
      </table>
      </div>
 
+     <!-- ---------- alert box ---------- -->
+     <div class='my_custom_alert' id='my_custom_alert_id'>
+         <p id='alert_text'>Testing alert message</p>
+         <button id='closeAlertBtn' class="closebtn" onclick="closeBtnClicked()">OK</button>
+     </div>
   </body>
 </html>
