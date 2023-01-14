@@ -11,7 +11,7 @@ CREATE SCHEMA IF NOT EXISTS common;
 
 CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
-CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'demo');
+CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
 
 CREATE TABLE IF NOT EXISTS common.users(
@@ -86,6 +86,62 @@ CREATE TABLE IF NOT EXISTS ohs_shao.teacherComment (
    FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
    FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
 );
+
+----------------------------------- salim schema ------------------------------
+DROP TABLE  IF EXISTS salim.seating CASCADE;
+DROP TABLE  IF EXISTS salim.breaks CASCADE;
+DROP TABLE  IF EXISTS salim.notes CASCADE;
+DROP TABLE  IF EXISTS salim.comment_template;
+DROP TABLE  IF EXISTS salim.teacherComment CASCADE;
+DROP TYPE   IF EXISTS salim.youBreakType CASCADE;
+DROP TYPE   IF EXISTS salim.youPassType CASCADE;
+
+DROP SCHEMA IF EXISTS salim CASCADE;
+CREATE SCHEMA IF NOT EXISTS salim;
+
+CREATE TYPE salim.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other', 'L w/o P', 'L w/o C');
+CREATE TYPE salim.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
+
+CREATE TABLE IF NOT EXISTS salim.seating (
+   student_id  INT,
+   row SMALLINT,
+   col SMALLINT,
+   UNIQUE(student_id, row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS salim.breaks (
+   break_id    INT GENERATED ALWAYS AS IDENTITY,
+   student_id  INT,
+   break_type  salim.youBreakType,
+   pass_type   salim.youPassType,
+   time_out    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   time_in     TIMESTAMPTZ DEFAULT NOW(),
+   PRIMARY KEY(break_id),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS salim.notes (
+   note_id   INT GENERATED ALWAYS AS IDENTITY,
+   note_body TEXT NOT NULL,
+   ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   class     common.youClassName,
+   PRIMARY KEY(note_id)
+);
+
+CREATE TABLE IF NOT EXISTS salim.teacherComment (
+   comment_id serial,
+   student_id INT NOT NULL,
+   teacher_name VARCHAR(100) NOT NULL,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512),
+   is_active boolean NOT NULL DEFAULT TRUE,
+   time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   redeem_time TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
+);
+
 ----------------------------------- demo schema ------------------------------
 DROP TABLE  IF EXISTS demo.seating CASCADE;
 DROP TABLE  IF EXISTS demo.breaks CASCADE;
