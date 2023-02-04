@@ -283,8 +283,13 @@ function getActiveWarningsRewards($class, $cmt_type)
 
 function displayStudentNamesFromDB($class)
 {
-   $active_warnings_map = getActiveWarningsRewards($class, 'warning');
-   $active_rewards_map  = getActiveWarningsRewards($class, 'reward');
+   $show_warning_reward_counts = false;
+
+   if ($show_warning_reward_counts)
+   {
+      $active_warnings_map = getActiveWarningsRewards($class, 'warning');
+      $active_rewards_map  = getActiveWarningsRewards($class, 'reward');
+   }
 
    $NUM_COLUMNS = getMaxColumns();
    printDebug("NUM_COLUMNS = $NUM_COLUMNS <br/>");
@@ -346,21 +351,31 @@ function displayStudentNamesFromDB($class)
       $html_input_prefix = "<input type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      $num_warn = 0;
-      $num_rewards = 0;
-      if (array_key_exists( $id, $active_warnings_map))
-      {
-         $num_warn = $active_warnings_map[$id];
-      }
-      if (array_key_exists( $id, $active_rewards_map))
-      {
-         $num_rewards = $active_rewards_map[$id];
-      }
       $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 0px; padding-right: 5px;'>\n";
       $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
-      $tr_data = $tr_data . '<strong><span style="color:white;background-color:red;font-size:1.5em;float:right">' . $num_warn . '</strong></span>';
+
+      if ($show_warning_reward_counts)
+      {
+         $num_warn = 0;
+         if (array_key_exists( $id, $active_warnings_map))
+         {
+            $num_warn = $active_warnings_map[$id];
+         }
+         $tr_data = $tr_data . '<strong><span style="color:white;background-color:red;font-size:1.5em;float:right">' . $num_warn . '</strong></span>';
+      }
+
       $tr_data = $tr_data . "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
-      $tr_data = $tr_data . '<br/><strong><span style="color:white;background-color:purple;font-size:1.5em;float:right">' . $num_rewards . '</span></strong>';
+
+      if ($show_warning_reward_counts)
+      {
+         $num_rewards = 0;
+         if (array_key_exists( $id, $active_rewards_map))
+         {
+            $num_rewards = $active_rewards_map[$id];
+         }
+         $tr_data = $tr_data . '<br/><strong><span style="color:white;background-color:purple;font-size:1.5em;float:right">' . $num_rewards . '</span></strong>';
+      }
+
       $tr_data = $tr_data . "</td>\n";
 
       $tc_idx += 1;
