@@ -1,3 +1,25 @@
+<style>
+.studNameCell {
+   width: 150px;
+   height: 100px;
+}
+
+.studNameSelRadioBtn {
+   width: 1.5em;
+   height: 1.5em;
+}
+
+.breakTypeRadioBtn {
+   width: 1.5em;
+   height: 1.5em;
+}
+
+.passTypeRadioBtn {
+   width: 1.5em;
+   height: 1.5em;
+}
+</style>
+
 <?php
 
 function printDebug($str, $debug = 0)
@@ -348,10 +370,10 @@ function displayStudentNamesFromDB($class)
          $tc_idx += 1;
       }
 
-      $html_input_prefix = "<input type='radio' name='student_id' ";
+      $html_input_prefix = "<input class='studNameSelRadioBtn' type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      $tr_data = $tr_data . "<td id='td_label_" . $id . "' style='padding-bottom: 0px; padding-right: 5px;'>\n";
+      $tr_data = $tr_data . "<td id='td_label_" . $id . "' class='studNameCell'>\n";
       $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
 
       if ($show_warning_reward_counts)
@@ -445,7 +467,7 @@ function displayBreakTypes()
    while ( $break_type = pg_fetch_row($break_types) )
    {
       $value = $break_type[0];
-      $html_input_prefix = "<input type='radio' name='break_type' ";
+      $html_input_prefix = "<input class='breakTypeRadioBtn' type='radio' name='break_type' ";
       $html_input_id = 'break_type_' . $value;
 
       echo "<td style='padding-bottom: 3%'>\n";
@@ -470,7 +492,7 @@ function displayPassTypes()
    while ( $pass_type = pg_fetch_row($pass_types) )
    {
       $value = $pass_type[0];
-      $html_input_prefix = "<input type='radio' name='pass_type' ";
+      $html_input_prefix = "<input class='passTypeRadioBtn' type='radio' name='pass_type' ";
       $html_input_id = 'pass_type_' . $value;
       $html_label_id = 'pass_type_label_' . $value;
 
