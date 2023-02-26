@@ -467,7 +467,7 @@ function displayBreakTypes()
    while ( $break_type = pg_fetch_row($break_types) )
    {
       $value = $break_type[0];
-      $html_input_prefix = "<input class='breakTypeRadioBtn' type='radio' name='break_type' ";
+      $html_input_prefix = "<input class='breakTypeRadioBtn' onchange='breakTypeSelected(this)' type='radio' name='break_type' ";
       $html_input_id = 'break_type_' . $value;
 
       echo "<td style='padding-bottom: 3%'>\n";
@@ -496,7 +496,15 @@ function displayPassTypes()
       $html_input_id = 'pass_type_' . $value;
       $html_label_id = 'pass_type_label_' . $value;
 
-      echo "<td style='padding-bottom: 3%'>\n";
+      if ($value == "Late")
+      {
+         echo "<td style='display: none'>\n";
+         // echo "<td style='padding-bottom: 3%'>\n";
+      }
+      else
+      {
+         echo "<td style='padding-bottom: 3%'>\n";
+      }
       echo "$html_input_prefix id='$html_input_id' value='$value' />\n";
       echo "<label id='$html_label_id' style='font-size: 2.0em; margin-right: 30px;' for='$html_input_id'>$value</label>\n";
       echo "</td>\n";

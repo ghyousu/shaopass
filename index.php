@@ -126,7 +126,19 @@
                //    }
                $student_id  = $_POST['student_id'];
                $break_type  = $_POST['break_type'];
-               $pass_type   = $_POST['pass_type'];
+
+               if (isset($_POST['pass_type']))
+               {
+                  $pass_type   = $_POST['pass_type'];
+               }
+               else
+               {
+                  if ($break_type == "Late")
+                  {
+                     $pass_type = "Late";
+                  }
+               }
+
                $is_checkout = ($_POST['submit'] == "Check Out");
 
                $break_id_session_key = getBreakIdSessionKey($student_id);
@@ -484,6 +496,25 @@
          }
       }
 
+      // this is callback when a break type is clicked
+      function breakTypeSelected(radioBtn)
+      {
+         // debugger;
+         var break_type = radioBtn.value; // "Late"
+
+         if (break_type == "Late")
+         {
+            // clear selections
+            deselectAllRadioButtons("pass_type");
+
+            disableAllRadioButtons("pass_type");
+         }
+         else
+         {
+            enableAllRadioButtons("pass_type");
+         }
+      }
+
       function atLeastOneRadioButtonChecked(radio_grp_name)
       {
          var radios = document.getElementsByName(radio_grp_name);
@@ -497,9 +528,16 @@
          return false;
       }
 
+      function isLateBreakTypeSelected()
+      {
+         var late_break_type_elem = document.getElementById("break_type_Late");
+         return late_break_type_elem.checked;
+      }
+
       // verify at least name and break type is selected
       function submitClicked(event)
       {
+         debugger;
          var alert_text_elem = document.getElementById('alert_text');
          var show_alert = false;
 
@@ -515,7 +553,8 @@
 
             setBackgroundColorByClassName('breakTypesTable', 'yellow');
          }
-         else if (false == atLeastOneRadioButtonChecked("pass_type"))
+         else if (false == atLeastOneRadioButtonChecked("pass_type") &&
+               false == isLateBreakTypeSelected())
          {
             alert_text_elem.innerText = "You need to select a pass";
             show_alert = true;
