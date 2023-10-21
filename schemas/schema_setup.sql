@@ -11,7 +11,7 @@ CREATE SCHEMA IF NOT EXISTS common;
 
 CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
-CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'demo');
+CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'ela', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
 
 CREATE TABLE IF NOT EXISTS common.users(
@@ -130,6 +130,61 @@ CREATE TABLE IF NOT EXISTS salim.notes (
 );
 
 CREATE TABLE IF NOT EXISTS salim.teacherComment (
+   comment_id serial,
+   student_id INT NOT NULL,
+   teacher_name VARCHAR(100) NOT NULL,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512),
+   is_active boolean NOT NULL DEFAULT TRUE,
+   time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   redeem_time TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
+);
+
+----------------------------------- ela schema ------------------------------
+DROP TABLE  IF EXISTS ela.seating CASCADE;
+DROP TABLE  IF EXISTS ela.breaks CASCADE;
+DROP TABLE  IF EXISTS ela.notes CASCADE;
+DROP TABLE  IF EXISTS ela.comment_template;
+DROP TABLE  IF EXISTS ela.teacherComment CASCADE;
+DROP TYPE   IF EXISTS ela.youBreakType CASCADE;
+DROP TYPE   IF EXISTS ela.youPassType CASCADE;
+
+DROP SCHEMA IF EXISTS ela CASCADE;
+CREATE SCHEMA IF NOT EXISTS ela;
+
+CREATE TYPE ela.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other', 'L w/o P', 'L w/o C');
+CREATE TYPE ela.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
+
+CREATE TABLE IF NOT EXISTS ela.seating (
+   student_id  INT,
+   row SMALLINT,
+   col SMALLINT,
+   UNIQUE(student_id, row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ela.breaks (
+   break_id    INT GENERATED ALWAYS AS IDENTITY,
+   student_id  INT,
+   break_type  ela.youBreakType,
+   pass_type   ela.youPassType,
+   time_out    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   time_in     TIMESTAMPTZ DEFAULT NOW(),
+   PRIMARY KEY(break_id),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ela.notes (
+   note_id   INT GENERATED ALWAYS AS IDENTITY,
+   note_body TEXT NOT NULL,
+   ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   class     common.youClassName,
+   PRIMARY KEY(note_id)
+);
+
+CREATE TABLE IF NOT EXISTS ela.teacherComment (
    comment_id serial,
    student_id INT NOT NULL,
    teacher_name VARCHAR(100) NOT NULL,
