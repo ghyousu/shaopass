@@ -467,7 +467,13 @@ function displayBreakTypes()
    while ( $break_type = pg_fetch_row($break_types) )
    {
       $value = $break_type[0];
-      $html_input_prefix = "<input class='breakTypeRadioBtn' onchange='breakTypeSelected(this)' type='radio' name='break_type' ";
+
+      if ($value == "Late")
+      {
+         continue; // temporarily disable this enum until further evaluation
+      }
+
+      $html_input_prefix = "<input class='breakTypeRadioBtn' type='radio' name='break_type' ";
       $html_input_id = 'break_type_' . $value;
 
       echo "<td style='padding-bottom: 3%'>\n";
@@ -492,6 +498,12 @@ function displayPassTypes()
    while ( $pass_type = pg_fetch_row($pass_types) )
    {
       $value = $pass_type[0];
+
+      if ($value == "Late")
+      {
+         continue; // temporarily disable this enum until further evaluation
+      }
+
       $html_input_prefix = "<input class='passTypeRadioBtn' type='radio' name='pass_type' ";
       $html_input_id = 'pass_type_' . $value;
       $html_label_id = 'pass_type_label_' . $value;
