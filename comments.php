@@ -289,7 +289,7 @@
 
       function commentTypeSelected(sel_elem)
       {
-         debugger;
+         // debugger;
          var html_id = sel_elem.id;
          var stud_id = html_id.split("_")[2];
 
@@ -317,7 +317,7 @@
 
       function commentTemplateSelected(sel_elem)
       {
-         debugger;
+         // debugger;
          var html_id = sel_elem.id;
          var stud_id = html_id.split("_")[2];
 
@@ -340,7 +340,7 @@
 
       function hide_redeemed_rows()
       {
-         debugger;
+         // debugger;
          var chkbox = document.getElementById('hide_redeemed_chkbox');
 
          var is_checked = chkbox.checked;
@@ -362,7 +362,7 @@
 
       function updateFilter(html_id, stored_value)
       {
-         debugger;
+         // debugger;
          var html_elem = document.getElementById(html_id);
 
          html_elem.value = stored_value;
