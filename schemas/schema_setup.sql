@@ -5,6 +5,7 @@ DROP TYPE   IF EXISTS common.youUserRole CASCADE;
 DROP TYPE   IF EXISTS common.youClassName CASCADE;
 DROP TYPE   IF EXISTS common.youSchemaName CASCADE;
 DROP TYPE   IF EXISTS common.commentType CASCADE;
+DROP TYPE   IF EXISTS common.studentDisplayBgColor CASCADE;
 
 DROP SCHEMA IF EXISTS common CASCADE;
 CREATE SCHEMA IF NOT EXISTS common;
@@ -13,6 +14,7 @@ CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
 CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'ela', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
+CREATE TYPE common.studentDisplayBgColor AS ENUM ('unset', 'red', 'green');
 
 CREATE TABLE IF NOT EXISTS common.users(
    user_name   VARCHAR(100) NOT NULL,
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS common.student (
    fname VARCHAR(50) NOT NULL,
    lname VARCHAR(50) NOT NULL,
    class common.youClassName NOT NULL,
+   display_color common.studentDisplayBgColor DEFAULT 'unset',
    UNIQUE(fname, lname),
    PRIMARY KEY(student_id)
 );

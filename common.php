@@ -273,50 +273,12 @@ function getMaxColumns()
    }
 }
 
-function getActiveWarningsRewards($class, $cmt_type)
-{
-   $id_warn_map = array();
-
-   $get_teacher_name_query = 'SELECT user_name FROM ' . getUsersTableName() .
-         " WHERE role = 'teacher' AND schema_name = " .
-         '(SELECT schema_name FROM ' . getUsersTableName() .
-         " WHERE user_name = '" . $_SESSION['user_name'] . "')";
-
-   $query = 'SELECT c.student_id, count(c.student_id) AS count FROM ' .
-            getStudentTableName() . ' s, ' . getCommentsTableName() .
-            " c WHERE s.student_id = c.student_id AND s.class = '" . $class . "' " .
-            "AND is_active = 't' AND c.cmt_type = '" . $cmt_type . "' " .
-            "AND c.teacher_name = (" . $get_teacher_name_query . ") GROUP BY c.student_id";
-
-   printDebug($query);
-
-   $result = fetchQueryResults($query);
-
-   while ( $res = pg_fetch_row($result) )
-   {
-      $stud_id  = $res[0];
-      $num_warn = $res[1];
-
-      $id_warn_map[$stud_id] = $num_warn;
-   }
-
-   return $id_warn_map;
-}
-
 function displayStudentNamesFromDB($class)
 {
-   $show_warning_reward_counts = false;
-
-   if ($show_warning_reward_counts)
-   {
-      $active_warnings_map = getActiveWarningsRewards($class, 'warning');
-      $active_rewards_map  = getActiveWarningsRewards($class, 'reward');
-   }
-
    $NUM_COLUMNS = getMaxColumns();
    printDebug("NUM_COLUMNS = $NUM_COLUMNS <br/>");
 
-   $query = "SELECT s.student_id, s.fname, s.lname, t.row, t.col FROM " .
+   $query = "SELECT s.student_id, s.fname, s.lname, t.row, t.col, s.display_color FROM " .
             getStudentTableName() . " s, " .
             getSeatingTableName() . " t " .
             "WHERE s.class = '$class' AND s.student_id = t.student_id " .
@@ -345,6 +307,7 @@ function displayStudentNamesFromDB($class)
 
       $db_row = $student[3];
       $db_col = $student[4];
+      $db_color = $student[5];
 
       printDebug("id: $id, name: '$name', row: '$db_row', col: '$db_col'");
 
@@ -373,30 +336,10 @@ function displayStudentNamesFromDB($class)
       $html_input_prefix = "<input class='studNameSelRadioBtn' type='radio' name='student_id' ";
       $html_input_id = getStudentNameChkboxHtmlId($id);
 
-      $tr_data = $tr_data . "<td id='td_label_" . $id . "' class='studNameCell'>\n";
+      $tr_data = $tr_data . "<td style='background-color: " . $db_color . "' id='td_label_" . $id . "' class='studNameCell'>\n";
       $tr_data = $tr_data . "$html_input_prefix id='$html_input_id' value='$id' onchange='studentNameSelected(this)' />\n";
 
-      if ($show_warning_reward_counts)
-      {
-         $num_warn = 0;
-         if (array_key_exists( $id, $active_warnings_map))
-         {
-            $num_warn = $active_warnings_map[$id];
-         }
-         $tr_data = $tr_data . '<strong><span style="color:white;background-color:red;font-size:1.5em;float:right">' . $num_warn . '</strong></span>';
-      }
-
       $tr_data = $tr_data . "<label style='font-size: 1.5em' for='$html_input_id'><br/>$name</label>\n";
-
-      if ($show_warning_reward_counts)
-      {
-         $num_rewards = 0;
-         if (array_key_exists( $id, $active_rewards_map))
-         {
-            $num_rewards = $active_rewards_map[$id];
-         }
-         $tr_data = $tr_data . '<br/><strong><span style="color:white;background-color:purple;font-size:1.5em;float:right">' . $num_rewards . '</span></strong>';
-      }
 
       $tr_data = $tr_data . "</td>\n";
 
@@ -508,7 +451,15 @@ function displayPassTypes()
       $html_input_id = 'pass_type_' . $value;
       $html_label_id = 'pass_type_label_' . $value;
 
-      echo "<td style='padding-bottom: 3%'>\n";
+      if ($value == "Late")
+      {
+         echo "<td style='display: none'>\n";
+         // echo "<td style='padding-bottom: 3%'>\n";
+      }
+      else
+      {
+         echo "<td style='padding-bottom: 3%'>\n";
+      }
       echo "$html_input_prefix id='$html_input_id' value='$value' />\n";
       echo "<label id='$html_label_id' style='font-size: 2.0em; margin-right: 30px;' for='$html_input_id'>$value</label>\n";
       echo "</td>\n";
@@ -936,19 +887,6 @@ function searchCommentsFromDB($fname, $lname)
 
    return $students;
 } // end of searchCommentsFromDB
-
-function insertRewardWarning($comment_type, $stud_id, $comment_body)
-{
-   $username = $_SESSION['user_name'];
-
-   $insert_query = "INSERT INTO " . getCommentsTableName() .
-      " (student_id, teacher_name, cmt_type, comment) " .
-      "VALUES ('$stud_id', '$username', '$comment_type', '$comment_body')";
-
-   printDebug( $insert_query, 0);
-
-   fetchQueryResults($insert_query);
-}
 
 function insertNewStudent($fname, $lname, $class)
 {
