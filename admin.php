@@ -47,11 +47,13 @@
       function classDropDownSelectionChanged()
       {
          // debugger;
+         var url = window.location.origin + window.location.pathname;
+
          var class_drop_down_sel = document.getElementById(<?php echo "'" . getClassDropDownId() . "'"; ?>);
 
          var selected_class_name = class_drop_down_sel.value;
 
-         var new_url = window.location.href + '&class=' + selected_class_name;
+         var new_url = url + '?class=' + selected_class_name;
 
          window.location.replace( new_url );
       }
