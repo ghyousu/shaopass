@@ -113,6 +113,7 @@ class tcStudent
    public $class = "";
    public $seating_row = null;
    public $seating_col = null;
+   public $display_color = null;
    public $comments = array();
 }
 
@@ -154,6 +155,32 @@ function fetchQueryResults($query)
 
    pg_close($conn);
    return $result;
+}
+
+function updateStudentDisplayColor($stud_ids, $display_color)
+{
+   $conn = getDBConnection();
+
+   $num_ids = count($stud_ids);
+   for ($i=0; $i<$num_ids; $i++)
+   {
+      $stud_id = $stud_ids[$i];
+
+      $query = "UPDATE " . getStudentTableName() . " SET display_color = '" . $display_color .
+               "' WHERE student_id = " . $stud_id;
+
+      $result = pg_query($conn, $query);
+
+      if ($result == false)
+      {
+         die('Failed to execute query. query str: "' . $query . '". <br/>' .
+               'Error str: "' . pg_last_error($conn) . '"');
+
+         pg_close($conn);
+      }
+   }
+
+   pg_close($conn);
 }
 
 function authenticateUser($username, $pw)
@@ -985,6 +1012,34 @@ function getStudentsWithoutSeatAssignment($class)
       $student->student_id  = $row[0];
       $student->fname       = $row[1];
       $student->lname       = $row[2];
+
+      array_push($stud_array, $student);
+   }
+
+   return $stud_array;
+}
+
+function getStudentNamesForRainbowPage($class)
+{
+   $query = "SELECT s.student_id, s.fname, s.lname, s.display_color, t.row, t.col FROM " .
+            getStudentTableName() . " s, " .
+            getSeatingTableName() . " t " .
+            "WHERE s.student_id = t.student_id AND s.class = '$class' " .
+            " ORDER BY t.row DESC, t.col";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id    = $row[0];
+      $student->fname         = $row[1];
+      $student->lname         = $row[2];
+      $student->display_color = $row[3];
+      $student->seating_row   = $row[4];
+      $student->seating_col   = $row[5];
 
       array_push($stud_array, $student);
    }

@@ -24,6 +24,12 @@
 
    <tr>
       <td><h1>
+         <a title="Rainbow" href='/admin.php?action=rainbow'>Rainbow</a>
+      </h1></td>
+   </tr>
+
+   <tr>
+      <td><h1>
          <a title="Add/Remove student(s)" href='/admin.php?action=add_remove'>Add/Remove<br/>Student(s)</a>
       </h1></td>
    </tr>

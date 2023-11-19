@@ -146,6 +146,26 @@
      ?>
 
      <script type="text/javascript">
+      function is903Class()
+      {
+         var value =
+            <?php if ($_SESSION['class_id'] && $_SESSION['class_id'] == '903') : ?>
+               true;
+            <?php else : ?>
+               false;
+            <?php endif ?>
+               ;
+
+         return value;
+      }
+
+      function reloadPage()
+      {
+         window.location = window.location.href;
+      }
+
+      const auto_reload_timeout = setTimeout(reloadPage, 30000);
+
       // this function returns string 'NA' if key is not found in session store
       function getStartDateFromSession()
       {
@@ -372,6 +392,11 @@
          updateStudentNameColor();
 
          disableTakenPassTypes();
+
+         if (false == is903Class())
+         {
+            clearTimeout(auto_reload_timeout);
+         }
       }
 
       function getBreakId(student_id)
@@ -439,6 +464,8 @@
       // this is callback when a sutdents name is selected
       function studentNameSelected(radioBtn)
       {
+         clearTimeout(auto_reload_timeout);
+
          var student_id = radioBtn.value;
          var break_id   = getBreakId(student_id);
 
