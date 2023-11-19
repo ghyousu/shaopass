@@ -142,9 +142,13 @@
                {
                   require_once("admin_gen_seat_map.php");
                }
-               else // if ($_GET['action'] == 'seating')   --> default case
+               else if ($_GET['action'] == 'seating')
                {
                   require_once("admin_change_seat.php");
+               }
+               else // if ($_GET['action'] == 'rainbow') --> default case
+               {
+                  require_once("admin_rainbow.php");
                }
             ?>
             </td>
