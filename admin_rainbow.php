@@ -197,6 +197,10 @@
          <label class='color_selection_label' id='red_color_radio_btn_label' for='red_color_radio_btn'>Red</label>
       </td>
       <td>
+         <input class='colorSelection' type='radio' name='<?php echo getColorSelRadioBtnGrpName(); ?>' id='orange_color_radio_btn' value='orange' />
+         <label class='color_selection_label' id='orange_color_radio_btn_label' for='red_color_radio_btn'>Orange</label>
+      </td>
+      <td>
          <input class='colorSelection' type='radio' name='<?php echo getColorSelRadioBtnGrpName(); ?>'  id='green_color_radio_btn' value='green' />
          <label class='color_selection_label' id='green_color_radio_btn_label' for='green_color_radio_btn'>Green</label>
       </td>
