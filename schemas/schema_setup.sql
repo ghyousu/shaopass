@@ -14,7 +14,7 @@ CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
 CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
 CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'ela', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
-CREATE TYPE common.studentDisplayBgColor AS ENUM ('unset', 'red', 'green');
+CREATE TYPE common.studentDisplayBgColor AS ENUM ('unset', 'red', 'green', 'orange');
 
 CREATE TABLE IF NOT EXISTS common.users(
    user_name   VARCHAR(100) NOT NULL,
