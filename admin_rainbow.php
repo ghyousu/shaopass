@@ -166,7 +166,8 @@
          <?php $student = $stud_array[$array_index]; ?>
 
          <?php if ($student->seating_row == $row && $student->seating_col == $col) : ?>
-            <td width="200" height="50" align='center' style='padding-bottom: 20px; font-size: 1.5em; background-color: <?php echo $student->display_color; ?>'>
+            <!-- myou disable colors <td width="200" height="50" align='center' style='padding-bottom: 20px; font-size: 1.5em; background-color: <?php echo $student->display_color; ?>'> -->
+            <td width="200" height="50" align='center' style='padding-bottom: 20px; font-size: 1.5em;'>
                <input style='width: 30px; height: 30px' type='checkbox'
                  name='<?php echo getStudentNameChkboxName() . "[]"; ?>'
                  value='<?php echo $student->student_id; ?>'
