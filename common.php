@@ -1078,7 +1078,7 @@ function moveStudent($stud_id, $new_class)
 
 function getStudentsPerSeat($row, $col)
 {
-   $query = "SELECT s.fname, s.lname, s.class, t.row, t.col FROM " .
+   $query = "SELECT s.fname, s.lname, s.class, t.row, t.col, s.student_id FROM " .
             getStudentTableName() . " s, " .
             getSeatingTableName() . " t " .
             "WHERE s.student_id = t.student_id AND t.row = $row AND t.col = $col " .
@@ -1096,6 +1096,7 @@ function getStudentsPerSeat($row, $col)
       $student->class       = $row[2];
       $student->seating_row = $row[3];
       $student->seating_col = $row[4];
+      $student->student_id  = $row[5];
 
       $stud_array[$student->class] = $student;
    }
