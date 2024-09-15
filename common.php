@@ -336,6 +336,12 @@ function displayStudentNamesFromDB($class)
       $db_col = $student[4];
       $db_color = $student[5];
 
+      // myou: only enable this for Salim's classes
+      if ( substr($_SESSION['user_name'], 0, 3) != "sci" )
+      {
+         $db_color = "unset";
+      }
+
       printDebug("id: $id, name: '$name', row: '$db_row', col: '$db_col'");
 
       // open a new table row
@@ -1078,7 +1084,7 @@ function moveStudent($stud_id, $new_class)
 
 function getStudentsPerSeat($row, $col)
 {
-   $query = "SELECT s.fname, s.lname, s.class, t.row, t.col FROM " .
+   $query = "SELECT s.fname, s.lname, s.class, t.row, t.col, s.student_id FROM " .
             getStudentTableName() . " s, " .
             getSeatingTableName() . " t " .
             "WHERE s.student_id = t.student_id AND t.row = $row AND t.col = $col " .
@@ -1096,6 +1102,7 @@ function getStudentsPerSeat($row, $col)
       $student->class       = $row[2];
       $student->seating_row = $row[3];
       $student->seating_col = $row[4];
+      $student->student_id  = $row[5];
 
       $stud_array[$student->class] = $student;
    }
