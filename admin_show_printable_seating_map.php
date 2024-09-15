@@ -16,13 +16,23 @@ td {
 }
 
 .class_name {
-   font-size: 7em;
+   font-size: 6em;
    font-weight: bold;
 }
 
 .student_name {
-   font-size: 5em;
+   font-size: 4em;
    font-weight: bold;
+}
+
+.td_class_and_student_name {
+   border-right: 0;
+}
+
+.td_qrcode {
+   width: 220px;
+   text-align: left;
+   border-left: 0;
 }
 
 .cell_id {
@@ -120,15 +130,11 @@ td {
             <?php endif; ?>
 
             <!--  show td data -->
-            <td>
+            <td class='td_class_and_student_name'>
                <?php if (isset($cell_content[$class_enums[$j]])): ?>
                   <div class='class_name'>
                      <?php echo $class_enums[$j];  ?>
                   </div>
-
-                  <br/>
-                  <br/>
-                  <br/>
 
                   <div class='student_name'>
                      <?php
@@ -138,6 +144,12 @@ td {
                         echo $stud->fname . "<br/>" . substr($stud->lname, 0, 2) . ".";
                      ?>
                   </div>
+               <?php endif; ?>
+            </td>
+
+            <td class='td_qrcode'>
+               <?php if (isset($cell_content[$class_enums[$j]])): ?>
+                   <img src='/imgs/<?php echo $stud->student_id . ".png"; ?>' />
                <?php endif; ?>
             </td>
 
