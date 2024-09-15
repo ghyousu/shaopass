@@ -5,9 +5,16 @@ if [ -z "$DATABASE_URL" ]; then
    exit 1
 fi
 
-TMP_SCRIPT=qrcode_gen.bash
+if [ $# -ne 1 ]; then
+   echo "Usage: $0 [901-904]"
+   exit 2
+fi
 
-db_query="SELECT student_id,fname,lname FROM common.student"
+class=$1
+
+TMP_SCRIPT=qrcode_gen_${class}.bash
+
+db_query="SELECT student_id,fname,lname FROM common.student WHERE class='$class'"
 
 ## use "," as separator
 psql --tuples-only -AF$',' $DATABASE_URL -c "$db_query" | \
