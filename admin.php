@@ -126,27 +126,34 @@
 
             <td>
             <?php
-               if ($_GET['action'] == 'add_remove')
+               if (isset($_GET['action']))
                {
-                  require_once("admin_add_del_student.php");
-               }
-               else if ($_GET['action'] == 'mod')
-               {
-                  require_once("admin_rename_student.php");
-               }
-               else if ($_GET['action'] == 'mov')
-               {
-                  require_once("admin_mov_student.php");
-               }
-               else if ($_GET['action'] == 'seat_map')
-               {
-                  require_once("admin_gen_seat_map.php");
-               }
-               else if ($_GET['action'] == 'seating')
-               {
-                  require_once("admin_change_seat.php");
-               }
-               else // if ($_GET['action'] == 'rainbow') --> default case
+                  if ($_GET['action'] == 'add_remove')
+                  {
+                     require_once("admin_add_del_student.php");
+                  }
+                  else if ($_GET['action'] == 'mod')
+                  {
+                     require_once("admin_rename_student.php");
+                  }
+                  else if ($_GET['action'] == 'mov')
+                  {
+                     require_once("admin_mov_student.php");
+                  }
+                  else if ($_GET['action'] == 'seat_map')
+                  {
+                     require_once("admin_gen_seat_map.php");
+                  }
+                  else if ($_GET['action'] == 'seating')
+                  {
+                     require_once("admin_change_seat.php");
+                  }
+                  else // if ($_GET['action'] == 'rainbow') --> default case
+                  {
+                     require_once("admin_rainbow.php");
+                  }
+               } // end of isset($_GET['action'])
+               else
                {
                   require_once("admin_rainbow.php");
                }
