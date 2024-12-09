@@ -932,6 +932,27 @@ function insertNewStudent($fname, $lname, $class)
    return fetchQueryResults($insert_query);
 }
 
+function getAllStudents()
+{
+   $query = "SELECT student_id, fname, lname FROM " .  getStudentTableName();
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id = $row[0];
+      $student->fname      = $row[1];
+      $student->lname      = $row[2];
+
+      array_push($stud_array, $student);
+   }
+
+   return $stud_array;
+}
+
 function getStudentNamesPerClass($class)
 {
    $query = "SELECT student_id, fname, lname FROM " .

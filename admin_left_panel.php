@@ -57,6 +57,12 @@
          <a title="Print seating map" href='/admin.php?action=seat_map'>Seating Map</a>
       </h1></td>
    </tr>
+
+   <tr>
+      <td><h1>
+         <a title="Name/QR code" href='/admin_name_qrcode.php'>Name/QR Code</a>
+      </h1></td>
+   </tr>
 </table>
 
 <?php printHtmlBreaks(10); ?>
