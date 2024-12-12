@@ -13,13 +13,21 @@
 
 <style>
 
+.page_breaker {
+   break-before: page;
+}
+
 </style>
 
-<table border=0>
+<table id='main_table' border=1>
    <?php for ($arr_index=0; $arr_index<$num_students; ++$arr_index): ?>
 
        <?php if ($arr_index % $NUM_COLUMNS_PER_ROW == 0) : ?>
-       <tr>
+          <?php if ($arr_index % $NUM_ROWS == 0) : ?>
+             <tr class='page_breaker'>
+          <?php else : ?>
+             <tr>
+          <?php endif; ?>
        <?php endif; ?>
 
           <td class='stud_name'>
