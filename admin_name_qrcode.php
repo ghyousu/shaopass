@@ -13,6 +13,16 @@
 
 <style>
 
+#main_table {
+   margin-left: auto;
+   margin-right: auto;
+   border-left: none;
+   border-right: none;
+   border-top: none;
+   border-bottom: none;
+   text-align: center;
+}
+
 .page_breaker {
    break-before: page;
 }
