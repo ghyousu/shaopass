@@ -126,6 +126,7 @@
                //    }
                $student_id  = $_POST['student_id'];
                $break_type  = $_POST['break_type'];
+               $pass_type   = $_POST['pass_type'];
 
 /* 12/24/2024 disable 'late' type              if (isset($_POST['pass_type']))
                {
