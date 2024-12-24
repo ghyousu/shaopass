@@ -49,6 +49,11 @@ CREATE SCHEMA IF NOT EXISTS ohs_shao;
 
 CREATE TYPE ohs_shao.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other', 'L w/o P', 'L w/o C');
 CREATE TYPE ohs_shao.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
+-- updated enums on 12/24/2024
+--    ALTER TYPE ohs_shao.youPassType RENAME VALUE 'A' TO 'GREEN';
+--    ALTER TYPE ohs_shao.youPassType RENAME VALUE 'B' TO 'Emergency';
+--    ALTER TYPE ohs_shao.youPassType RENAME VALUE 'S1' TO 'Other';
+--    ALTER TYPE ohs_shao.youPassType RENAME VALUE 'S2' TO 'L w/o P';
 
 CREATE TABLE IF NOT EXISTS ohs_shao.seating (
    student_id  INT,

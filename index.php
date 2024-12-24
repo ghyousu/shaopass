@@ -349,12 +349,9 @@
 
             var pass_type_name = document.getElementById("pass_type_" + break_id).innerHTML;
 
-            // allow unlimited pass type of "Special" and "L w/o"
-            if (pass_type_name == "Special")
-            {
-               continue;
-            }
-            if (pass_type_name == "L w/o")
+            // updated on 12/24/2024:
+            // * only "green" pass is limited
+            if (pass_type_name != "GREEN")
             {
                continue;
             }

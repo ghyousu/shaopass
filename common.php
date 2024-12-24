@@ -475,6 +475,13 @@ function displayPassTypes()
    {
       $value = $pass_type[0];
 
+      // updated on 12/24/2024:
+      // * hide S3, L1, L2, L3 enums since psql doesn't support removing enums
+      if ($value == "S3" || $value == "L1" || $value == "L2" || $value == "L3")
+      {
+         continue;
+      }
+
 /* 12/24/2024 disable this for now      if ($value == "Late")
       {
          continue; // temporarily disable this enum until further evaluation
