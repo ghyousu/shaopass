@@ -48,6 +48,8 @@ DROP SCHEMA IF EXISTS ohs_shao CASCADE;
 CREATE SCHEMA IF NOT EXISTS ohs_shao;
 
 CREATE TYPE ohs_shao.youBreakType AS ENUM ('Bathroom', 'Water', 'Nurse', 'Other', 'L w/o P', 'L w/o C');
+-- updated enums on 12/24/2024
+--    ALTER TYPE ohs_shao.youBreakType ADD VALUE 'Pray';
 CREATE TYPE ohs_shao.youPassType  AS ENUM ('A', 'B', 'Water', 'S1', 'S2', 'S3', 'L1', 'L2', 'L3');
 -- updated enums on 12/24/2024
 --    ALTER TYPE ohs_shao.youPassType RENAME VALUE 'A' TO 'GREEN';
