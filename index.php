@@ -76,7 +76,12 @@
             printDebug("auto-gen stop date:  " . $_SESSION[getStopDateSessionKey()] );
          }
 
-         if ($_SERVER['REQUEST_METHOD'] === 'POST')
+         if (isset($_POST['submit']) && $_POST['randcheck'] != $_SESSION['rand'])
+         {
+            // could be a page refresh, do nothing to prevent double form submission
+            // echo "<b>debug: un-matched random value, this could be a form re-submission</b>";
+         }
+         else if ($_SERVER['REQUEST_METHOD'] === 'POST')
          {
             // var_dump($_POST);
             // die("<br/>temp");
@@ -741,6 +746,13 @@
 <?php if ($_SESSION['user_role'] == 'student') : ?>
      <td rowspan="2" style="padding-right: 20px">
         <form action='/index.php' method='POST' enctype='multipart/form-data'>
+           <!-- hidden random value to prevent double form submission -->
+           <?php
+              $rand = rand();
+              $_SESSION['rand'] = $rand;
+           ?>
+           <input type="hidden" value="<?php echo $rand; ?>" name="randcheck" />
+
            <?php
               echo '<h2 style="margin-block-end: -0.5em">Select your name:</h2><br/>';
               displayStudentNamesFromDB($_SESSION['class_id']);
