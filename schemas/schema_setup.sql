@@ -6,6 +6,7 @@ DROP TYPE   IF EXISTS common.youClassName CASCADE;
 DROP TYPE   IF EXISTS common.youSchemaName CASCADE;
 DROP TYPE   IF EXISTS common.commentType CASCADE;
 DROP TYPE   IF EXISTS common.studentDisplayBgColor CASCADE;
+DROP TYPE   IF EXISTS common.hwSubmissionStatus CASCADE;
 
 DROP SCHEMA IF EXISTS common CASCADE;
 CREATE SCHEMA IF NOT EXISTS common;
@@ -15,6 +16,7 @@ CREATE TYPE common.youClassName AS ENUM ('901', '902', '903', '904', 'demo');
 CREATE TYPE common.youSchemaName AS ENUM ('ohs_shao', 'salim', 'ela', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
 CREATE TYPE common.studentDisplayBgColor AS ENUM ('unset', 'red', 'green', 'orange');
+CREATE TYPE common.hwSubmissionStatus AS ENUM ('incomplete', 'semi-complete', 'completed');
 
 CREATE TABLE IF NOT EXISTS common.users(
    user_name   VARCHAR(100) NOT NULL,
@@ -39,6 +41,7 @@ CREATE TABLE IF NOT EXISTS common.student (
 DROP TABLE  IF EXISTS ohs_shao.seating CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.breaks CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.notes CASCADE;
+DROP TABLE  IF EXISTS ohs_shao.hw_submissions CASCADE;
 DROP TABLE  IF EXISTS ohs_shao.comment_template;
 DROP TABLE  IF EXISTS ohs_shao.teacherComment CASCADE;
 DROP TYPE   IF EXISTS ohs_shao.youBreakType CASCADE;
@@ -62,6 +65,16 @@ CREATE TABLE IF NOT EXISTS ohs_shao.seating (
    row SMALLINT,
    col SMALLINT,
    UNIQUE(student_id, row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ohs_shao.hw_submissions (
+   hw_submission_id INT GENERATED ALWAYS AS IDENTITY,
+   student_id  INT,
+   hw_status common.hwSubmissionStatus NOT NULL DEFAULT 'incomplete',
+   hw_date DATE NOT NULL DEFAULT CURRENT_DATE,
+   PRIMARY KEY(hw_submission_id),
+   unique(student_id, hw_date),
    FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
 );
 
