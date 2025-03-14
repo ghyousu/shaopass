@@ -30,6 +30,12 @@
 
    <tr>
       <td><h1>
+         <a title="HW Tracker" href='/forms/admin_hw_tracker.php'>HW Tracker</a>
+      </h1></td>
+   </tr>
+
+   <tr>
+      <td><h1>
          <a title="Add/Remove student(s)" href='/admin.php?action=add_remove'>Add/Remove<br/>Student(s)</a>
       </h1></td>
    </tr>

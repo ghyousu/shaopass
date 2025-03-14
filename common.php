@@ -52,7 +52,9 @@ function getStudentTableName() { return getCommonSchemaName() . "." . "student";
 
 // enum types in common schema
 function getClassEnumName() { return getCommonSchemaName() . ".youclassname"; }
-function getCommentTypeEnumName() { return getCommonSchemaName() . ".commentType"; }
+function getCommentTypeEnumName() { return getcommonschemaname() . ".commentType"; }
+function getHWStatusEnumName() { return getIndividualSchemaName() . ".hwSubmissionStatus"; }
+function getToggleHWStatusProcName() { return getIndividualSchemaName() . ".toggleHomeworkStatus"; }
 
 function getIndividualSchemaName() { return $_SESSION['schema_name']; }
 
@@ -1166,6 +1168,13 @@ function getCommentTemplates()
    }
 
    return $cmt_templates;
+}
+
+function updateStudentHomeworkTracker($student_id)
+{
+   $query = 'CALL ' . getToggleHWStatusProcName() . '(' .  $student_id . ')';
+
+   fetchQueryResults($query);
 }
 
 ?>
