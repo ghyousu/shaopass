@@ -177,29 +177,29 @@ body, table, input, select, textarea {
       }
    }
 
-   $percent_incomplete   = $num_incomplete   / $total_students;
-   $percent_semicomplete = $num_semicomplete / $total_students;
-   $percent_completed    = $num_completed    / $total_students;
+   $percent_incomplete   = round(($num_incomplete   / $total_students * 100), 2);
+   $percent_semicomplete = round(($num_semicomplete / $total_students * 100), 2);
+   $percent_completed    = round(($num_completed    / $total_students * 100), 2);
 ?>
 
 <table class="graph">
    <caption>HW submissions</caption>
    <tbody>
-      <tr <?php echo 'style="height:' . ($percent_incomplete * 100) . '%"'; ?> >
+      <tr <?php echo 'style="height:' . $percent_incomplete . '%"'; ?> >
          <th scope="row">
-            incomplete <?php echo '(' . ($percent_incomplete * 100) . '%)'; ?>
+            incomplete <?php echo '(' . $percent_incomplete . '%)'; ?>
          </th>
          <td style='background: red'><span> <?php echo $num_incomplete; ?> </span></td>
       </tr>
-      <tr <?php echo 'style="height:' . ($percent_semicomplete * 100) . '%"'; ?> >
+      <tr <?php echo 'style="height:' . $percent_semicomplete . '%"'; ?> >
          <th scope="row">
-            semi-complete <?php echo '(' . ($percent_semicomplete * 100) . '%)'; ?>
+            semi-complete <?php echo '(' . $percent_semicomplete . '%)'; ?>
          </th>
          <td style='background: orange'><span> <?php echo $num_semicomplete; ?> </span></td>
       </tr>
-      <tr <?php echo 'style="height:' . ($percent_completed * 100) . '%"'; ?> >
+      <tr <?php echo 'style="height:' . $percent_completed . '%"'; ?> >
          <th scope="row">
-            completed <?php echo '(' . ($percent_completed * 100) . '%)'; ?>
+            completed <?php echo '(' . $percent_completed . '%)'; ?>
          </th>
          <td style='background: green'><span> <?php echo $num_completed; ?> </span></td>
       </tr>
