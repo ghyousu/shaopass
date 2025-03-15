@@ -16,6 +16,11 @@
    <form action='/post/admin_hw_tracker.php' method='POST'>
 
    <tr>
+      <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?>  style='text-align: center'>
+         <h1>Homework Tracker <?php echo "(" . $_SESSION[getAdminPageClassSessionKey()] . ")"; ?></h2>
+      </td>
+   </tr>
+   <tr>
       <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> >
          <div class='div_front_back' style='font-size: 2em; text-align: center; font-weight: bold;'>Back</div>
       </td>
