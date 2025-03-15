@@ -186,15 +186,21 @@ body, table, input, select, textarea {
    <caption>HW submissions</caption>
    <tbody>
       <tr <?php echo 'style="height:' . ($percent_incomplete * 100) . '%"'; ?> >
-         <th scope="row">incomplete</th>
+         <th scope="row">
+            incomplete <?php echo '(' . ($percent_incomplete * 100) . '%)'; ?>
+         </th>
          <td style='background: red'><span> <?php echo $num_incomplete; ?> </span></td>
       </tr>
       <tr <?php echo 'style="height:' . ($percent_semicomplete * 100) . '%"'; ?> >
-         <th scope="row">semi-complete</th>
+         <th scope="row">
+            semi-complete <?php echo '(' . ($percent_semicomplete * 100) . '%)'; ?>
+         </th>
          <td style='background: orange'><span> <?php echo $num_semicomplete; ?> </span></td>
       </tr>
       <tr <?php echo 'style="height:' . ($percent_completed * 100) . '%"'; ?> >
-         <th scope="row">completed</th>
+         <th scope="row">
+            completed <?php echo '(' . ($percent_completed * 100) . '%)'; ?>
+         </th>
          <td style='background: green'><span> <?php echo $num_completed; ?> </span></td>
       </tr>
    </tbody>
