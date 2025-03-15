@@ -782,7 +782,9 @@
      <td colspan='4' style="vertical-align: baseline">
      <br/>
 <?php endif; ?>
-        <h2>Break History: </h2>
+        <?php require_once("forms/hw_bar_graph.php"); ?>
+
+        <h2 style='padding-top: 120px;'>Break History: </h2>
         <?php
            displayBreakHistory($_SESSION['class_id']);
         ?>
@@ -790,7 +792,7 @@
      </tr>
 
 <?php if ($_SESSION['user_role'] == 'student') : ?>
-     <tr>
+<!--     <tr>
      <td style="vertical-align: baseline; padding-top: 30px">
         <form action='/notes.php' method='POST' enctype='multipart/form-data'>
           <textarea id="notes_textarea" name="notes" placeholder="Enter teacher's comment here ..." style="font-size: 1.5em; width: 450px; height: 250px; resize: none"></textarea>
@@ -801,6 +803,7 @@
           </div>
         </form>
      </td>
+-->
 <?php endif; ?>
 
      </tr>
