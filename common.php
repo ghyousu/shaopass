@@ -68,6 +68,7 @@ function getBreaksTableName() { return getIndividualSchemaName() . "." . "breaks
 function getSeatingTableName() { return getIndividualSchemaName() . "." . "seating"; }
 function getCommentTemplateTableName() { return getIndividualSchemaName() . "." . "comment_template"; }
 function getCommentsTableName() { return getIndividualSchemaName() . "." . "teacherComment"; }
+function getHWSubmissionTableName() { return getIndividualSchemaName() . "." . "hw_submissions"; }
 
 function getStudentNameChkboxHtmlId($id) { return 'student_id_' . $id; }
 
@@ -113,6 +114,7 @@ class tcStudent
    public $fname = "";
    public $lname = "";
    public $class = "";
+   public $today_hw_status = '';
    public $seating_row = null;
    public $seating_col = null;
    public $display_color = null;
@@ -1076,6 +1078,38 @@ function getStudentNamesForRainbowPage($class)
       $student->display_color = $row[3];
       $student->seating_row   = $row[4];
       $student->seating_col   = $row[5];
+
+      array_push($stud_array, $student);
+   }
+
+   return $stud_array;
+}
+
+function getStudentsForHWTracker($class)
+{
+   $ugly_sub_query = '(SELECT COALESCE(' .
+          '(SELECT hw_status FROM ' . getHWSubmissionTableName() . ' h ' .
+            "WHERE h.student_id = s.student_id AND h.hw_date = CURRENT_DATE), 'incomplete')" .
+          ') AS hw_status ';
+
+   $query = 'SELECT s.student_id, s.fname, s.lname, t.row, t.col, ' . $ugly_sub_query .
+            ' FROM ' . getStudentTableName() . " s, " .  getSeatingTableName() . " t " .
+            "WHERE s.student_id = t.student_id AND s.class = '$class' " .
+            " ORDER BY t.row DESC, t.col";
+
+   $students = fetchQueryResults($query);
+
+   $stud_array = array();
+
+   while ( $row = pg_fetch_row($students) )
+   {
+      $student = new tcStudent();
+      $student->student_id      = $row[0];
+      $student->fname           = $row[1];
+      $student->lname           = $row[2];
+      $student->seating_row     = $row[3];
+      $student->seating_col     = $row[4];
+      $student->today_hw_status = $row[5];
 
       array_push($stud_array, $student);
    }

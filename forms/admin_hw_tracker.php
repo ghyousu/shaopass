@@ -4,10 +4,9 @@
 
      <script type="text/javascript" src="/scripts/admin_hw_tracker.js"></script>
 
-     <link rel="stylesheet" href="/style/admin_hw_tracker.css">
+<!--     <link rel="stylesheet" href="/style/admin_hw_tracker.css"> -->
 
      <?php
-
         require_once("../common.php");
         setlocale(LC_ALL,'C.UTF-8');
         session_start();
@@ -39,7 +38,7 @@
    </tr>
 
    <?php
-       $stud_array = getStudentNamesForRainbowPage('902'); ## TODO
+       $stud_array = getStudentsForHWTracker('902'); ## TODO
        $array_index = 0;
    ?>
 
@@ -51,10 +50,18 @@
 
          <?php if ($student->seating_row == $row && $student->seating_col == $col) : ?>
             <td class='td_student_name'>
-               <input class='input_student_name' type='submit'
+               <input type='submit'
                  name='<?php echo "submit_id_" . $student->student_id; ?>'
                  value='<?php echo $student->fname . " " . $student->lname; ?>'
+               <?php if ($student->today_hw_status == 'incomplete') : ?>
+                 style='width: 150px;height: 100px; background-color: red;'
+               <?php elseif ($student->today_hw_status == 'semi-complete') : ?>
+                 style='width: 150px;height: 100px; background-color: orange;'
+               <?php elseif ($student->today_hw_status == 'completed') : ?>
+                 style='width: 150px;height: 100px; background-color: green;'
+               <?php else : ?>
                  style='width: 150px;height: 100px;'
+               <?php endif ; ?>
                >
                </input>
             </td>
