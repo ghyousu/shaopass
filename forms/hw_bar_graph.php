@@ -122,8 +122,6 @@ body, table, input, select, textarea {
          padding:0.5em 0;
          margin:-1em 0 0;
          font:normal 85%/120% arial,helvetica,sans-serif;
-/*          background:white; */
-/*          box-shadow:0 0 0.25em rgba(0,0,0,0.6); */
          font-weight:bold;
          opacity:0;
          transition:opacity 0.5s;
@@ -156,7 +154,7 @@ body, table, input, select, textarea {
 
    $total_students = count($stud_array);
    $num_incomplete = 0;
-   $num_semicomplete = 6;
+   $num_semicomplete = 0;
    $num_completed = 0;
 
    for ($i = 0; $i<$total_students; ++$i)
