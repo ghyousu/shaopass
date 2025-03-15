@@ -23,6 +23,6 @@
          break;
       }
 
-      header("location: /forms/admin_hw_tracker.php");
+      header("location: /admin.php?action=hw_tracker");
    }
 ?>

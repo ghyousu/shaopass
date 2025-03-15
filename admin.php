@@ -148,6 +148,10 @@
                   {
                      require_once("admin_change_seat.php");
                   }
+                  else if ($_GET['action'] == 'hw_tracker')
+                  {
+                     require_once("forms/admin_hw_tracker.php");
+                  }
                   else // if ($_GET['action'] == 'rainbow') --> default case
                   {
                      require_once("admin_rainbow.php");

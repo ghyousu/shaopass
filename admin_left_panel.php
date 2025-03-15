@@ -30,7 +30,7 @@
 
    <tr>
       <td><h1>
-         <a title="HW Tracker" href='/forms/admin_hw_tracker.php'>HW Tracker</a>
+         <a title="Rainbow" href='/admin.php?action=hw_tracker'>HW Tracker</a>
       </h1></td>
    </tr>
 

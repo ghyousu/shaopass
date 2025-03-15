@@ -1,44 +1,35 @@
-<html>
-  <head>
-     <title>Homework Tracker</title>
+<?php
+   require_once("common.php");
+   setlocale(LC_ALL,'C.UTF-8');
+   session_start();
 
-     <script type="text/javascript" src="/scripts/admin_hw_tracker.js"></script>
+   if (!isset($_SESSION['LOGGED_IN']))
+   {
+      header("location: /login.php");
+   }
 
-<!--     <link rel="stylesheet" href="/style/admin_hw_tracker.css"> -->
+   $NUM_ROWS_PER_CLASS  = 6;
+   $NUM_COLUMNS_PER_ROW = 6;
 
-     <?php
-        require_once("../common.php");
-        setlocale(LC_ALL,'C.UTF-8');
-        session_start();
-
-        if (!isset($_SESSION['LOGGED_IN']))
-        {
-           header("location: /login.php");
-        }
-
-        $NUM_ROWS_PER_CLASS  = 6;
-        $NUM_COLUMNS_PER_ROW = 6;
-
-        function getStudentNameChkboxId()     { return 'student_id_chk_boxes'; }
-        function getStudentNameChkboxName()   { return getStudentNameChkboxId(); }
-        function getColorSelRadioBtnGrpName() { return 'color_sel_radio_grp'; }
-        function getColorSelRadioBtnGrpId()   { return getColorSelRadioBtnGrpName(); }
-     ?>
-   </head>
-
-<body>
+   function getStudentNameChkboxId()     { return 'student_id_chk_boxes'; }
+   function getStudentNameChkboxName()   { return getStudentNameChkboxId(); }
+   function getColorSelRadioBtnGrpName() { return 'color_sel_radio_grp'; }
+   function getColorSelRadioBtnGrpId()   { return getColorSelRadioBtnGrpName(); }
+?>
 
 <table border=0>
    <form action='/post/admin_hw_tracker.php' method='POST'>
 
    <tr>
       <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> >
-         <div class='div_front_back'>Back</div>
+         <div class='div_front_back' style='font-size: 2em; text-align: center; font-weight: bold;'>Back</div>
       </td>
    </tr>
 
    <?php
-       $stud_array = getStudentsForHWTracker('902'); ## TODO
+       $class_id = $_SESSION[getAdminPageClassSessionKey()];
+
+       $stud_array = getStudentsForHWTracker($class_id);
        $array_index = 0;
    ?>
 
@@ -76,20 +67,10 @@
 
    <tr>
       <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> >
-         <div class='div_front_back'>Front</div>
+         <div class='div_front_back' style='font-size: 2em; text-align: center; font-weight: bold;'>Front</div>
       </td>
    </tr>
 
    </form>
 </table>
 
-     <!-- ---------- alert box ---------- -->
-<!--     <div class='my_custom_alert' id='my_custom_alert_id'>
-         <p id='alert_text'>Testing alert message</p>
-         <button id='closeAlertBtn' class="closebtn" onclick="closeBtnClicked()">OK</button>
-     </div>
--->
-
-</body>
-
-</html>
