@@ -778,12 +778,11 @@
 
 <?php if ($_SESSION['user_role'] == 'student') : ?>
      <td style="vertical-align: baseline">
+     <?php require_once("forms/hw_bar_graph.php"); ?>
 <?php else : ?>
      <td colspan='4' style="vertical-align: baseline">
      <br/>
 <?php endif; ?>
-        <?php require_once("forms/hw_bar_graph.php"); ?>
-
         <h2 style='padding-top: 120px;'>Break History: </h2>
         <?php
            displayBreakHistory($_SESSION['class_id']);
