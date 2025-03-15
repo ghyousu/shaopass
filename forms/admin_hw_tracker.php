@@ -10,11 +10,6 @@
 
    $NUM_ROWS_PER_CLASS  = 6;
    $NUM_COLUMNS_PER_ROW = 6;
-
-   function getStudentNameChkboxId()     { return 'student_id_chk_boxes'; }
-   function getStudentNameChkboxName()   { return getStudentNameChkboxId(); }
-   function getColorSelRadioBtnGrpName() { return 'color_sel_radio_grp'; }
-   function getColorSelRadioBtnGrpId()   { return getColorSelRadioBtnGrpName(); }
 ?>
 
 <table border=0>
