@@ -18,6 +18,23 @@
    width: 1.5em;
    height: 1.5em;
 }
+
+input[type=radio]{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-clip: content-box;
+  border: 2px solid rgba(255,252,229,1);
+  background-color: rgba(255,252,229,1);
+}
+
+input[type="radio"]:checked {
+  appearance: none;
+  background-color: green;
+  padding: 4px;
+  border: 2px solid #000;
+}
+
 </style>
 
 <?php
