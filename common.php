@@ -965,9 +965,9 @@ function searchCommentsFromDB($fname, $lname)
    $query = 'SELECT s.student_id, s.fname, s.lname, s.class, c.comment_id, c.cmt_type, c.comment, ' .
             "c.is_active, TO_CHAR(timezone('$tz', c.time), 'Dy'), " .
             "TO_CHAR(timezone('$tz', c.time), 'mm/DD/YYYY HH12:MI:SS AM') " .
-            'FROM ' . getStudentTableName() . ' s, ' .
-            getCommentsTableName() . ' c ' . 'WHERE s.student_id=c.student_id ' .
-            "AND s.fname ILIKE '%" . $fname . "%' AND s.lname ILIKE '%" . $lname . "%' " .
+            'FROM ' . getStudentTableName() . ' s LEFT JOIN ' .
+            getCommentsTableName() . ' c ' . ' ON s.student_id=c.student_id ' .
+            "WHERE s.fname ILIKE '%" . $fname . "%' AND s.lname ILIKE '%" . $lname . "%' " .
             'ORDER BY c.is_active, c.time';
 
    printDebug($query, 0);

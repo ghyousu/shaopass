@@ -119,9 +119,8 @@
       {
          $comment = $stud->comments[$i];
 
-         // this is a workaround to avoid complicated sql query in searchCommentsFromDB function that wouldn't
-         // return students who did not have existing records in teacherComment table
-         if ($comment->cmt_text == 'dummy comment')
+         // a "LEFT JOIN" query was used to search, which could return a null comment, check cmt_id here before displaying the "tr" row
+         if ($comment->cmt_id == null)
          {
             continue ;
          }
