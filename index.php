@@ -164,25 +164,25 @@
      ?>
 
      <script type="text/javascript">
-      function is903Class()
-      {
-         var value =
-            <?php if ($_SESSION['class_id'] && $_SESSION['class_id'] == '903') : ?>
-               true;
-            <?php else : ?>
-               false;
-            <?php endif ?>
-               ;
+      // disable auto-refresh function is903Class()
+      // disable auto-refresh {
+      // disable auto-refresh    var value =
+      // disable auto-refresh       <?php if ($_SESSION['class_id'] && $_SESSION['class_id'] == '903') : ?>
+      // disable auto-refresh          true;
+      // disable auto-refresh       <?php else : ?>
+      // disable auto-refresh          false;
+      // disable auto-refresh       <?php endif ?>
+      // disable auto-refresh          ;
 
-         return value;
-      }
+      // disable auto-refresh    return value;
+      // disable auto-refresh }
 
       function reloadPage()
       {
          window.location = window.location.href;
       }
 
-      const auto_reload_timeout = setTimeout(reloadPage, 30000);
+      // disable auto-fresh const auto_reload_timeout = setTimeout(reloadPage, 30000);
 
       // this function returns string 'NA' if key is not found in session store
       function getStartDateFromSession()
@@ -408,10 +408,10 @@
 
          disableTakenPassTypes();
 
-         if (false == is903Class())
-         {
-            clearTimeout(auto_reload_timeout);
-         }
+         // disable auto-refresh if (false == is903Class())
+         // disable auto-refresh {
+         // disable auto-refresh    clearTimeout(auto_reload_timeout);
+         // disable auto-refresh }
       }
 
       function getBreakId(student_id)
@@ -479,7 +479,7 @@
       // this is callback when a sutdents name is selected
       function studentNameSelected(radioBtn)
       {
-         clearTimeout(auto_reload_timeout);
+         // disable auto-refresh clearTimeout(auto_reload_timeout);
 
          var student_id = radioBtn.value;
          var break_id   = getBreakId(student_id);
