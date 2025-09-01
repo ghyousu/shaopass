@@ -26,7 +26,7 @@
       }
       else if (isset($_POST['username']) && isset($_POST['password']))
       {
-         if (authenticateUser($_POST['username'], $_POST['password']))
+         if (authenticateUser(strtolower($_POST['username']), $_POST['password']))
          {
             // $_SESSION['msg'] = '';
             $_SESSION['LOGGED_IN'] = true;
