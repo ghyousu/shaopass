@@ -238,7 +238,7 @@
 
    <!-- add the Apply button -->
    <tr>
-      <td colspan='6' style="padding-top: 30px; padding-bottom: 30px; padding-left: 85%">
+      <td colspan=<?php echo $NUM_COLUMNS_PER_ROW; ?> style="padding-top: 30px; padding-bottom: 30px; padding-left: 85%">
          <!-- NOTE: value is filled by javascript after apply button is clicked -->
          <input type="hidden" value='' name='<?php echo getUpdatedSeatingMapName(); ?>'
                 id='<?php echo getUpdatedSeatingMapId(); ?>' />
