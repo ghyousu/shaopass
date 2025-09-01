@@ -280,7 +280,7 @@
          }
 
          insertRewardWarning(
-               $comment_type, $stud_id, $comment_body);
+               $comment_type, $stud_id, str_replace("'", "''", $comment_body));
       }
    }
 ?>

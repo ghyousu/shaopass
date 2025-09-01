@@ -91,6 +91,19 @@ CREATE TABLE IF NOT EXISTS shao.notes (
    PRIMARY KEY(note_id)
 );
 
+CREATE TABLE IF NOT EXISTS shao.comment_template (
+   comment_id serial,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512)
+);
+INSERT INTO shao.comment_template (cmt_type, comment) VALUES
+('warning', 'talking in class'),
+('warning', 'disturbing class'),
+('warning', 'talk over teachers'),
+('warning', 'disrespect teacher or classmate'),
+('warning', 'play fighting'),
+('warning', 'left classroom without permission');
+
 CREATE TABLE IF NOT EXISTS shao.teacherComment (
    comment_id serial,
    student_id INT NOT NULL,
