@@ -776,6 +776,7 @@
      </td>
 <?php endif; ?>
 
+<!-- disable hw bar graph for millenium high school
 <?php if ($_SESSION['user_role'] == 'student') : ?>
      <td style="vertical-align: baseline">
      <?php require_once("forms/hw_bar_graph.php"); ?>
@@ -783,6 +784,8 @@
      <td colspan='4' style="vertical-align: baseline">
      <br/>
 <?php endif; ?>
+-->
+        <td colspan='4' style="vertical-align: baseline">
         <h2 style='padding-top: 120px;'>Break History: </h2>
         <?php
            displayBreakHistory($_SESSION['class_id']);
