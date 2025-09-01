@@ -119,6 +119,13 @@
       {
          $comment = $stud->comments[$i];
 
+         // this is a workaround to avoid complicated sql query in searchCommentsFromDB function that wouldn't
+         // return students who did not have existing records in teacherComment table
+         if ($comment->cmt_text == 'dummy comment')
+         {
+            continue ;
+         }
+
          $td_class_name = 'cmt_td_reward';
          if ($comment->cmt_type == 'warning')
          {
