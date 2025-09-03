@@ -356,7 +356,7 @@
 
             // updated on 12/24/2024:
             // * only "green" pass is limited
-            if (pass_type_name != "Hallway")
+            if (pass_type_name != "Green" && pass_type_name != "Pink" )
             {
                continue;
             }

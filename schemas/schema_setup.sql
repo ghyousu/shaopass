@@ -52,7 +52,7 @@ CREATE SCHEMA IF NOT EXISTS shao;
 
 CREATE TYPE shao.youBreakType AS ENUM ('Bathroom', 'Main Office', 'Nurse', 'Other');
 
-CREATE TYPE shao.youPassType  AS ENUM ('Hallway', 'TBD A', 'TBD B');
+CREATE TYPE shao.youPassType  AS ENUM ('Green', 'Pink', 'Special');
 
 CREATE TABLE IF NOT EXISTS shao.seating (
    student_id  INT,
