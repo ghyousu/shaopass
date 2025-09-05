@@ -12,8 +12,8 @@ DROP SCHEMA IF EXISTS common CASCADE;
 CREATE SCHEMA IF NOT EXISTS common;
 
 CREATE TYPE common.youUserRole  AS ENUM ('teacher', 'student');
-CREATE TYPE common.youClassName AS ENUM ('G04', 'G06', 'G08', 'G09', 'demo');
-CREATE TYPE common.youSchemaName AS ENUM ('shao', 'demo');
+CREATE TYPE common.youClassName AS ENUM ('G04', 'G06', 'G08', 'G09', 'demo', 'L01', 'L02','L03', 'L05', 'L07');
+CREATE TYPE common.youSchemaName AS ENUM ('shao', 'lauren', 'demo');
 CREATE TYPE common.commentType  AS ENUM ('warning', 'reward');
 CREATE TYPE common.studentDisplayBgColor AS ENUM ('unset', 'red', 'green', 'orange');
 CREATE TYPE common.hwSubmissionStatus AS ENUM ('incomplete', 'semi-complete', 'completed');
@@ -105,6 +105,87 @@ INSERT INTO shao.comment_template (cmt_type, comment) VALUES
 ('warning', 'left classroom without permission');
 
 CREATE TABLE IF NOT EXISTS shao.teacherComment (
+   comment_id serial,
+   student_id INT NOT NULL,
+   teacher_name VARCHAR(100) NOT NULL,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512),
+   is_active boolean NOT NULL DEFAULT TRUE,
+   time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   redeem_time TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE,
+   FOREIGN KEY(teacher_name) REFERENCES common.users(user_name) ON DELETE CASCADE
+);
+
+----------------------------------- lauren schema ------------------------------
+DROP TABLE  IF EXISTS lauren.seating CASCADE;
+DROP TABLE  IF EXISTS lauren.breaks CASCADE;
+DROP TABLE  IF EXISTS lauren.notes CASCADE;
+DROP TABLE  IF EXISTS lauren.hw_submissions CASCADE;
+DROP TABLE  IF EXISTS lauren.comment_template;
+DROP TABLE  IF EXISTS lauren.teacherComment CASCADE;
+DROP TYPE   IF EXISTS lauren.youBreakType CASCADE;
+DROP TYPE   IF EXISTS lauren.youPassType CASCADE;
+
+DROP SCHEMA IF EXISTS lauren CASCADE;
+CREATE SCHEMA IF NOT EXISTS lauren;
+
+CREATE TYPE lauren.youBreakType AS ENUM ('Bathroom', 'Main Office', 'Nurse', 'Other');
+
+CREATE TYPE lauren.youPassType  AS ENUM ('Green', 'Pink', 'Special');
+
+CREATE TABLE IF NOT EXISTS lauren.seating (
+   student_id  INT,
+   row SMALLINT,
+   col SMALLINT,
+   UNIQUE(student_id, row, col),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS lauren.hw_submissions (
+   hw_submission_id INT GENERATED ALWAYS AS IDENTITY,
+   student_id  INT,
+   hw_status common.hwSubmissionStatus NOT NULL DEFAULT 'incomplete',
+   hw_date DATE NOT NULL DEFAULT CURRENT_DATE,
+   PRIMARY KEY(hw_submission_id),
+   unique(student_id, hw_date),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS lauren.breaks (
+   break_id    INT GENERATED ALWAYS AS IDENTITY,
+   student_id  INT,
+   break_type  lauren.youBreakType,
+   pass_type   lauren.youPassType,
+   time_out    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   time_in     TIMESTAMPTZ DEFAULT NOW(),
+   PRIMARY KEY(break_id),
+   FOREIGN KEY(student_id) REFERENCES common.student(student_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS lauren.notes (
+   note_id   INT GENERATED ALWAYS AS IDENTITY,
+   note_body TEXT NOT NULL,
+   ts        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+   class     common.youClassName,
+   PRIMARY KEY(note_id)
+);
+
+CREATE TABLE IF NOT EXISTS lauren.comment_template (
+   comment_id serial,
+   cmt_type common.commentType NOT NULL,
+   comment VARCHAR(512)
+);
+
+INSERT INTO lauren.comment_template (cmt_type, comment) VALUES
+('warning', 'talking in class'),
+('warning', 'disturbing class'),
+('warning', 'talk over teachers'),
+('warning', 'disrespect teacher or classmate'),
+('warning', 'play fighting'),
+('warning', 'left classroom without permission');
+
+CREATE TABLE IF NOT EXISTS lauren.teacherComment (
    comment_id serial,
    student_id INT NOT NULL,
    teacher_name VARCHAR(100) NOT NULL,
